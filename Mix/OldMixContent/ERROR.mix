@@ -1,0 +1,133 @@
+variable x
+variable y
+variable z
+
+variable c
+variable v
+
+variable rx
+variable ry
+variable rw
+variable rh
+variable rt
+
+variable ptr
+variable cs
+
+variable cx
+variable cy
+
+INITTILES solids, 10,4
+
+while(true) {
+
+  cs = 2
+  call drawPics
+
+  call getNextColor
+  call drawPics
+
+  call getNextColor
+  call drawPics
+
+}
+
+
+
+drawPics:
+
+rx=0
+ry=0
+rw=2
+rh=2
+rt=4106
+
+ptr = 0x7FA4
+
+for(y=0;y<6;++y) {
+  for(x=0;x<2;++x) {
+    for(z=0;z<4;++z) {
+
+      rectangle rx 
+
+      mem(ptr) = cs      
+
+      cx = rx
+      cy = ry+2
+      v = cs
+      setCursor cx
+      call hexByte
+
+      ++ptr      
+      rx=rx+4  
+      rt=rt+1
+
+      call getNextColor       
+
+    }
+    rt=rt & 0xFFF0
+    rt=rt + 4106
+  }
+  rx=0
+  ry=ry+4
+}
+
+setcursor 0,23
+print "          PRESS ENTER"
+GETNUMBER x
+
+return
+
+getNextColor:
+  while(true) {      
+    ++cs
+    v = cs & 15
+    cx = cs >> 4
+    cy = v & 8
+    if(v==9) {
+      continue
+    }
+    if(v==0) {
+      continue
+    }
+    if(v==1) {
+      continue
+    }        
+    if(cy==0 && cx>0) {          
+      continue
+    }
+    break
+  }   
+  cs = cs & 255
+return
+
+hexByte:
+ c = v >> 4
+ call hexChar
+ c = v & 15
+ call hexChar
+ return
+
+hexChar:
+ print hextrans[c]
+ return
+
+
+----
+
+
+solids:
+Tile {
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+}
+
+hextrans:
+"0",0,"1",0,"2",0,"3",0,"4",0,"5",0,"6",0,"7",0
+"8",0,"9",0,"A",0,"B",0,"C",0,"D",0,"E",0,"F",0

@@ -1,0 +1,21 @@
+
+cluster Sampler
+
+call Dice:draw
+call Cards:draw
+call MineSweep:draw
+call TicTacToe:draw
+call Tetris:draw
+call Chess:draw
+call Sudoku:draw
+
+here:
+  goto here
+
+include TileSamplerCards.ccl
+include TileSamplerDice.ccl
+include TileSamplerMine.ccl
+include TileSamplerTic.ccl
+include TileSamplerTetris.ccl
+include TileSamplerChess.ccl
+include TileSamplerSudoku.ccl

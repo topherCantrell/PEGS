@@ -1,0 +1,77 @@
+
+/*
+
+ This program displays the 64 bytes from the keyboard key-state buffer as
+ hex bytes. This allows you to figure out which key presses map to which
+ bytes/bits in the buffer.
+
+ The program also displays the GETINPUTS values for player 1 and 2.
+
+ */
+
+variable c, v, ptr, x, y, w
+
+// Select one input-driver configuration below
+
+// InputDriver TwoPads
+// InputDriver OnePad
+InputDriver Keyboard
+// InputDriver None
+
+while(true) {
+
+  // Restart at the top of the screen
+  setcursor 0,4
+
+  // First byte in the keystate memory
+  ptr = M_KEYSTATES
+
+  for(y=0;y<4;++y) {
+    for(x=0;x<8;++x) {
+      v = mem(ptr)
+      ++ptr
+      call hexByte  // Print the 2 digit hex code
+      print " "     // Print a spacer
+    }
+    print "\n"      // Next line
+  }
+  
+  print "\n\n"
+
+  GETINPUTS 1,w     // Print player 1 ...
+  call hexWord      // ... inputs as 16 bit hex
+
+  print " "
+
+  GETINPUTS 2,w     // Print player 2 ...
+  call hexWord      // ... inputs as 16 bit hex
+
+  pause 100ms       // Pause for 1/10th of a second
+
+}
+
+/**
+ * Hexadecimal printing
+ */
+
+hexWord:
+ v = w >> 8
+ call hexByte
+ v = w & 255
+ call hexByte
+ return
+hexByte:
+ c = v >> 4
+ call hexChar
+ c = v & 15
+ call hexChar
+ return
+hexChar:
+ print hextrans[c]
+ return
+
+-----------------
+
+hextrans:
+"0",0,"1",0,"2",0,"3",0,"4",0,"5",0,"6",0,"7",0
+"8",0,"9",0,"A",0,"B",0,"C",0,"D",0,"E",0,"F",0

@@ -1,0 +1,34 @@
+
+initTiles torp,10,2
+
+SETSPRITE sprite=0,
+  x=100, y=50,simpleImage=10,
+  width=8, height=8,
+  numpics=2, flipdelay=0
+
+-------
+
+torp:
+SimpleImage {
+INFO width=8, height=8, map=.ABX
+
+........
+........
+........
+B..XXXX.
+BXXXXXXX
+B..XXXX.
+........
+........
+
+........
+........
+........
+...XXXX.
+BXXXXXXX
+...XXXX.
+........
+........
+
+}
+

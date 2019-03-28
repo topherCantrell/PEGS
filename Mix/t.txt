@@ -1,0 +1,26 @@
+ Volume in drive C is OS
+ Volume Serial Number is F644-CC77
+
+ Directory of C:\projects\Pegs\Mix
+
+12/27/2008  09:19 PM             2,563 FlowCOG_BRANCHIFNOT_Command.java
+12/27/2008  09:19 PM             2,548 FlowCOG_BRANCHIF_Command.java
+12/27/2008  09:19 PM             3,367 FlowCOG_CALL_Command.java
+12/27/2008  09:19 PM             1,721 FlowCOG_DEBUG_Command.java
+12/27/2008  09:19 PM             2,488 FlowCOG_EXECUTE_Command.java
+12/28/2008  08:16 AM             2,943 FlowCOG_GETINPUTS_Command.java
+12/28/2008  08:37 AM             2,373 FlowCOG_GETJOYSTICK_Command.java
+12/27/2008  09:19 PM             3,242 FlowCOG_GOTO_Command.java
+12/28/2008  08:13 AM             1,341 FlowCOG_INPUTMODE_Command.java
+12/27/2008  09:20 PM             2,790 FlowCOG_LOADVARIABLES_Command.java
+12/27/2008  09:20 PM             2,764 FlowCOG_MEMCOPY_Command.java
+12/27/2008  09:20 PM             1,319 FlowCOG_NOOP_Command.java
+12/28/2008  08:40 AM             1,248 FlowCOG_PADMODE_Command.java
+12/27/2008  09:20 PM             2,260 FlowCOG_PAUSE_Command.java
+12/27/2008  09:20 PM             1,445 FlowCOG_RETURN_Command.java
+12/28/2008  08:43 AM             2,322 FlowCOG_RUMBLE_Command.java
+12/27/2008  09:20 PM             3,009 FlowCOG_SAVEVARIABLES_Command.java
+12/27/2008  09:20 PM             1,434 FlowCOG_STOP_Command.java
+12/27/2008  09:21 PM             2,704 FlowCOG_TOKENIZE_Command.java
+              19 File(s)         43,881 bytes
+               0 Dir(s)  48,762,052,608 bytes free

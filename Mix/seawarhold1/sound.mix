@@ -1,0 +1,47 @@
+
+// Bad placement
+// Good placement
+// Bomb drop whistle
+// Explosion
+// Miss
+
+
+WAVEFORM 0,WaveSimple,16
+SOUNDCFG Noise,FrequencySweeper
+
+/* Bad placement
+SOUND Channel=0, Frequency=100Hz, Wave=0, EDelta=6, EPeriod=10, ELength=100, ERepeat=true
+SOUND Channel=1, Frequency=120Hz, Wave=0, EDelta=8, EPeriod=10, ELength=100, ERepeat=true
+PAUSE 200ms
+SOUND Channel=0, Frequency=OFF
+SOUND Channel=1, Frequency=OFF
+*/
+
+/*
+SOUND Channel=0, Frequency=600Hz, Wave=0, EDelta=-1, EPeriod=5, ELength=150
+PAUSE 150ms
+SOUND Channel=0, Frequency=OFF
+*/
+
+/*
+SOUND Channel=0, Frequency=700Hz, Wave=0, EDelta=1, EPeriod=10ms, ELength=2000ms
+PAUSE 1000ms
+SOUND Channel=0, Frequency=OFF
+*/
+
+SOUND Channel=0, Frequency=500Hz, Wave=1, EDelta=2, EPeriod=5ms, ELength=2000ms
+PAUSE 500ms
+SOUND Channel=0, Frequency=OFF
+
+------
+
+WaveSimple:
+  WAVEFORM {
+     ..
+     ..
+     ..
+     ..
+     X.
+     .X
+  }
+

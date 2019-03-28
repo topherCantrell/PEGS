@@ -1,0 +1,477 @@
+aScript:
+ActionScript {
+// sequence starts at x=0
+count=36, deltaX=1, delayX=2, width=32, height=8, image=314, numPics=2, flipDelay=1
+count=32, deltaX=1, delayX=2
+count=34, deltaX=1, delayX=2
+// Flip direction from 1
+count=32, deltaX=-1, delayX=2, width=32, height=8, image=330, numPics=2, flipDelay=1
+count=38, deltaX=-1, delayX=2
+// Continuing off the screen
+count=32, deltaX=-1, delayX=2
+// Delay 56
+count=1, deltaX=-1, delayX=28
+count=1, deltaX=1, delayX=28
+//
+// Changing ship to 2
+// Starting run at x=0
+count=38, deltaX=1, delayX=2, width=16, height=8, image=378, numPics=2, flipDelay=2
+// Speed up from 0 to 1
+count=46, deltaX=1, delayX=1
+count=60, deltaX=1, delayX=1
+count=66, deltaX=1, delayX=1
+// Speed up from 1 to 2
+count=38, deltaX=2, delayX=1
+// Delay 54
+count=1, deltaX=1, delayX=27
+count=1, deltaX=-1, delayX=27
+//
+// Changing ship to 2
+// Starting run at x=286
+count=66, deltaX=-2, delayX=1, width=16, height=8, image=386, numPics=2, flipDelay=2
+// Flip direction from 0
+count=66, deltaX=2, delayX=1, width=16, height=8, image=378, numPics=2, flipDelay=2
+// Delay 52
+count=1, deltaX=1, delayX=26
+count=1, deltaX=-1, delayX=26
+//
+// Changing ship to 2
+// Starting run at x=286
+count=116, deltaX=-2, delayX=1, width=16, height=8, image=386, numPics=2, flipDelay=2
+count=27, deltaX=-2, delayX=1
+// Delay 34
+count=1, deltaX=-1, delayX=17
+count=1, deltaX=1, delayX=17
+//
+// Changing ship to 1
+// Starting run at x=0
+count=108, deltaX=2, delayX=1, width=32, height=8, image=346, numPics=2, flipDelay=2
+// Slow down from 2 to 1
+count=52, deltaX=1, delayX=1
+// Slow down from 1 to 0
+count=18, deltaX=1, delayX=2
+// Delay 46
+count=1, deltaX=1, delayX=23
+count=1, deltaX=-1, delayX=23
+//
+// Changing ship to 4
+// Starting run at x=286
+count=36, deltaX=-1, delayX=2, width=16, height=8, image=418, numPics=2, flipDelay=3
+count=32, deltaX=-1, delayX=2
+count=34, deltaX=-1, delayX=2
+// Speed up from 0 to 2
+count=76, deltaX=-2, delayX=1
+// Continuing off the screen
+count=16, deltaX=-2, delayX=1
+// Delay 26
+count=1, deltaX=-1, delayX=13
+count=1, deltaX=1, delayX=13
+//
+// Changing ship to 4
+// Starting run at x=0
+count=98, deltaX=2, delayX=1, width=16, height=8, image=410, numPics=2, flipDelay=3
+// Slow down from 2 to 1
+count=72, deltaX=1, delayX=1
+count=18, deltaX=1, delayX=1
+// Delay 52
+count=1, deltaX=1, delayX=26
+count=1, deltaX=-1, delayX=26
+//
+// Changing ship to 1
+// Starting run at x=286
+count=50, deltaX=-1, delayX=1, width=32, height=8, image=362, numPics=2, flipDelay=2
+// Slow down from 1 to 0
+count=36, deltaX=-1, delayX=2
+count=34, deltaX=-1, delayX=2
+// Speed up from 0 to 1
+count=64, deltaX=-1, delayX=1
+// Speed up from 1 to 2
+count=51, deltaX=-2, delayX=1
+// Delay 50
+count=1, deltaX=-1, delayX=25
+count=1, deltaX=1, delayX=25
+//
+// Changing ship to 4
+// Starting run at x=0
+REPEAT
+}
+
+bScript:
+ActionScript {
+// sequence starts at x=286
+count=52, deltaX=-1, delayX=1, width=32, height=8, image=362, numPics=2, flipDelay=2
+// Slow down from 1 to 0
+count=38, deltaX=-1, delayX=2
+// Flip direction from 0
+count=36, deltaX=1, delayX=2, width=32, height=8, image=346, numPics=2, flipDelay=2
+// Speed up from 0 to 1
+count=52, deltaX=1, delayX=1
+// Speed up from 1 to 2
+count=1, deltaX=2, delayX=1
+// Delay 42
+count=1, deltaX=1, delayX=21
+count=1, deltaX=-1, delayX=21
+//
+// Changing ship to 0
+// Starting run at x=286
+count=98, deltaX=-2, delayX=1, width=32, height=8, image=330, numPics=2, flipDelay=1
+count=45, deltaX=-2, delayX=1
+// Delay 28
+count=1, deltaX=-1, delayX=14
+count=1, deltaX=1, delayX=14
+//
+// Changing ship to 0
+// Starting run at x=0
+count=110, deltaX=2, delayX=1, width=32, height=8, image=314, numPics=2, flipDelay=1
+count=33, deltaX=2, delayX=1
+// Delay 40
+count=1, deltaX=1, delayX=20
+count=1, deltaX=-1, delayX=20
+//
+// Changing ship to 2
+// Starting run at x=286
+count=100, deltaX=-2, delayX=1, width=16, height=8, image=386, numPics=2, flipDelay=2
+// Slow down from 2 to 0
+count=34, deltaX=-1, delayX=2
+// Speed up from 0 to 1
+count=46, deltaX=-1, delayX=1
+// Speed up from 1 to 2
+count=3, deltaX=-2, delayX=1
+// Delay 56
+count=1, deltaX=-1, delayX=28
+count=1, deltaX=1, delayX=28
+//
+// Changing ship to 0
+// Starting run at x=0
+count=60, deltaX=2, delayX=1, width=32, height=8, image=314, numPics=2, flipDelay=1
+count=83, deltaX=2, delayX=1
+// Delay 24
+count=1, deltaX=1, delayX=12
+count=1, deltaX=-1, delayX=12
+//
+// Changing ship to 3
+// Starting run at x=286
+count=94, deltaX=-2, delayX=1, width=16, height=8, image=402, numPics=2, flipDelay=3
+count=49, deltaX=-2, delayX=1
+// Delay 26
+count=1, deltaX=-1, delayX=13
+count=1, deltaX=1, delayX=13
+//
+// Changing ship to 0
+// Starting run at x=0
+count=96, deltaX=2, delayX=1, width=32, height=8, image=314, numPics=2, flipDelay=1
+// Slow down from 2 to 1
+count=48, deltaX=1, delayX=1
+// Speed up from 1 to 2
+count=23, deltaX=2, delayX=1
+// Delay 50
+count=1, deltaX=1, delayX=25
+count=1, deltaX=-1, delayX=25
+//
+// Changing ship to 2
+// Starting run at x=286
+count=70, deltaX=-2, delayX=1, width=16, height=8, image=386, numPics=2, flipDelay=2
+// Slow down from 2 to 0
+count=34, deltaX=-1, delayX=2
+// Speed up from 0 to 1
+count=76, deltaX=-1, delayX=1
+// Slow down from 1 to 0
+count=36, deltaX=-1, delayX=2
+// Delay 38
+count=1, deltaX=-1, delayX=19
+count=1, deltaX=1, delayX=19
+//
+// Changing ship to 2
+// Starting run at x=0
+count=38, deltaX=1, delayX=2, width=16, height=8, image=378, numPics=2, flipDelay=2
+count=34, deltaX=1, delayX=2
+// Speed up from 0 to 2
+count=107, deltaX=2, delayX=1
+// Delay 22
+count=1, deltaX=1, delayX=11
+count=1, deltaX=-1, delayX=11
+//
+// Changing ship to 4
+// Starting run at x=286
+REPEAT
+}
+
+cScript:
+ActionScript {
+// sequence starts at x=0
+count=32, deltaX=1, delayX=2, width=16, height=8, image=394, numPics=2, flipDelay=3
+count=34, deltaX=1, delayX=2
+count=36, deltaX=1, delayX=2
+// Flip direction from 1
+// Continuing off the screen
+count=102, deltaX=-1, delayX=2, width=16, height=8, image=402, numPics=2, flipDelay=3
+// Delay 36
+count=1, deltaX=-1, delayX=18
+count=1, deltaX=1, delayX=18
+//
+// Changing ship to 2
+// Starting run at x=0
+count=36, deltaX=1, delayX=2, width=16, height=8, image=378, numPics=2, flipDelay=2
+count=36, deltaX=1, delayX=2
+// Speed up from 0 to 1
+count=70, deltaX=1, delayX=1
+// Speed up from 1 to 2
+// Continuing off the screen
+count=72, deltaX=2, delayX=1
+// Delay 52
+count=1, deltaX=1, delayX=26
+count=1, deltaX=-1, delayX=26
+//
+// Changing ship to 2
+// Starting run at x=286
+count=78, deltaX=-2, delayX=1, width=16, height=8, image=386, numPics=2, flipDelay=2
+// Flip direction from 0
+count=78, deltaX=2, delayX=1, width=16, height=8, image=378, numPics=2, flipDelay=2
+// Delay 40
+count=1, deltaX=1, delayX=20
+count=1, deltaX=-1, delayX=20
+//
+// Changing ship to 1
+// Starting run at x=286
+count=86, deltaX=-2, delayX=1, width=32, height=8, image=362, numPics=2, flipDelay=2
+count=57, deltaX=-2, delayX=1
+// Delay 40
+count=1, deltaX=-1, delayX=20
+count=1, deltaX=1, delayX=20
+//
+// Changing ship to 4
+// Starting run at x=0
+count=116, deltaX=2, delayX=1, width=16, height=8, image=410, numPics=2, flipDelay=3
+// Slow down from 2 to 0
+count=34, deltaX=1, delayX=2
+// Speed up from 0 to 1
+count=20, deltaX=1, delayX=1
+// Delay 32
+count=1, deltaX=1, delayX=16
+count=1, deltaX=-1, delayX=16
+//
+// Changing ship to 4
+// Starting run at x=286
+count=76, deltaX=-1, delayX=1, width=16, height=8, image=418, numPics=2, flipDelay=3
+count=74, deltaX=-1, delayX=1
+count=54, deltaX=-1, delayX=1
+count=54, deltaX=-1, delayX=1
+// Speed up from 1 to 2
+count=14, deltaX=-2, delayX=1
+// Delay 36
+count=1, deltaX=-1, delayX=18
+count=1, deltaX=1, delayX=18
+//
+// Changing ship to 1
+// Starting run at x=0
+count=66, deltaX=2, delayX=1, width=32, height=8, image=346, numPics=2, flipDelay=2
+// Flip direction from 1
+count=66, deltaX=-2, delayX=1, width=32, height=8, image=362, numPics=2, flipDelay=2
+// Delay 32
+count=1, deltaX=-1, delayX=16
+count=1, deltaX=1, delayX=16
+//
+// Changing ship to 0
+// Starting run at x=0
+count=82, deltaX=2, delayX=1, width=32, height=8, image=314, numPics=2, flipDelay=1
+// Flip direction from 1
+count=60, deltaX=-2, delayX=1, width=32, height=8, image=330, numPics=2, flipDelay=1
+// Slow down from 2 to 0
+count=34, deltaX=-1, delayX=2
+// Speed up from 0 to 2
+count=5, deltaX=-2, delayX=1
+// Delay 26
+count=1, deltaX=-1, delayX=13
+count=1, deltaX=1, delayX=13
+//
+// Changing ship to 1
+// Starting run at x=0
+REPEAT
+}
+
+dScript:
+ActionScript {
+// sequence starts at x=0
+count=86, deltaX=2, delayX=1, width=16, height=8, image=378, numPics=2, flipDelay=2
+// Flip direction from 1
+count=68, deltaX=-2, delayX=1, width=16, height=8, image=386, numPics=2, flipDelay=2
+count=18, deltaX=-2, delayX=1
+// Delay 56
+count=1, deltaX=-1, delayX=28
+count=1, deltaX=1, delayX=28
+//
+// Changing ship to 2
+// Starting run at x=0
+count=114, deltaX=2, delayX=1, width=16, height=8, image=378, numPics=2, flipDelay=2
+// Slow down from 2 to 1
+count=42, deltaX=1, delayX=1
+// Slow down from 1 to 0
+count=16, deltaX=1, delayX=2
+// Delay 22
+count=1, deltaX=1, delayX=11
+count=1, deltaX=-1, delayX=11
+//
+// Changing ship to 2
+// Starting run at x=286
+count=32, deltaX=-1, delayX=2, width=16, height=8, image=386, numPics=2, flipDelay=2
+count=32, deltaX=-1, delayX=2
+// Speed up from 0 to 2
+count=78, deltaX=-2, delayX=1
+count=33, deltaX=-2, delayX=1
+// Delay 52
+count=1, deltaX=-1, delayX=26
+count=1, deltaX=1, delayX=26
+//
+// Changing ship to 0
+// Starting run at x=0
+count=98, deltaX=2, delayX=1, width=32, height=8, image=314, numPics=2, flipDelay=1
+// Flip direction from 1
+count=98, deltaX=-2, delayX=1, width=32, height=8, image=330, numPics=2, flipDelay=1
+// Delay 36
+count=1, deltaX=-1, delayX=18
+count=1, deltaX=1, delayX=18
+//
+// Changing ship to 4
+// Starting run at x=0
+count=106, deltaX=2, delayX=1, width=16, height=8, image=410, numPics=2, flipDelay=3
+// Slow down from 2 to 0
+count=32, deltaX=1, delayX=2
+count=32, deltaX=1, delayX=2
+// Speed up from 0 to 2
+count=5, deltaX=2, delayX=1
+// Delay 48
+count=1, deltaX=1, delayX=24
+count=1, deltaX=-1, delayX=24
+//
+// Changing ship to 0
+// Starting run at x=286
+count=102, deltaX=-2, delayX=1, width=32, height=8, image=330, numPics=2, flipDelay=1
+// Slow down from 2 to 0
+count=36, deltaX=-1, delayX=2
+count=32, deltaX=-1, delayX=2
+// Continuing off the screen
+count=14, deltaX=-1, delayX=2
+// Delay 50
+count=1, deltaX=-1, delayX=25
+count=1, deltaX=1, delayX=25
+//
+// Changing ship to 2
+// Starting run at x=0
+count=36, deltaX=1, delayX=2, width=16, height=8, image=378, numPics=2, flipDelay=2
+// Speed up from 0 to 1
+count=52, deltaX=1, delayX=1
+// Speed up from 1 to 2
+count=99, deltaX=2, delayX=1
+// Delay 46
+count=1, deltaX=1, delayX=23
+count=1, deltaX=-1, delayX=23
+//
+// Changing ship to 2
+// Starting run at x=286
+count=104, deltaX=-2, delayX=1, width=16, height=8, image=386, numPics=2, flipDelay=2
+// Slow down from 2 to 0
+count=32, deltaX=-1, delayX=2
+// Speed up from 0 to 1
+count=44, deltaX=-1, delayX=1
+// Slow down from 1 to 0
+count=2, deltaX=-1, delayX=2
+// Delay 46
+count=1, deltaX=-1, delayX=23
+count=1, deltaX=1, delayX=23
+//
+// Changing ship to 2
+// Starting run at x=0
+REPEAT
+}
+
+eScript:
+ActionScript {
+// sequence starts at x=286
+count=96, deltaX=-2, delayX=1, width=16, height=8, image=418, numPics=2, flipDelay=3
+count=47, deltaX=-2, delayX=1
+// Delay 58
+count=1, deltaX=-1, delayX=29
+count=1, deltaX=1, delayX=29
+//
+// Changing ship to 2
+// Starting run at x=0
+count=78, deltaX=2, delayX=1, width=16, height=8, image=378, numPics=2, flipDelay=2
+// Flip direction from 1
+count=60, deltaX=-2, delayX=1, width=16, height=8, image=386, numPics=2, flipDelay=2
+count=18, deltaX=-2, delayX=1
+// Delay 58
+count=1, deltaX=-1, delayX=29
+count=1, deltaX=1, delayX=29
+//
+// Changing ship to 3
+// Starting run at x=0
+count=94, deltaX=2, delayX=1, width=16, height=8, image=394, numPics=2, flipDelay=3
+// Flip direction from 1
+count=94, deltaX=-2, delayX=1, width=16, height=8, image=402, numPics=2, flipDelay=3
+// Delay 22
+count=1, deltaX=-1, delayX=11
+count=1, deltaX=1, delayX=11
+//
+// Changing ship to 3
+// Starting run at x=0
+count=82, deltaX=2, delayX=1, width=16, height=8, image=394, numPics=2, flipDelay=3
+// Flip direction from 1
+count=80, deltaX=-2, delayX=1, width=16, height=8, image=402, numPics=2, flipDelay=3
+// Slow down from 2 to 0
+count=4, deltaX=-1, delayX=2
+// Delay 22
+count=1, deltaX=-1, delayX=11
+count=1, deltaX=1, delayX=11
+//
+// Changing ship to 2
+// Starting run at x=0
+count=38, deltaX=1, delayX=2, width=16, height=8, image=378, numPics=2, flipDelay=2
+count=36, deltaX=1, delayX=2
+count=38, deltaX=1, delayX=2
+count=38, deltaX=1, delayX=2
+// Flip direction from 1
+count=36, deltaX=-1, delayX=2, width=16, height=8, image=386, numPics=2, flipDelay=2
+// Speed up from 0 to 2
+count=57, deltaX=-2, delayX=1
+// Delay 54
+count=1, deltaX=-1, delayX=27
+count=1, deltaX=1, delayX=27
+//
+// Changing ship to 2
+// Starting run at x=0
+count=86, deltaX=2, delayX=1, width=16, height=8, image=378, numPics=2, flipDelay=2
+// Slow down from 2 to 0
+count=34, deltaX=1, delayX=2
+// Speed up from 0 to 1
+count=68, deltaX=1, delayX=1
+count=12, deltaX=1, delayX=1
+// Delay 24
+count=1, deltaX=1, delayX=12
+count=1, deltaX=-1, delayX=12
+//
+// Changing ship to 2
+// Starting run at x=286
+count=66, deltaX=-1, delayX=1, width=16, height=8, image=386, numPics=2, flipDelay=2
+// Speed up from 1 to 2
+count=76, deltaX=-2, delayX=1
+// Slow down from 2 to 1
+count=68, deltaX=-1, delayX=1
+// Delay 44
+count=1, deltaX=-1, delayX=22
+count=1, deltaX=1, delayX=22
+//
+// Changing ship to 2
+// Starting run at x=0
+count=56, deltaX=1, delayX=1, width=16, height=8, image=378, numPics=2, flipDelay=2
+count=50, deltaX=1, delayX=1
+// Speed up from 1 to 2
+count=90, deltaX=2, delayX=1
+// Delay 54
+count=1, deltaX=1, delayX=27
+count=1, deltaX=-1, delayX=27
+//
+// Changing ship to 0
+// Starting run at x=286
+REPEAT
+}
+

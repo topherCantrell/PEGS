@@ -1,0 +1,158 @@
+/*
+   This program shows all the possible color values that can be produced by the graphics system.
+   There are 3 pages of colors with the hex-values for each shown below each. Press enter to
+   flip among the pages.
+ */
+
+// General purpose variables
+variable x,y,z,c,v,ptr,cs
+
+// Variables used to draw rectangles
+variable rx,ry,rw,rh,rt
+
+// Variables used to set the cursor coordinates
+variable cx, cy
+
+// 4 solid tiles ... one for each color of a 4-color set
+INITTILES solids, 10,4
+
+// Background color a soft blue
+mem(M_ColorScheme_0) = 0x3B
+
+while(true) {
+
+  cs = 2 // 0 and 1 are NOT valid colors
+
+  call drawPics     // Draw first page
+
+  call getNextColor // Next valid color
+  call drawPics     // Draw second page
+
+  call getNextColor // Next valid color
+  call drawPics     // Draw third page
+
+}
+
+/**
+ * This fuction draws a single page of color values. CS contains the starting
+ * color value
+ */
+drawPics:
+
+cls 
+
+rx=0
+ry=0
+rw=2
+rh=2
+rt=4106 // 2nd color set ... leave the first set alone for text and background
+
+ptr = M_ColorScheme_1   // Start of 2nd color set
+
+for(y=0;y<6;++y) {       // 6 rows
+  for(x=0;x<2;++x) {     // 2 sets ...
+    for(z=0;z<4;++z) {   // ... of 4 columns
+
+      if(cs>255) {
+        goto abort // All colors shown. 3rd page is short.
+      }
+
+      rectangle rx   // Draw the rectange
+
+      mem(ptr) = cs  // Set the rectangles color-set    
+
+      cx = rx        // Position ...
+      cy = ry+2      // ... cursor below ...
+      setCursor cx   // ... rectangle
+
+      v = cs         // Show ...
+      call hexByte   // ... rectangles color in hex
+
+      ++ptr          // Next color memory position
+      rx=rx+4        // Next X coordinate
+      ++rt           // Next color/tile value
+
+      call getNextColor  // Bump CS to the next valid color value     
+
+    }
+    rt=rt & 0xFFF0   // Reset tile number ...
+    rt=rt + 4106     // ... to 10 and bump color set
+  }
+  rx=0      // Start of ...
+  ry=ry+4   // ... next row
+}
+
+abort:
+
+// Wait for user to move on
+setcursor 0,23
+print "          PRESS FIRE"
+
+pause 250ms
+
+do {
+ GETINPUTS variable=x
+} while(x!=0)
+
+pause 250ms
+
+do {
+ GETINPUTS variable=x
+} while(x==0)
+
+return
+
+/**
+ * Certain combinations of colors are invalid (or redundant). This
+ * function bumps CS to the next valid color value.
+ */
+getNextColor:
+  while(true) {
+    // Luminance value of 1 is reserved (9 or 1).
+    // If color modulation is off (black/white mode) then luminance value of 0 is reserved.
+    // If color modulation is off then the upper 4 bits are ignored (redundant black/white).
+    ++cs
+    v = cs & 15
+    cx = cs >> 4
+    cy = v & 8
+    if((v==9 || v==0) || v==1) {
+      continue
+    }        
+    if(cy==0 && cx>0) {          
+      continue
+    }
+    return
+  }    
+
+/**
+ * This functions print hex bytes/characters to the next screen location.
+ */
+hexChar:
+ c = c & 15
+ print hextrans[c]
+ return 
+
+hexByte:
+ c = v >> 4 
+ call hexChar 
+ c = v
+ call hexChar 
+ return
+
+----------
+
+solids:
+Tile {
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+  ........ RRRRRRRR GGGGGGGG WWWWWWWW
+}
+
+hextrans:
+"0",0,"1",0,"2",0,"3",0,"4",0,"5",0,"6",0,"7",0
+"8",0,"9",0,"A",0,"B",0,"C",0,"D",0,"E",0,"F",0

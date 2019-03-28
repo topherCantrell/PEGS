@@ -1,0 +1,21 @@
+
+PAUSE 1
+mem(0x7813) = 1
+
+mem(0x7E6C) = 0
+mem(0x7E6D) = 0
+
+
+while(1) {
+
+for(v1=0x7800;v1<0x7810;v1=v1+1) {
+  v0 = mem(v1)
+  printvar v0
+  print " "
+}
+
+print "----------\n"
+pause 1s
+
+
+}

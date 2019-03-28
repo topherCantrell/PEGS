@@ -1,0 +1,17 @@
+
+* Draw schematic for reduced PEGS board
+* Start PCB and layout holes and joystick pads
+
+----------------------------------------------------------------------------------------------------
+
+* Cut traces and modify to hook joystick to existing PEGS for joysticks/switches/LED
+* Layout the final circuit
+* Purchase board
+* Purchase parts
+* Modify case and mount PCB and SD connector and bring prop-plug wires out bottom
+* Basic hardware tests and debug PCB
+
+* Pull out all INPUTLINE, INPUTVAR features
+* Pull out all Keyboard and GC features
+* Create new switch-input cog
+* New video capabilities ... map geometry and background scrolling (and auto-scroll)

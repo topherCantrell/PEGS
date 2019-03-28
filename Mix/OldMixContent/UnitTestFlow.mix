@@ -1,0 +1,32 @@
+
+if(v0==1 || v0==2 || v0==3 || v0==4 || (v1==1 && v2==1 && v3==1)) {
+  PRINT "YES\n"
+}
+
+GETLINE myBuffer,79
+TOKENIZE BUFFER=myBuffer,DICTIONARY=dict,MAXTOKENS=5
+
+PRINT "\n"
+PRINTVAR V0
+PRINT "\n"
+PRINTVAR V1
+PRINT "\n"
+PRINTVAR V2
+PRINT "\n"
+PRINTVAR V3
+PRINT "\n"
+PRINTVAR V4
+PRINT "\n"
+PRINTVAR V5
+
+-----
+
+dict:
+1,2,"ONE",0
+2,3,"TWO",0
+3,4,"THREE",0
+4,5,"FOUR",0
+255,255
+
+myBuffer:
+reserve(80)

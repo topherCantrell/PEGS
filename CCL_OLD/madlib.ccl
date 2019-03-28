@@ -1,0 +1,56 @@
+
+while(1) {
+
+CLS
+
+PRINT "STORAGE PLACE (CABINET, FRIDGE,\n"
+PRINT "TRUNK).\n"
+PRINT ">             <"
+SETCURSOR 1,2
+GETLINE place,12
+
+SETCURSOR 0,4
+PRINT "TYPE OF PET (DOG, CAT, FISH).\n"
+PRINT ">         <"
+SETCURSOR 1,5
+GETLINE pet,8
+
+SETCURSOR 0,7
+PRINT "TYPE OF FOOD (PIZZA, CAKE, HAM)."
+PRINT ">         <"
+SETCURSOR 1,8
+GETLINE food,8
+
+SETCURSOR 0,11
+//     0123456789a123456789b123456789c1
+PRINT "--------------------------------"
+PRINT "OLD MOTHER HUBBARD WENT TO\n"       // 12
+PRINT "THE             TO GET HER POOR "  // 13
+PRINT "         A         .\n"             // 14
+PRINT "WHEN SHE GOT THERE THE\n"           // 15
+PRINT "             WAS BARE\n"            // 16
+PRINT "SO THE POOR LITTLE         \n"      // 17
+PRINT "GOT NONE.\n"                        // 18
+PRINT "--------------------------------"
+
+SETCURSOR 4,13
+PRINT place
+
+SETCURSOR 0,14
+PRINT pet 
+
+SETCURSOR 11,14
+PRINT food
+
+SETCURSOR 0,16
+PRINT place
+
+SETCURSOR 19,17
+PRINT pet
+
+SETCURSOR 0,21
+PRINT " PRESS ENTER "
+GETLINE pet,0
+
+}
+

@@ -1,0 +1,156 @@
+
+// Some assignments for later tests
+V0 = 123
+V1 = 4321
+V2 = 64
+V3 = 8
+
+// -------------------- Print some of the assignments
+PRINTVAR V0
+PRINT " "
+PRINTVAR V1
+PRINT "\n"
+
+// -------------------- Try all math operations 
+
+V100 = V1 + V0
+Call PrintV100
+
+V100 = V1 - V0
+Call PrintV100
+
+V100 = 4 * v3
+Call PrintV100
+
+V100 = V2 / 2
+Call PrintV100
+
+V100 = V1 % 3
+Call PrintV100
+
+V100 = V2 << 2
+Call PrintV100
+
+V100 = V1 >> V3
+Call PrintV100
+
+V100 = V1 & 3
+Call PrintV100
+
+V100 = V0 | 192
+Call PrintV100
+
+V100 = V1 ^ 111
+Call PrintV100
+
+V100 = ~V1
+Call PrintV100
+
+// -------------------- Comparisons
+
+V1 = 150
+V2 = 150
+Call CompareV1V2
+
+V1 = 140
+CALL CompareV1V2
+
+V2 = 130
+CALL CompareV1V2
+
+CALL WaitOnKey
+
+// -------------------- Specials
+
+V100 = rand
+CALL PrintV100
+
+V100 = rand
+CALL PrintV100
+
+rand = 0x00B4F01A
+
+V100 = rand
+CALL PrintV100
+
+V100 = rand
+CALL PrintV100
+
+CALL WaitOnKey
+
+V100 = register(0x14D)
+CALL PrintV100
+
+register(0x1B1) = 76543
+CALL PrintV100
+
+V16 = @data
+V100 = current(v16,word)
+CALL PrintV100
+
+current(v16,long) = 0x07_06_05_04
+V100 = current(v16,long)
+CALL PrintV100
+
+V100 = mem(0x7000,long)
+CALL PrintV100
+
+mem(0x7000,long) = 9876543
+V100 = mem(0x7000,long)
+CALL PrintV100
+V20 = 0x7000
+V100 = mem(V20,long)
+CALL PrintV100
+
+V20 = 1
+V100 = [V20]
+CALL PrintV100
+
+V21 = 100
+V20 = 2
+[V21] = [V20]
+CALL PrintV100
+
+
+STOP
+
+
+PrintV100:
+PRINTVAR V100
+PRINT "\n"
+RETURN
+
+
+WaitOnKey:
+PRINT "PRESS A KEY"
+while(nextKey==0) {
+}
+CLS
+RETURN
+
+CompareV1V2:
+if(v1==v2) {
+  PRINT "== "
+}
+if(v1!=v2) {
+  PRINT "!= "
+}
+if(v1<v2) {
+  PRINT "< "
+}
+if(v1>v2) {
+  PRINT "> "
+}
+if(v1<=v2) {
+  PRINT "<= "
+}
+if(v1>=v2) {
+  PRINT ">= "
+}
+PRINT "\n"
+RETURN
+
+--
+
+data:
+1,2,3,4,0

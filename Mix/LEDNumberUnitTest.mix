@@ -1,0 +1,13 @@
+
+value = 0xFACE
+x=10
+y=10
+w=4
+z=5
+c=1
+sb=2
+call LEDNumber:drawHexWord
+call LEDGraphics:refreshScreen
+
+include LEDNumber.mix
+include LEDGraphics.mix

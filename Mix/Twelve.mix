@@ -1,0 +1,51 @@
+/*
+
+ The movie sequencer waits for music var 0,1 as follows:
+ 
+ - When musicvar 0,1 has upper bit set, display the current frame buffer
+   and load the requested frame into the buffer.
+ - Clear the musicvar 0,1 and wait for next change
+
+ If the music script is faster than the music sequencer, frames will be
+ skipped by the process.
+
+ */
+
+variable x,y,frameBase
+
+define musicvar=32640
+define musicvarL=32654
+define REFRESH = 32620
+
+CLUSTER movie
+
+ call song:
+
+ frameBase=2
+
+ while(true) {
+     
+
+     x = mem(musicvarL,WORD)
+     if(x&0X8000) {
+       x = x & 0X7FFF
+       mem(musicvarL,WORD) = x
+       cacheHint INDIRECT        
+     }
+
+     x = mem(musicvar,WORD)
+     if(x&0X8000==0) {
+       continue
+     }
+      
+     mem(musicvar,WORD)=0
+     mem(REFRESH)=1
+     y = x & 7
+     x = x >> 3
+     x = x & 0b0000_111111111111
+     x = x + frameBase
+     call VARIABLE=x
+ }
+
+include song2.mix
+include movieframes.mix

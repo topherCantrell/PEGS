@@ -1,0 +1,21 @@
+
+
+
+-----------------
+
+
+
+flicktest:
+Tile {
+
+........ ........ ........ ........ ........ ........ ........ ........
+........ ........ ........ ........ ........ ........ ........ ........
+GRGR.... .GRGR... ..GRGR.. ........ ........ ........ ........ ........
+RGRG.... .RGRG... ..RGRG.. ........ ........ ........ ........ ........
+GRGR.... .GRGR... ..GRGR.. ...GRGR. ....GRGR ........ ........ ........
+WWWWWWWW WWWWWWWW WWWWWWWW WWWWWWWW WWWWWWWW WWWWWWWW WWWWWWWW WWWWWWWW
+.WWWWWW. .WWWWWW. .WWWWWW. .WWWWWW. .WWWWWW. .WWWWWW. .WWWWWW. .WWWWWW.
+..WWWW.. ..WWWW.. ..WWWW.. ..WWWW.. ..WWWW.. ..WWWW.. ..WWWW.. ..WWWW..
+
+
+}

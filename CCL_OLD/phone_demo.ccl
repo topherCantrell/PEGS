@@ -1,0 +1,100 @@
+
+WAVEFORM 0,WaveSimple,16
+SOUNDCFG None
+
+SOUND channel=0, frequency=440HZ
+SOUND channel=1, frequency=350HZ
+PAUSE 2000
+PAUSE 1000
+
+// 6
+SOUND Channel=0,Frequency=1477Hz
+SOUND Channel=1,Frequency=770Hz
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+
+// 5
+SOUND Channel=0,Frequency=1336Hz
+SOUND Channel=1,Frequency=770Hz
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+
+// 1
+SOUND Channel=0,Frequency=1209Hz
+SOUND Channel=1,Frequency=697Hz
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+
+// 8
+SOUND Channel=0,Frequency=1336Hz
+SOUND Channel=1,Frequency=852Hz
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+
+// 2
+SOUND Channel=0,Frequency=1336Hz
+SOUND Channel=1,Frequency=697Hz
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+
+// 8
+SOUND Channel=0,Frequency=1336Hz
+SOUND Channel=1,Frequency=852Hz
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+
+
+// 2
+SOUND Channel=0,Frequency=1336Hz
+SOUND Channel=1,Frequency=697Hz
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+
+// Pause before ring back
+PAUSE 500
+
+// Two rings
+SOUND Channel=0,Frequency=480Hz
+SOUND Channel=1,Frequency=440Hz
+PAUSE 2000
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 2000
+PAUSE 2000
+SOUND Channel=0,Frequency=480Hz
+SOUND Channel=1,Frequency=440Hz
+PAUSE 2000
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+
+SOUNDCFG Noise,Sequencer,FrequencySweeper
+
+SOUND Channel=0,Wave=1,Frequency=1000Hz
+PAUSE 50
+
+
+
+--DATA--
+WaveSimple:
+  WAVEFORM {
+    ..
+    ..
+    X.
+    .X
+  }
+

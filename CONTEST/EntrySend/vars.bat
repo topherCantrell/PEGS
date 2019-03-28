@@ -1,0 +1,1 @@
+set CLASSPATH=c:\projects\gx\bin

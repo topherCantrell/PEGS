@@ -1,0 +1,33 @@
+                                           
+                 define   tone  = @0x7000  
+                 define   delta = @0x7002  
+                 define   count = @0x7004  
+                                           
+                 delta    = (word)0x18     
+                 tone     = (word)0x4      
+                                           
+                 WriteChipA 8,10             
+                 WriteChipA 7,0b11_111_110   
+                                           
+                 count=0x80                  
+FLOW_A_1_OUTPUT_BEGIN:                           
+                 x!=0                      
+                 BRANCH-IFNOT FLOW_A_1_OUTPUT_FALSE 
+                                           
+                 count==0x6D                  
+                 BRANCH-IFNOT FLOW_A_2_OUTPUT_FALSE 
+                 tone     = (word)0x4      
+                 GOTO     FLOW_A_1_OUTPUT_BREAK 
+FLOW_A_2_OUTPUT_FALSE:                           
+                                           
+                 PlayToneOnVoice 0, tone          
+                                           
+                 tone     = tone + (word)delta 
+                                           
+FLOW_A_1_OUTPUT_CONTINUE:                           
+                 x=x-1                     
+                 GOTO     FLOW_A_1_OUTPUT_BEGIN 
+FLOW_A_1_OUTPUT_FALSE:                           
+FLOW_A_1_OUTPUT_BREAK:                           
+                                           
+                 WriteChipA 7,0b11_111_111   

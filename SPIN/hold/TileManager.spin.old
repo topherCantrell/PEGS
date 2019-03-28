@@ -1,0 +1,396 @@
+' 8
+' 1---1000 ........ ssssssss nnnnnnnn : ptr
+' setTileDataN startSlot,numberOfTiles,tileData
+
+' 9
+' 1---1001 vxxxxxxx yyyyyyyy tttttttt : --
+' setTileN x,y,tile
+' setTileN VN
+
+' 10
+' 1---1010 vxxxxxxx yyyyyyyy -- : -- hhhhhhhh wwwwwwww tttttttt
+' tileBlockN x,y,width,heigh,tile
+' tileBlockN VN
+
+' 11
+' 1---1011 vxxxxxxx yyyyyyyy vvvvvvvv : --
+' getTileN x,y,VN
+' getTileN VN
+
+' 12
+' 1---1100 vxxxxxxx yyyyyyyy -- : -- -- pppppppp pppppppp
+' tileText x,y,ztstring
+
+' 13 (FUTURE WORK)
+' 1---1101 vxxxxxxx yyyyyyyy -- : hhhhhhhh wwwwwwww tttttttt ddnnnnnn
+' scrollBlock x,y,width,height,dir,num,tile
+
+
+CON
+
+  x_tiles = 16    ' Really 32
+  y_tiles = 13    ' Really 26
+  numTiles = 256
+
+  ' 32*26*2  = 1664 bytes for screen map
+  ' 128 * 16 = 2048 bytes for tiles
+  ' Less than 4K total for screen  
+
+VAR                         
+
+    long  tv_status     '0/1/2 = off/visible/invisible           read-only
+    long  tv_enable     '0/? = off/on                            write-only
+    long  tv_pins       '%ppmmm = pins                           write-only
+    long  tv_mode       '%ccinp = chroma,interlace,ntsc/pal,swap write-only
+    long  tv_screen     'pointer to screen (words)               write-only
+    long  tv_colors     'pointer to colors (longs)               write-only               
+    long  tv_hc         'horizontal cells                        write-only
+    long  tv_vc         'vertical cells                          write-only
+    long  tv_hx         'horizontal cell expansion               write-only
+    long  tv_vx         'vertical cell expansion                 write-only
+    long  tv_ho         'horizontal offset                       write-only
+    long  tv_vo         'vertical offset                         write-only
+    long  tv_broadcast  'broadcast frequency (Hz)                write-only
+    long  tv_auralcog   'aural fm cog                            write-only
+    long  tv_tileMemory 'base of tiles (16 bytes each)           write-only
+
+    long  x, y, bitmap_base         
+    byte  bitmap[numTiles*16 + 16]     'add 16 to allow for 16-byte alignment
+    word  screen[x_tiles*2 * y_tiles*2 + 16]
+
+OBJ  
+  tv    : "tv8x8"   
+
+PUB setup(basepin)
+     
+  'init screen to first tile
+  bitmap_base := (@bitmap + $0F) & $7FF0  
+  repeat x from 0 to 32*26-1
+    screen[x] := 0
+
+  ' Clear the first tile
+  repeat y from 0 to 15
+    byte[bitmap_base+y] := 0  
+
+  'start tv
+  tvparams_pins := (basepin & $38) << 1 | (basepin & 4 == 4) & %0101
+  longmove(@tv_status, @tvparams, 15)
+  tv_screen     := @screen
+  tv_tileMemory := bitmap_base
+  tv_colors     := @color_schemes
+  tv.start(@tv_status)
+    
+PUB start(mailbox)                                 
+    long[mailbox+4*3*1] := bitmap_base
+    long[mailbox+4*3*1+4] := @screen
+    cognew(@TileManager, mailbox)
+
+DAT
+
+tvparams                long    0               'status
+                        long    1               'enable
+tvparams_pins           long    %001_0101       'pins
+                        long    %0000           'mode
+                        long    0               'screen
+                        long    0               'colors
+                        long    x_tiles         'hc
+                        long    y_tiles         'vc
+                        long    10              'hx
+                        long    1               'vx
+                        long    0               'ho
+                        long    0               'vo
+                        long    55_250_000      'broadcast
+                        long    0               'auralcog
+                        long    0               'tileMemory
+
+color_schemes           long    $BC_6C_05_02
+                        long    $0E_0D_0C_0A
+                        long    $6E_6D_6C_6A
+                        long    $BE_BD_BC_BA                  
+
+
+' ---------------------------------------------------------------------------------
+
+' The TileManager COG
+
+        org 0
+TileManager
+
+' Param contains mailbox pointer. The upper bit is masked off but
+' if upper bit is 0, listen to box 1 else listen to box 2.
+' The box must be initialized with a pointer to the raster buffer.
+        
+        mov      varMgrCom, par       ' Parameter passed in        
+        mov      boxCom, varMgrCom    ' Get our target box
+        add      boxCom, #4*3*1       ' Box 1                        
+        mov      boxData,boxCom       ' Calculate ...
+        add      boxData,#4           ' ... data ...
+        mov      boxOffs,boxData      ' ... and ...
+        add      boxOffs,#4           ' ... offset location
+
+        add      varMgrCom, #4*3*3       ' Calculate the ...
+        mov      varMgrData, varMgrCom   ' ... variable manager ...
+        add      varMgrData,#4           ' ... box                                        
+         
+        rdlong   tileData,boxCom      ' Get the raster buffer from the box
+        rdlong   screenMap,boxData    ' Get the screen memory from the box
+        wrlong   C_0001,boxCom        ' Free up the box
+            
+top
+        rdlong   t1,boxCom            ' Get command word
+        mov      t1,t1 wc             ' Check the upper bit                    
+  if_nc jmp      #top                 ' Not a command
+
+  ' Multiplex the commands
+  
+        mov      t2,t1                ' Mask off ...
+        shr      t2,#24               ' ... just the ...
+        and      t2,#15               ' ... command numner
+        cmp      t2,#9 wz             ' Do ...
+  if_z  jmp      #doSetTile           ' ... SetTile
+
+        cmp      t2,#8 wz
+  if_z  jmp      #doSetTileData
+
+        cmp      t2,#10 wz
+  if_z  jmp      #doTileBlock       
+
+        cmp      t2,#11 wz
+  if_z  jmp      #doGetTile
+
+        cmp      t2,#12 wz 
+  if_z  jmp      #doText 
+
+        ' TO DO a window scroller
+        ' TO DO have text writer auto-scroll
+topDone
+        wrlong   C_0001,boxCom        ' Return value
+        jmp       #top                ' Wait for next command
+
+' -----------------------------------------
+' SetTile X,Y,Tile
+' SetTile Vn
+'        
+doSetTile
+        call     #getXY               ' Get the X,Y, and data
+  if_z  jmp      #doSetTile1          ' Got all data if not a variable        
+        call     #fetchVariable       ' Get the tile number ...
+        mov      dataPnt,vData        ' ... from the var mgr                  
+doSetTile1                                 
+        call     #pushTile            ' Draw the tile
+        jmp      #topDone             ' Wait for next command
+
+' -----------------------------------------
+' TileBlock X,Y,width,height,tile
+' TileBlock Vn
+'
+doTileBlock      
+        call     #getXY               ' Get the X,Y
+  if_z  jmp      #doTileBlock1        ' More data to fetch if in variables
+        call     #fetchVariable       ' Get the width ...
+        mov      wid,vData            ' ... from the var mgr
+        call     #fetchVariable       ' Get the height ...
+        mov      hei,vData            ' ... from the var mgr
+        call     #fetchVariable       ' Get the tile numner ...
+        mov      dataPnt,vData        ' ... from the var mgr
+        jmp      #doTileBlock2        ' Got the data                  
+doTileBlock1
+        mov      hei,dataPnt          ' Mask off the ...
+        shr      hei,#24              ' ... height ...
+        mov      wid,dataPnt          ' Mask off the ...
+        shr      wid,#16              ' ... ...
+        and      wid,#$FF             ' ... width value
+        and      dataPnt,C_FFFF       ' Mask off the tile
+doTileBlock2        
+        mov      holdA,tileX          ' Remember start of row        
+outter
+        mov      holdB,wid            ' counter over width
+inner             
+        call     #pushTile            ' Draw tile
+        add      tileX,#1             ' Next to the right
+        djnz     holdB,#inner         ' Do all tiles in this row
+        mov      tileX,holdA          ' Reset X back to start
+        add      tileY,#1             ' Next row
+        djnz     hei,#outter          ' Do all rows
+        jmp      #topDone             ' Wait for next command  
+
+' -----------------------------------------
+' SetTileData startSlot,number,ptr
+'
+doSetTileData
+
+        rdlong   t2,boxData           ' Read the pointer
+        mov      tmp,t1               ' Original data
+        rdlong   t3,boxOffs           ' Read the offset
+        add      t2,t3                ' Pointer to tile data in t2    
+        and      t1,#$FF              ' Number of slots in t1        
+        shl      t1,#4                ' Total number of bytes in t1            
+        shr      tmp,#8               ' Get ...
+        and      tmp,#$FF             ' ... starting slot in tmp
+        shl      tmp,#4               ' Offset to ...
+        add      tmp,tileData         ' ... target tile  
+
+dst1
+        rdbyte   holdA,t2    ' From tile data
+        add      t2,#1       ' Next data         
+        wrbyte   holdA,tmp   ' To tile memory
+        add      tmp,#1      ' Next memory
+        djnz     t1,#dst1    ' Move all bytes    
+        
+        jmp    #topDone         ' Wait for next command        
+
+
+' ------------------------------------------------------
+' This routine fills out the tileX and tileY values either
+' from the command data or from the indicated variable
+' pair. The Z flag is cleared if a variable lookup was performed.
+'
+' t1 contains the full command data
+'
+'   tileX the X value
+'   tileY the Y value
+'   dataPnt the value from the box-data
+'   Z flag is clear if variable lookup
+'
+getXY   rdlong  dataPnt,boxData ' We'll always need the data
+        mov     tileX,t1        ' Complete command
+        shr     tileX,#16       ' Strip off X and V bit
+        mov     t2,tileX        ' (Hold for later)
+        and     tileX,#$7F      ' X coordinate (or variable)
+        and     t2,#$80 nr,wz   ' If not a variable ...
+  if_z  jmp     #getXY1         ' ... access use what we got    
+        mov     t1,tileX        ' This is the 1st variable
+        call    #fetchVariable  ' Get the X coordinate ...
+        mov     tileX,vData     ' ... from the var mgr                          
+        call    #fetchVariable  ' Get the Y coordinate ...
+        mov     tileY,vData     ' ... from the var mgr
+        jmp     #getXY_out      ' Finish up
+getXY1  mov     tileY,t1        ' Mask off ...
+        shr     tileY,#8        ' ... the Y ...
+        and     tileY,#$FF      ' ... coordinate   
+getXY_out
+        and  t2,#$80 nr,wz   ' Clear Z flag if variable lookup
+getXY_ret
+        ret
+
+' -----------------------------------------
+' Fetch value of variable t1. Result to vData.
+' Increment t1
+
+fetchVariable
+        mov       vCmd,t1        ' Variable
+        shl       vCmd,#8        ' Destination
+        or        vCmd,t1        ' Source
+        or        vCmd,C_VMGRCMD ' The command
+        mov       vData,#0       ' V = V + 0
+        call      #VarCommand    ' Get the value
+        add       t1,#1          ' Next register next time                      
+fetchVariable_ret                          
+        ret
+
+' ------------------------------------------------------
+' This routine sends a command to the variable manager
+' vCmd is the command value
+' vData is the command data
+'   Return data value in vData
+VarCommand
+       mov       holdC,#3          ' Box 3 is the VarCOG
+gwaitOnBox
+       lockset   holdC wc          ' Acquire ...
+  if_c jmp       #gwaitOnBox       ' ... lock
+       wrlong    vData,varMgrData  ' Write the data
+       wrlong    vCmd,varMgrCom    ' Write the command                
+gwaitOnData
+       rdlong    vCmd,varMgrCom    ' Wait for ...
+       mov       vCmd,vCmd wc      ' ... response ...
+ if_c  jmp       #gwaitOnData      ' ... from VarMgr
+       rdlong    vData,varMgrData  ' Get the return value
+       lockclr   holdC             ' Release our lock on the box
+VarCommand_ret
+       ret
+
+' -----------------------------------------
+doGetTile  
+              
+       call     #getXY          ' Get the X,Y coordinates
+ if_nz mov      dataPnt,t1      ' If variable, use the next
+
+       shl      tileY,#5           ' *32 tiles per row
+       add      tileY,tileX        ' offset to tile on row
+       shl      tileY,#1           ' 2 bytes per map entry
+       add      tileY,screenMap    ' Offset to the screen memory
+       rdword   vData,tileY       
+
+       mov      vCmd,dataPnt    ' Destination variable
+       shl      vCmd,#8         ' Add the variable number ...
+       or       vCmd,C_VMST     ' ... to the SET command
+       call     #VarCommand     ' Store the tile number in the variable
+       jmp      #topDone        ' Back to the top
+
+' -----------------------------------------
+' doText x,y,data
+doText          
+        call     #getXY               ' Get the X,Y
+        rdlong   t3,boxOffs           ' Read the offset
+        add      t3,dataPnt           ' Pointer to text
+
+doText1
+        rdbyte   dataPnt,t3
+        mov      dataPnt,dataPnt     wz
+  if_z  jmp      #topDone
+        call     #pushTile
+        add      tileX,#1
+        cmp      tileX,#32
+  if_z  mov      tileX,#0
+  if_z  add      tileY,#1
+        add      t3,#1
+        jmp      #doText1  
+
+' tileX = X
+' tileY = Y
+' dataPnt = tile
+
+pushTile
+            mov     v1,tileY
+            shl     v1,#5
+            add     v1,tileX
+            shl     v1,#1
+            add     v1,screenMap
+            wrword  dataPnt,v1            
+pushTile_ret
+            ret
+
+C_VMST        long   $B0_04_00_00  ' V = c
+C_VMGRCMD     long   $B0_0C_00_00  ' V = n + d
+C_0001        long   $1            ' OK return value
+C_FFFF        long   $FFFF
+C_FFFE        long   $FFFE
+
+v1            res 1
+ 
+vData         res 1            ' VarCOG data
+vCmd          res 1            ' VarCOG command
+wid           res 1            ' Width of block
+hei           res 1            ' Height of block
+inErase       res 1            ' 1 if draw command is erase-mode
+varMgrCom     res 1            ' The variable manager's command
+varMgrData    res 1            ' The variable manager's data 
+boxCom        res 1            ' Our command
+boxData       res 1            ' Our data
+boxOffs       res 1            ' Our cluster base
+        
+screenMap     res 1            ' Base address of tile word-storage
+tileData      res 1            ' Base address of the tile data
+
+t1            res 1            ' Misc storage
+t2            res 1
+t3            res 1
+tmp           res 1
+          
+tileX         res 1
+tileY         res 1
+dataPnt       res 1
+holdA         res 1
+holdB         res 1
+holdC         res 1
+                

@@ -1,0 +1,293 @@
+
+cluster CPU
+
+// =====================================================================
+
+cpuShot:  
+
+  // Brute force ... check each ship one by one and see if we have hit
+  // it. If so, set the tracking data and go track the ship! If not, make
+  // a random shot.
+
+  if(numHitA>0) {
+    lastHitX = lastHitXA
+    lastHitY = lastHitYA
+    numLeft = numLeftA
+    numHit = numHitA        
+    goto trackShip
+  }
+
+  if(numHitB>0) {
+    lastHitX = lastHitXB
+    lastHitY = lastHitYB
+    numLeft = numLeftB
+    numHit = numHitB       
+    goto trackShip
+  }
+
+  if(numHitC>0) {
+    lastHitX = lastHitXC
+    lastHitY = lastHitYC
+    numLeft = numLeftC
+    numHit = numHitC       
+    goto trackShip
+  }
+
+  if(numHitS>0) {
+    lastHitX = lastHitXS
+    lastHitY = lastHitYS
+    numLeft = numLeftS
+    numHit = numHitS       
+    goto trackShip
+  }
+
+  if(numHitP>0) {
+    lastHitX = lastHitXP
+    lastHitY = lastHitYP
+    numLeft = numLeftP
+    numHit = numHitP       
+    goto trackShip
+  }
+
+  // Nothing to track ... make a random shot
+  call randomCpuShot
+
+  return
+
+// =====================================================================
+
+trackShip:
+//
+// Called with info for the ship in "lastHitX", "lastHitY",
+// "numLeft", and "numHit". 
+
+// This is ugly "brute force" to track a ship right, left, down, or up.
+
+  // Get the tile-number of the ship we are tracking from
+  // the last time we hit it.
+
+  tx = lastHitX
+  ty = lastHitY
+  getTile tx
+  ship = tt  
+
+  tmp1 = 0 // Used to track multiple hits
+
+trackRight:
+  tx=tx+1        // Move one space right
+  getTile tx    // Look at the tile  
+  if(tt==ship) {     // Did we hit this last time?
+    tmp1 = 1         // Mark multi-hit
+    goto trackRight  // Keep tracking
+  }
+  if(tt<BOATS_HIT_P) {
+    if(tt>=BOARD_MAIN) {
+      goto doItR
+    }
+  }
+  if(tt<COMPUTER_MISS) {       // If the cell is uncalled
+      if(tt>BOATS_HIT_C) {     // And it is callable
+doItR:
+        tlx = tx       // This is a possible ...
+        tly = ty       // ... for later
+        if(tmp1==1) {       // If this is the end of the line ...
+          goto recordShot   // ... make the shot
+        }
+      }      
+  }
+  tx = tx - 1 // Back up to the last known hit and track left  
+
+trackLeft:
+  tx=tx-1
+  getTile tx
+  if(tt==ship) {
+    tmp1 = 1
+    goto trackLeft
+  }
+  if(tt<BOATS_HIT_P) {
+    if(tt>=BOARD_MAIN) {
+      goto doItL
+    }
+  }
+  if(tt<COMPUTER_MISS) {       // If the cell is uncalled
+    if(tt>BOATS_HIT_C) {
+ doItL:
+        tlx = tx       // This is a possible ...
+        tly = ty       // ... for later
+        if(tmp1==1) {       // If this is the end of the line ...
+          goto recordShot   // ... make the shot
+        }     
+     }
+  } 
+  tx = tx + 1
+  if(tmp1==1) {
+    goto trackRight
+  } 
+
+trackUp:
+  ty=ty-1
+  getTile tx
+  if(tt==ship) {
+    tmp1 = 1
+    goto trackUp
+  }
+  if(tt<BOATS_HIT_P) {
+    if(tt>=BOARD_MAIN) {
+      goto doItU
+    }
+  }
+  if(tt<COMPUTER_MISS) {       // If the cell is uncalled
+      if(tt>BOATS_HIT_C) {     // And it is callable
+doItU:
+        tlx = tx       // This is a possible ...
+        tly = ty       // ... for later
+        if(tmp1==1) {       // If this is the end of the line ...
+          goto recordShot   // ... make the shot
+        }
+      }      
+  }   
+  ty = ty + 1
+
+trackDown:
+  ty=ty+1
+  getTile tx
+  if(tt==ship) {
+    tmp1 = 1
+    goto trackDown
+  }
+  if(tt<BOATS_HIT_P) {
+    if(tt>=BOARD_MAIN) {
+      goto doItD
+    }
+  }
+  if(tt<COMPUTER_MISS) {       // If the cell is uncalled
+      if(tt>BOATS_HIT_C) {     // And it is callable
+doItD:
+        tlx = tx       // This is a possible ...
+        tly = ty       // ... for later
+        if(tmp1==1) {       // If this is the end of the line ...
+          goto recordShot   // ... make the shot
+        }
+      }      
+  }  
+  ty = ty - 1 
+  if(tmp1==1) {
+    goto trackUp
+  }
+
+  tx = tlx
+  ty = tly
+  goto recordShot
+
+return
+
+
+
+// =====================================================================
+
+// Returns a random board coordinate in tx,ty
+//
+randomTxTy:
+  tx = RAND & 15
+  if(tx>9) {
+    goto randomTxTy
+  }
+randomTxTy2:
+  ty = RAND & 15
+  if(ty>9) {
+    goto randomTxTy2
+  }
+  return
+
+// =====================================================================
+
+randomCpuShot:
+//
+// This cpu-shot algorithm is used when there are
+// no known ships. Just call a random location.
+//
+  call randomTxTy
+  tx = tx + PLR_BOARD_X
+  ty = ty + PLR_BOARD_Y
+  getTile tx
+  // Already made this shot
+  if(tt >= BOATS_HIT_P) {
+    goto randomCpuShot
+  }
+
+// Common code for recording a shot fire at tx,ty
+
+recordShot:
+
+  // Get the shot result
+  getTile tx  
+
+  blinkX = tx
+  blinkY = ty
+  blinkBack = tt
+  call init:shotAnimate
+
+  // If we hit something ... mark the ship  
+
+  if(tt==BOATS_UNHIT_A) { 
+    lastHitXA = tx
+    lastHitYA = ty
+    numHitA = numHitA + 1
+    numLeftA = numLeftA - 1 
+    cpuHitCount = cpuHitCount - 1       
+    if(numLeftA==0) {
+      numHitA=0
+    }
+  }  
+  if(tt==BOATS_UNHIT_B) { 
+    lastHitXB = tx
+    lastHitYB = ty
+    numHitB = numHitB + 1
+    numLeftB = numLeftB - 1 
+    cpuHitCount = cpuHitCount - 1  
+    if(numLeftB==0) {
+      numHitB=0
+    }     
+  }  
+  if(tt==BOATS_UNHIT_S) { 
+    lastHitXC = tx
+    lastHitYC = ty
+    numHitC = numHitC + 1
+    numLeftC = numLeftC - 1 
+    cpuHitCount = cpuHitCount - 1       
+    if(numLeftC==0) {
+      numHitC=0
+    }
+  }  
+  if(tt==BOATS_UNHIT_C) { 
+    lastHitXS = tx
+    lastHitYS = ty
+    numHitS = numHitS + 1
+    numLeftS = numLeftS - 1 
+    cpuHitCount = cpuHitCount - 1       
+    if(numLeftS==0) {
+      numHitS=0
+    }
+  }  
+  if(tt==BOATS_UNHIT_P) { 
+    lastHitXP = tx
+    lastHitYP = ty
+    numHitP = numHitP + 1
+    numLeftP = numLeftP - 1 
+    cpuHitCount = cpuHitCount - 1       
+    if(numLeftP==0) {
+      numHitP=0
+    }
+  }  
+
+  if(tt==BOARD_MAIN) {
+    tt = COMPUTER_MISS      // CPU miss tile
+  } else {
+    tt = tt + 5  // Unhit become hit
+  }
+
+  // Draw either a hit ship or miss   
+  blinkBack = tt
+  call init:shotAnimate
+  
+  return

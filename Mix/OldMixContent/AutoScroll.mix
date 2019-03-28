@@ -1,0 +1,58 @@
+variable pad
+
+InitTiles testTiles,0,4
+
+Rectangle 12,9,4,4,1
+Rectangle 16,9,4,4,2
+Rectangle 14,13,4,4,3
+
+SCROLLSCRIPT ascript
+
+while(true) {
+
+ GetInputs Player=1, Variable=pad
+  
+ if(pad&IN_DOWN) {
+   mem(M_YOFFSET,word) = mem(M_YOFFSET,word)+1
+ }
+ if(pad&IN_UP) {
+   mem(M_YOFFSET,word) = mem(M_YOFFSET,word)-1
+ }
+
+ PAUSE 10ms
+
+}
+
+
+-----------------------------------------------
+
+testTiles:
+Tile {
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+}
+
+// 0_bbb ... scriptcount = bbb (AND WAIT)
+// 1_sss ... GOTO +/- sss (and execute next)
+// 2_bbb ... yOffset = bbb (and execute next)
+// 3_sss ... yDelta = +/- sss (and execute next)
+// 4_www ... waitcount = www (and execute next)
+
+ascript:
+
+ScrollScript{
+
+  YOffset=100
+  
+RepeatToHere
+  Delta=1, Pause=10, Count=50
+  Delta=-2, Pause=5
+  Count=25
+}
+  

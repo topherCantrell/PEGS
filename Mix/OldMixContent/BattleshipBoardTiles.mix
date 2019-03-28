@@ -1,0 +1,312 @@
+
+ // Game tiles specific to Battleship game
+
+ // These are offset from tile 128
+
+ // 128-132:   The game board
+ // 133-137:   Unhit boats (A,B,S,C,P with green background)
+ // 138-142:   Hit boats (A,B,S,C,P with red background)
+ // 143-147:   Invisible ships (looks like empty board)
+ // 148:       Computer miss (a dot)
+ // 149:       Human miss (a plus)
+ // 150:       Red B (matches controller button)
+ // 151:       Green A (matches controller button)
+ // 152:       Cursor (a plus/X) with black background
+ // 153:       Shot indicator (solid white)
+
+Cluster BoardData
+
+InitTiles:
+
+  //InitTiles tileData,BOARD_BLANK,26
+  InitTiles tileData,128,26
+  return
+
+------------------------
+
+tileData:
+
+TILE {
+
+// 0 - 4 : Game board
+
+// 0
+ ........
+ ........
+ ........
+ ........
+ ........
+ ........
+ ........
+ ........
+
+// 1 
+ WWWWWWWW
+ ........
+ ........
+ ........
+ ........
+ ........
+ ........
+ ........
+
+// 2
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+
+// 3
+ W.......
+ ........
+ ........
+ ........
+ ........
+ ........
+ ........
+ ........
+
+ // 4
+ WWWWWWWW
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+
+ // 5 - 9 : Un-hit boats
+
+ // 5 PT Boat (2) "P"
+ WWWWWWWW
+ WGGGGGGG
+ WGWWWWWG
+ WGWGGGWG
+ WGWWWWWG
+ WGWGGGGG
+ WGWGGGGG
+ WGGGGGGG
+
+ // 6 Submarine (3) "S"
+ WWWWWWWW
+ WGGGGGGG
+ WGGWWWWG
+ WGWGGGGG
+ WGGWWWGG
+ WGGGGGWG
+ WGWWWWGG
+ WGGGGGGG
+
+ // 7 Battleship (4) "B"
+ WWWWWWWW
+ WGGGGGGG
+ WGWWWWGG
+ WGWGGGWG
+ WGWWWWGG
+ WGWGGGWG
+ WGWWWWGG
+ WGGGGGGG
+
+ // 8 Aircraft Carrier (5) "A"
+ WWWWWWWW
+ WGGGGGGG
+ WGGGWGGG
+ WGGWGWGG
+ WGWWWWWG
+ WGWGGGWG
+ WGWGGGWG
+ WGGGGGGG
+
+ // 9 Cruiser (3) "C"
+ WWWWWWWW
+ WGGGGGGG
+ WGGWWWGG
+ WGWGGGWG
+ WGWGGGGG
+ WGWGGGWG
+ WGGWWWGG
+ WGGGGGGG
+
+ // 10 - 14 : Hit boats
+
+ // 10 PT Boat (2) "P"
+ WWWWWWWW
+ WRRRRRRR
+ WRWWWWWR
+ WRWRRRWR
+ WRWWWWWR
+ WRWRRRRR
+ WRWRRRRR
+ WRRRRRRR
+
+ // 11 Submarine (3) "S"
+ WWWWWWWW
+ WRRRRRRR
+ WRRWWWWR
+ WRWRRRRR
+ WRRWWWRR
+ WRRRRRWR
+ WRWWWWRR
+ WRRRRRRR
+
+ // 12 Battleship (4) "B"
+ WWWWWWWW
+ WRRRRRRR
+ WRWWWWRR
+ WRWRRRWR
+ WRWWWWRR
+ WRWRRRWR
+ WRWWWWRR
+ WRRRRRRR
+
+ // 13 Aircraft Carrier (5) "A"
+ WWWWWWWW
+ WRRRRRRR
+ WRRRWRRR
+ WRRWRWRR
+ WRWWWWWR
+ WRWRRRWR
+ WRWRRRWR
+ WRRRRRRR
+
+ // 14 Cruiser (3) "C"
+ WWWWWWWW
+ WRRRRRRR
+ WRRWWWRR
+ WRWRRRWR
+ WRWRRRRR
+ WRWRRRWR
+ WRRWWWRR
+ WRRRRRRR
+
+ // 15 - 19 : "Invisible" ships
+
+ // 15
+ WWWWWWWW
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+
+ // 16
+ WWWWWWWW
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+
+ // 17
+ WWWWWWWW
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+
+ // 18
+ WWWWWWWW
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+
+ // 19
+ WWWWWWWW
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+ W.......
+
+ // 20 : Computer "miss"
+
+ // 20
+ WWWWWWWW
+ W.......
+ W.......
+ W.......
+ W...W...
+ W.......
+ W.......
+ W.......
+
+ // 21 : Human "miss"
+
+ // 21
+ WWWWWWWW
+ W.......
+ W.......
+ W...W...
+ W..WWW..
+ W...W...
+ W.......
+ W.......
+
+ // 22 : Red B
+
+ //22
+ ...RR...
+ .RRRRRR.
+ .RWWWRR.
+ RRWRRWRR
+ RRWWWRRR
+ .RWRRWR.
+ .RWWWRR.
+ ...RR...
+
+ // 23 : Green A
+
+ //23
+ ...GG...
+ .GGGGGG.
+ .GG..GG.
+ GG.GG.GG
+ GG....GG
+ .G.GG.G.
+ .GGGGGG.
+ ...GG...
+
+ // 24 : Cursor tile
+
+ // 24
+ WWWWWWWW
+ WG..G..G
+ W.G.G.G.
+ W...G...
+ WGGGGGGG
+ W...G...
+ W.G.G.G.
+ WG..G..G
+
+ //25 : Shot animation
+
+ WWWWWWWW
+ WWWWWWWW
+ WWWWWWWW
+ WWWWWWWW
+ WWWWWWWW
+ WWWWWWWW
+ WWWWWWWW
+ WWWWWWWW
+}
+
+
+

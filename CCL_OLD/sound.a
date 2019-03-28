@@ -1,0 +1,3 @@
+CLUSTER 
+SOUND channel=0, frequency=440HZ // Desired:440.0 Actual:439.29010718678614
+STOP

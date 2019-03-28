@@ -1,0 +1,322 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 11 (filtered)">
+<title>CCL Reference</title>
+
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+h1
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:16.0pt;
+	font-family:Arial;}
+p.ExampleCode, li.ExampleCode, div.ExampleCode
+	{margin:0in;
+	margin-bottom:.0001pt;
+	background:#F3F3F3;
+	font-size:12.0pt;
+	font-family:"Courier New";}
+p.CommandHeader, li.CommandHeader, div.CommandHeader
+	{margin:0in;
+	margin-bottom:.0001pt;
+	background:#E5FAFF;
+	font-size:20.0pt;
+	font-family:"Times New Roman";}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-US>
+
+<div class=Section1>
+
+<h1>Text Commands</h1>
+
+<p class=CommandHeader>CLS       </p>
+
+<p class=CommandHeader style='text-indent:.5in'><span style='font-size:16.0pt'>Clear
+the screen</span></p>
+
+<p class=MsoNormal>This command fills the entire screen with the SPACE
+character and resets the text cursor to the top left corner of the screen.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=ExampleCode>CLS // Clear the screen</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=CommandHeader>CLS n    </p>
+
+<p class=CommandHeader style='text-indent:.5in'><span style='font-size:16.0pt'>Clear
+the screen with a specific character</span></p>
+
+<p class=MsoNormal>This command fills the entire screen with the given
+character and resets the text cursor to the top left corner of the screen.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=ExampleCode>CLS &quot;.&quot; // Fill the screen with periods</p>
+
+<p class=ExampleCode>CLS &quot;#&quot; // Fill the screen with pounds</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=CommandHeader>PRINT “message”      </p>
+
+<p class=CommandHeader style='text-indent:.5in'><span style='font-size:16.0pt'>Print
+a given message</span></p>
+
+<p class=MsoNormal>This command prints a message on the screen at the current
+text cursor. </p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=ExampleCode>PRINT &quot;HELLO WORLD\n&quot;</p>
+
+<p class=ExampleCode>PRINT &quot;TESTING&quot;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=CommandHeader>PRINT label        </p>
+
+<p class=CommandHeader style='text-indent:.5in'><span style='font-size:16.0pt'>Print
+a message defined in the data section</span></p>
+
+<p class=MsoNormal>This command prints a message on the screen at the current
+text cursor. The message must be defined in the data section.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=ExampleCode>PRINT myMsg</p>
+
+<p class=ExampleCode>&nbsp;</p>
+
+<p class=ExampleCode>-- DATA --</p>
+
+<p class=ExampleCode>&nbsp;</p>
+
+<p class=ExampleCode>myMsg:</p>
+
+<p class=ExampleCode>&quot;HELLO WORLD\n&quot;, 0</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=CommandHeader>PRINTVAR Vn          </p>
+
+<p class=CommandHeader style='text-indent:.5in'><span style='font-size:16.0pt'>Print
+a number</span></p>
+
+<p class=MsoNormal>This command prints the value of the given variable on the
+screen at the current text cursor.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=ExampleCode>PRINTVAR V0   // Print the contents of V0</p>
+
+<p class=ExampleCode>PRINTVAR V32  // Print the contents of V32</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=CommandHeader>GETNUMBER Vn            </p>
+
+<p class=CommandHeader style='text-indent:.5in'><span style='font-size:16.0pt'>Read
+a number from the keyboard</span></p>
+
+<p class=MsoNormal>This command reads a numeric value from the user on the
+screen at the current text cursor. Use the “SETCURSORINFO” command to change
+the picture and blink-rate of the cursor.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=ExampleCode>GETNUMBER V0  // Get a number from the user</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=CommandHeader>GETLINE label, size  </p>
+
+<p class=CommandHeader style='text-indent:.5in'><span style='font-size:16.0pt'>Read
+a length of text from the keyboard</span></p>
+
+<p class=MsoNormal>This command reads a line of text from the user on the
+screen at the current text cursor. The size is the maximum number of characters
+to accept. Use the “SETCURSORINFO” command to change the picture and blink-rate
+of the cursor.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Note that the text is automatically zero-terminated after
+reading. Make sure the buffer is large enough the extra zero on the end.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>If the “label” does not already exist in the data section, a
+data line is automatically created and sized.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=ExampleCode>GETLINE myText, 20  // Get 20 characters from the user</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=CommandHeader>TOKENIZE buf,ptr,Vn,maxWords</p>
+
+<p class=CommandHeader>       <span style='font-size:16.0pt'>Convert an input
+line into a series of numeric tokens</span></p>
+
+<p class=MsoNormal>This command tokenizes a line of text (user input) and fills
+a sequence of variables with the numeric tokens mapped to each word.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Token information must be defined in the data section as a
+list of zero-terminated strings followed by the 2-byte numeric value assigned
+to the string. The list of tokens is terminated with a zero string (see example
+below).</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The first variable is filled with the number of words
+(separated by spaces) on the input line. The second variable is filled with the
+number of words that are decoded. This will be less than or equal to
+“maxWords”.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The following variables are filled with the numeric values
+of the decoded words or 0xFFFFFFFF if the word has no match in the token info
+table.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>In the example below, the variables will be filled as
+follows:</p>
+
+<p class=MsoNormal>V10 = 6 (There are six words in the input)</p>
+
+<p class=MsoNormal>V11 = 4 (As requested, a max of four words were decoded)</p>
+
+<p class=MsoNormal>V12 = 0x1000 </p>
+
+<p class=MsoNormal>V13 = 0x2000</p>
+
+<p class=MsoNormal>V14 = 0xFFFFFFFF (The work “FOUR” is not in the token table)</p>
+
+<p class=MsoNormal>V15 = 0x3000</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=ExampleCode>TOKENIZE inp, tokenInfo, V10, 4</p>
+
+<p class=ExampleCode>&nbsp;</p>
+
+<p class=ExampleCode>-- DATA --</p>
+
+<p class=ExampleCode>&nbsp;</p>
+
+<p class=ExampleCode>inp:</p>
+
+<p class=ExampleCode>&quot;ONE      TWO FOUR THREE A B&quot; , 0</p>
+
+<p class=ExampleCode>&nbsp;</p>
+
+<p class=ExampleCode>tokenInfo:</p>
+
+<p class=ExampleCode>&quot;ONE&quot;, 0,    word(0x1000)</p>
+
+<p class=ExampleCode>&quot;TWO&quot;, 0,    word(0x2000)</p>
+
+<p class=ExampleCode>&quot;THREE&quot;, 0,  word(0x3000)</p>
+
+<p class=ExampleCode>0</p>
+
+<h1>Tile Commands</h1>
+
+<p class=CommandHeader>INITTILES ptr, start, count</p>
+
+<p class=CommandHeader>       <span style='font-size:16.0pt'>Initialize a
+sequence of graphic tiles</span></p>
+
+<p class=MsoNormal>This command changes tile-picture-memory for one or more
+tiles defined in the data section at label “ptr”. The “start” indicates the
+starting tile-number to change, and count indicates the number of tiles
+defined. </p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Tiles are drawn in ASCII art as shown below.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=ExampleCode>INITTILES pics, 10, 3  // Init tiles 10, 11, and 12</p>
+
+<p class=ExampleCode>&nbsp;</p>
+
+<p class=ExampleCode>-- DATA --</p>
+
+<p class=ExampleCode>&nbsp;</p>
+
+<p class=ExampleCode>&quot; | W......R  GGGGGGGG  RRRRRRRR&quot;</p>
+
+<p class=ExampleCode>&quot; | .W.....R  G......G  ......R.&quot;</p>
+
+<p class=ExampleCode>&quot; | ..W.....  G......G  .....R..&quot;</p>
+
+<p class=ExampleCode>&quot; | ...W....  G......G  ....R...&quot;</p>
+
+<p class=ExampleCode>&quot; | ....W...  G......G  ...R....&quot;</p>
+
+<p class=ExampleCode>&quot; | .....W..  G......G  ..R.....&quot;</p>
+
+<p class=ExampleCode>&quot; | G.....W.  G......G  .R......&quot;</p>
+
+<p class=ExampleCode>&quot; | G......W  GGGGGGGG  R.......&quot;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+
+</div>
+
+</body>
+
+</html>

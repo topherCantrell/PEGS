@@ -1,0 +1,146 @@
+define REFRESH = 32620
+
+variable x,y,c
+variable xr,yr,bp,tx,ty,yo
+
+cluster LEDGraphics
+
+call ClearScreen
+
+for(x=0;x<30;++x) {
+  y=x
+  c=1
+  call plot
+}
+
+for(y=10;y<24;++y) {
+  x=35
+  c=1
+  call plot
+}
+
+call RefreshScreen
+
+stop
+
+// ***********************************************************
+RefreshScreen:
+  mem(REFRESH)=1
+  return
+
+// ***********************************************************
+ClearScreen:
+
+memcopy clearFrame,0,48 // Clear the screen
+return
+
+// ***********************************************************
+GetPoint: // X,Y, C
+
+call CalcMem
+
+c = mem(xr) & bp
+if(c>0) {
+  c=1
+}
+return
+
+// ***********************************************************
+// X,Y,C
+Plot:
+
+call CalcMem
+
+if(c!=0) {
+  mem(xr) = mem(xr) | bp  
+} else {
+  bp = ~bp
+  mem(xr) = mem(xr) & bp
+}
+return
+
+// ***********************************************************
+// There are 4 quadrants. Figure out which we are in.
+CalcMem:
+
+tx = x
+ty = y
+
+if(y<16) {
+
+  if(x<24) {
+
+    // Upper left
+    xr = tx * 2   // Two bytes per column
+    yr = ty / 8   // Byte offset in column
+    yo = ty % 8   // Bit offset in byte
+
+    bp = 128 >> yo
+
+    xr = 191 - xr
+    xr = xr - yr
+    
+  } else {
+
+    // Upper right
+    tx = tx - 24
+    xr = tx * 2   // Two bytes per column
+    yr = ty / 8   // Byte offset in column
+    yo = ty % 8   // Bit offset in byte
+
+    bp = 128 >> yo
+
+    xr = 143 - xr
+    xr = xr - yr    
+
+  }
+
+} else {
+
+  if(x<24) {
+
+    // Lower left
+    ty=ty-16
+    xr = tx * 2   // Two bytes per column
+    yr = ty / 8   // Byte offset in column
+    yo = ty % 8   // Bit offset in byte
+
+    bp = 1 << yo
+
+    xr = 48 + xr
+    xr = xr + yr    
+
+
+  } else {
+
+    // Lower right
+    ty=ty-16
+    tx=tx-24
+    xr = tx * 2   // Two bytes per column
+    yr = ty / 8   // Byte offset in column
+    yo = ty % 8   // Bit offset in byte
+
+    bp = 1 << yo
+
+    xr = 0 + xr
+    xr = xr + yr    
+
+  }  
+
+}
+
+return
+
+---------------------------
+
+clearFrame:
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+

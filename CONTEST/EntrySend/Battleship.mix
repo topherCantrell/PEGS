@@ -1,0 +1,493 @@
+
+// Where the player puts his or her ships
+define PLR_BOARD_X =       18     
+define PLR_BOARD_Y =        5
+define PLR_BOARD_X_LIMIT = 28        
+define PLR_BOARD_Y_LIMIT = 15
+
+// Where the CPU puts its ships
+define CPU_BOARD_X =        2
+define CPU_BOARD_Y =        5
+define CPU_BOARD_X_LIMIT = 12
+define CPU_BOARD_Y_LIMIT = 15
+
+// Bit-masks for the controller buttons
+include BattleshipBoardConstants.mix
+
+variable cursorX, cursorY, cursorTile
+
+variable ship, horz, badPlace, size
+
+variable numLeft, numHit
+
+variable tmp1
+variable ptr
+
+variable tx, ty, tt
+variable inputs
+
+variable hitCount, cpuHitCount
+
+variable lastHitXA, lastHitYA, numLeftA, numHitA
+variable lastHitXB, lastHitYB, numLeftB, numHitB
+variable lastHitXC, lastHitYC, numLeftC, numHitC
+variable lastHitXS, lastHitYS, numLeftS, numHitS
+variable lastHitXP, lastHitYP, numLeftP, numHitP
+
+variable lastHitX, lastHitY
+
+variable tlx, tly
+
+// Used in the animated-shot routine
+variable blinkX, blinkY, blinkTile, blinkBack
+
+cluster init 
+
+    // Init these every time since we change the tiles at the
+    // end of a game to show the CPU ships
+    call BoardData:InitTiles
+
+    initTiles winLetters,458,13
+
+
+if(a==4) {
+ print(4)
+}
+
+
+
+while( (a==4 || a==5) && (b<4 || c>5) ) {
+
+ if(a==5) {
+   break
+ } else {
+   continue
+ }
+
+}
+ 
+
+    // Clear the screen
+    CLS BOARD_BLANK
+  
+
+    rectangle PLR_BOARD_X,       PLR_BOARD_Y,       10,10, BOARD_MAIN
+    rectangle PLR_BOARD_X_LIMIT, PLR_BOARD_Y,        1,10, BOARD_LEFT
+    rectangle PLR_BOARD_X,       PLR_BOARD_Y_LIMIT, 10, 1, BOARD_TOP
+    setTile   PLR_BOARD_X_LIMIT, PLR_BOARD_Y_LIMIT,  BOARD_DOT
+}
+    // Draw instructions
+    //setCursor 1,2
+    //print "PLACE YOUR SHIPS!"
+    //setCursor 1,5
+    //print "ROTATE = select"
+    //setCursor 1,7
+    //print "PLACE = fire"
+
+    return
+
+PlaceAndPlay:
+
+    // Guide the player through placing all ships
+    call PlaceShips:placeHumanShips
+ 
+    // Erase the instructions
+    //rectangle 1,2,20,1,BOARD_BLANK
+    //rectangle 1,5,16,10,BOARD_BLANK
+
+    // Place the CPU's ships
+    call PlaceShips:placeCPUShips
+
+    // Init player's last shot
+    cursorX = CPU_BOARD_X
+    cursorY = CPU_BOARD_Y
+
+    // Play the game
+    call GamePlay
+    goto SeaWar:ReStart
+  
+
+GamePlay:
+
+  while(true) {
+
+    // Player goes first
+    call playerShot
+    if(hitCount==0) {
+      call playerWin
+      return
+    }
+
+    // CPU goes second
+    call CPU:cpuShot
+    if(cpuHitCount==0) {
+      call cpuWin
+      return
+    }
+
+  }
+
+// =======================================================
+// Player or CPU wins
+// - Draw "You Win!" or "I Win!"
+// - Draw "Press any button"
+// - Show CPU ships
+// - Wait for press
+// 458  459  460  461  462  463  464  465  466  467  468  469  470
+// I    Y    O    U    W    N    P    R    E    S    A    K    !
+PlayerWin:
+  //setCursor 11,3
+  //print "YOU WIN!" 
+  setTile 11,3,459
+  setTile 12,3,460
+  setTile 13,3,461
+  setTile 15,3,462
+  setTile 16,3,458
+  setTile 17,3,463
+  setTile 18,3,470
+  call WaitStart
+  return
+
+//
+CpuWin:
+  // "I Win!" at the top
+  //setCursor 12,3
+  //print "I WIN!"
+  setTile 12,3,458
+  setTile 14,3,462
+  setTile 15,3,458
+  setTile 16,3,463
+  setTile 17,3,470
+  call WaitStart
+  return
+
+WaitStart:
+  do {
+    GetInputs variable=inputs
+  } while(inputs!=0)
+  pause 250ms
+  do {
+    GetInputs variable=inputs
+  } while(inputs==0)
+  pause 250ms
+  do {
+    GetInputs variable=inputs
+  } while(inputs!=0)
+  pause 250ms
+  return
+
+
+// =======================================================
+// - Flash cursor and wait for key
+// - Move cursorX and cursorY within bounds
+// - Handle uncovering a CPU ship or a miss
+
+playerShot:
+
+  while(true) {
+
+    while(true) {
+      // Remember what is at the cursor
+      getTile cursorX
+      tmp1 = cursorTile
+
+      // Draw the cursor tile
+      cursorTile = CURSOR_B
+      setTile cursorX
+
+      pause 100ms
+      GetInputs variable=inputs
+      if(inputs!=0) {
+        cursorTile = tmp1
+        setTile cursorX
+        break
+      }
+
+      cursorTile = tmp1
+      setTile cursorX
+      pause 100ms
+      GetInputs variable=inputs
+      if(inputs!=0) {
+        break
+      }
+    }  
+
+    // Move the cursor if a direction pressed
+    if(inputs & IN_RIGHT) {
+      cursorX = cursorX + 1
+    }
+    if(inputs & IN_LEFT) {
+      cursorX = cursorX - 1
+    }
+    if(inputs & IN_UP) {
+      cursorY = cursorY - 1
+    } 
+    if(inputs & IN_DOWN) {
+      cursorY = cursorY + 1
+    }   
+
+    // Keep cursor on the board
+    if(cursorX<CPU_BOARD_X) {
+      cursorX = CPU_BOARD_X
+    }
+    if(cursorY<CPU_BOARD_Y) {
+      cursorY = CPU_BOARD_Y
+    }
+    if(cursorX>=CPU_BOARD_X_LIMIT) {
+      cursorX = cursorX-1
+    }
+    if(cursorY>=CPU_BOARD_Y_LIMIT) {
+      cursorY = cursorY-1
+    }
+
+    // Handle "fire" button
+    if(inputs & IN_A) {
+
+      do {
+        GetInputs variable=inputs
+      } while(inputs!=0)
+
+      // Initialize the blinking parameters    
+      blinkX = cursorX
+      blinkY = cursorY
+      blinkBack = cursorTile
+
+      SOUND Channel=0, Frequency=900Hz, Wave=0, EDelta=1, EPeriod=10ms, ELength=2000ms
+      if(cursorTile<COMPUTER_MISS) {            
+        // If shot is on board tile: MISS
+        if(cursorTile==BOARD_MAIN) {
+          call shotAnimate // Blink the shot
+          blinkBack = HUMAN_MISS
+          SOUND Channel=0, Frequency=OFF
+          call shotAnimate // Blink a miss peg          
+          return
+        }
+        // If "invisible" ship tile: HIT
+        if(cursorTile>=BOATS_INVIS_P) {        
+          call shotAnimate // Blink the shot
+          blinkBack = cursorTile - 5          
+          SOUND Channel=0, Frequency=500Hz, Wave=1, EDelta=2, EPeriod=5ms, ELength=2000ms
+          call shotAnimate // Blink a hit ship
+          SOUND Channel=0, Frequency=OFF
+          PAUSE 250ms
+          hitCount = hitCount - 1          
+          return
+        }       
+      }     
+    }
+  
+  }
+
+// =======================================================
+// Animates a shot by player or CPU
+// - Show the shot-tile (solid white)
+// - pause
+// - Show the new tile
+// - pause
+// - Repeate once
+
+shotAnimate:   
+  blinkTile = SHOT_INDICATOR
+  setTile blinkX
+  PAUSE 250ms
+  blinkTile = blinkBack
+  setTile blinkX
+  PAUSE 250ms
+  blinkTile = SHOT_INDICATOR
+  setTile blinkX
+  PAUSE 250ms
+  blinkTile = blinkBack
+  setTile blinkX
+  PAUSE 250ms
+  return
+
+-------
+
+// =======================================================
+
+// When the game is over, we swap these tiles for the
+// "invisible" CPU ship tiles so the player can see
+// what he or she missed.
+
+showUnhit:
+
+TILE {
+
+ WWWWWWWW
+ WG.G.G.G
+ W.WWWWW.
+ WGWG.GWG
+ W.WWWWW.
+ WGWG.G.G
+ W.W.G.G.
+ WG.G.G.G
+
+ WWWWWWWW
+ WG.G.G.G
+ W.GWWWW.
+ WGWG.G.G
+ W.GWWWG.
+ WG.G.GWG
+ W.WWWWG.
+ WG.G.G.G
+
+ WWWWWWWW
+ WG.G.G.G
+ W.WWWWG.
+ WGWG.GWG
+ W.WWWWG.
+ WGWG.GWG
+ W.WWWWG.
+ WG.G.G.G
+
+ WWWWWWWW
+ WG.G.G.G
+ W.G.W.G.
+ WG.W.W.G
+ W.WWWWW.
+ WGWG.GWG
+ W.W.G.W.
+ WG.G.G.G
+
+ WWWWWWWW
+ WG.G.G.G
+ W.GWWWG.
+ WGWG.GWG
+ W.W.G.G.
+ WGWG.GWG
+ W.GWWWG.
+ WG.G.G.G
+
+}
+
+winLetters:
+TILE {
+..WWW...
+...W....
+...W....
+...W....
+...W....
+...W....
+..WWW...
+........
+
+W.....W.
+W.....W.
+.W...W..
+..W.W...
+...W....
+...W....
+...W....
+........
+
+.WWWWW..
+W.....W.
+W.....W.
+W.....W.
+W.....W.
+W.....W.
+.WWWWW..
+........
+
+W.....W.
+W.....W.
+W.....W.
+W.....W.
+W.....W.
+W.....W.
+.WWWWW..
+........
+
+W.....W.
+W.....W.
+W.....W.
+W..W..W.
+W..W..W.
+.W.W.W..
+..W.W...
+........
+
+W.....W.
+WW....W.
+W.W...W.
+W..W..W.
+W...W.W.
+W....WW.
+W.....W.
+........
+
+WWWWWW..
+W.....W.
+W.....W.
+WWWWWW..
+W.......
+W.......
+W.......
+........
+
+WWWWWW..
+W.....W.
+W.....W.
+WWWWWW..
+W...W...
+W....W..
+W.....W.
+........
+
+WWWWWWW.
+W.......
+W.......
+WWWWWW..
+W.......
+W.......
+WWWWWWW.
+........
+
+.WWWWW..
+W.....W.
+W.......
+.WWWWW..
+......W.
+W.....W.
+.WWWWW..
+........
+
+...W....
+..W.W...
+.W...W..
+W.....W.
+WWWWWWW.
+W.....W.
+W.....W.
+........
+
+W.....W.
+W...WW..
+W.WW....
+WW......
+W.WW....
+W...WW..
+W.....W.
+........
+
+...W....
+...W....
+...W....
+...W....
+...W....
+........
+...W....
+........
+
+}
+
+
+
+// IYOUWNPRESAK!
+
+include BattleshipPlaceShips.mix
+include battleshipCPU.mix
+include BattleshipBoardTiles.mix
+
+
+

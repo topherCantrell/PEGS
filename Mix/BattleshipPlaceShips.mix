@@ -1,0 +1,487 @@
+
+cluster PlaceShips
+
+// --------------------------------------------------------------------------
+// Draws the human's board and takes the player through placing each
+// ship one by one.
+// OUTPUTS
+//  hitCount = 17 remaining hits for computer to win
+// MANGLES
+//  size, ship, tx, ty, tt, tmp1, size, cursorX, cursorY, horiz
+//
+placeHumanShips:
+
+  SETSPRITE sprite=0,
+    x=0, y=72,image=314,numPics=2,flipDelay=1,
+    width=32, height=8,actionScript=ShipsOn
+
+  SETSPRITE sprite=1,
+    x=0, y=88,image=346,numPics=2,flipDelay=3,
+    width=32, height=8,actionScript=ShipsOn
+
+  SETSPRITE sprite=2,
+    x=0, y=104,image=378,numPics=2,flipDelay=3,
+    width=16, height=8,actionScript=ShipsOn
+
+  SETSPRITE sprite=3,
+    x=0, y=120,image=394,numPics=2,flipDelay=1,
+    width=16, height=8,actionScript=ShipsOn
+
+  SETSPRITE sprite=4,
+    x=0, y=136,image=410,numPics=2,flipDelay=2,
+    width=16, height=8,actionScript=ShipsOn
+
+WAVEFORM 0,WaveSimple,16
+SOUNDCFG Sequencer
+
+SEQUENCER Seq1
+
+  PAUSE 1333ms
+
+  SETSPRITE sprite=0,
+    x=120, y=72,image=314,numPics=2,flipDelay=1,
+    width=32, height=8,actionScript=ShipsToBoard
+  PAUSE 1866ms
+  SETSPRITE sprite=0,
+    x=0, y=72,image=314,numPics=2,flipDelay=1,
+    width=32, height=8
+    
+  cursorX = PLR_BOARD_X
+  cursorY = PLR_BOARD_Y
+  ship = BOATS_UNHIT_A
+  size = 5
+  call placeShip  
+
+  SETSPRITE sprite=1,
+    x=120, y=88,image=346,numPics=2,flipDelay=1,
+    width=32, height=8,actionScript=ShipsToBoard
+  PAUSE 1866ms
+  SETSPRITE sprite=1,
+    x=0, y=88,image=346,numPics=2,flipDelay=1,
+    width=32, height=8
+
+  cursorX = PLR_BOARD_X
+  cursorY = PLR_BOARD_Y+2
+  ship = BOATS_UNHIT_B
+  size = 4
+  call placeShip
+
+  SETSPRITE sprite=2,
+    x=120, y=104,image=378,numPics=2,flipDelay=1,
+    width=16, height=8,actionScript=ShipsToBoard
+  PAUSE 1866ms
+  SETSPRITE sprite=2,
+    x=0, y=104,image=378,numPics=2,flipDelay=1,
+    width=16, height=8
+
+  cursorX = PLR_BOARD_X
+  cursorY = PLR_BOARD_Y+4
+  ship = BOATS_UNHIT_S
+  size = 3
+  call placeShip
+
+  SETSPRITE sprite=3,
+    x=120, y=120,image=394,numPics=2,flipDelay=1,
+    width=16, height=8,actionScript=ShipsToBoard
+  PAUSE 1866ms
+  SETSPRITE sprite=3,
+    x=0, y=120,image=394,numPics=2,flipDelay=1,
+    width=16, height=8
+
+  cursorX = PLR_BOARD_X
+  cursorY = PLR_BOARD_Y+6
+  ship = BOATS_UNHIT_C
+  size = 3
+  call placeShip
+
+  SETSPRITE sprite=4,
+    x=120, y=136,image=410,numPics=2,flipDelay=1,
+    width=16, height=8,actionScript=ShipsToBoard
+  PAUSE 1866ms
+  SETSPRITE sprite=4,
+    x=0, y=136,image=410,numPics=2,flipDelay=1,
+    width=16, height=8
+
+  cursorX = PLR_BOARD_X
+  cursorY = PLR_BOARD_Y+8
+  ship = BOATS_UNHIT_P
+  size = 2
+  call placeShip
+
+  hitCount = 17
+
+  return
+
+// --------------------------------------------------------------------------
+// Draws the CPU's board and places (invisibly) all the CPU's ships.
+// OUTPUTS
+//   numLeftA, numLeftB, numLeftS, numLeftC, numLeftP = number of hits remaining on boat (size)
+//   numHitA, numHitB, numHitS, numHitC, numHitP = number of hits on boat (0)
+//   cpuHitCount = 17 (5+4+3+3+2)
+// MANGLES
+//   size, ship, tx, ty, tt, tmp1, size, cursorX, cursorY, horiz
+//
+placeCPUShips:  
+
+  rectangle CPU_BOARD_X,       CPU_BOARD_Y,       10,10, BOARD_MAIN
+  rectangle CPU_BOARD_X_LIMIT, CPU_BOARD_Y,        1,10, BOARD_LEFT
+  rectangle CPU_BOARD_X,       CPU_BOARD_Y_LIMIT, 10, 1, BOARD_TOP
+  setTile   CPU_BOARD_X_LIMIT, CPU_BOARD_Y_LIMIT,  BOARD_DOT
+  
+  size = 5
+  ship = BOATS_INVIS_A 
+  call placeCPUShip  
+  numLeftA = 5
+  numHitA = 0
+  
+  size = 4
+  ship = BOATS_INVIS_B
+  call placeCPUShip
+  numLeftB = 4
+  numHitB = 0
+
+  size = 3
+  ship = BOATS_INVIS_S
+  call placeCPUShip
+  numLeftC = 3
+  numHitC = 0
+
+  size = 3
+  ship = BOATS_INVIS_C
+  call placeCPUShip
+  numLeftS = 3
+  numHitS = 0
+
+  size = 2
+  ship = BOATS_INVIS_P
+  call placeCPUShip
+  numLeftP = 2
+  numHitP = 0
+
+  cpuHitCount = 17
+
+  return
+
+// --------------------------------------------------------------------------
+// Finds a place for a CPU "ship" and draws
+// it (invisibly) on the board
+// INPUTS
+//   size = size of ship (2,3,4,5)
+//   ship = ship tile
+// OUTPUTS
+//   cursorX = X coordinate
+//   cursorY = Y coordinate
+//   horz = 1 for left/right or 0 for up/down
+// MANGLES
+//   tx, ty, tt, tmp1, size
+//
+placeCPUShip:
+
+  // Find a spot
+  do {
+    call randomTxTy  
+    cursorX = tx+CPU_BOARD_X
+    cursorY = ty+CPU_BOARD_Y
+    horz = RAND & 1
+    call checkCPUShipPlacement
+  } while(tx==0)
+  
+  // Draw the ship
+  tx = cursorX
+  ty = cursorY    
+  for(tt=ship;size!=0;size=size-1) {
+    setTile tx
+    if(horz==1) {
+      tx = tx + 1
+    } else {
+      ty = ty + 1
+    }
+  }
+     
+  return
+
+// --------------------------------------------------------------------------
+// Checks if CPU ship of "size" will fit at
+// "cursorX","cursorY" with the "horiz" orientation.
+// Returns tx=0 if not, tx=1 if so
+// INPUTS
+//   cursorX = X coordinate
+//   cursorY = Y coordinate
+//   horz = 1 for left/right or 0 for up/down
+// OUTPUTS
+//   tx = 0 if doesn't fit or 1 if does
+// MANGLES
+//   tmp1, ty, tt
+//
+
+checkCPUShipPlacement:    
+ 
+  tx = cursorX
+  ty = cursorY
+  
+  for(tmp1=size;tmp1!=0;tmp1=tmp1-1) {
+  
+    getTile tx
+    if(tt!=BOARD_MAIN) {
+      tx = 0
+      return
+    }
+
+    if(horz==1) {
+      tx = tx + 1
+    } else {
+      ty = ty + 1
+    }
+
+  }  
+
+  tx = 1
+  return
+
+// --------------------------------------------------------------------------
+// Returns a random board coordinate in tx,ty
+// OUTPUTS
+//   tx = x coordinate (0-9)
+//   ty = y coordinate (0-9)
+//
+randomTxTy:
+  do {
+    tx = RAND & 15
+  } while(tx>9)
+  do {
+    ty = RAND & 15
+  } while(ty>9)  
+  return
+
+// --------------------------------------------------------------------------
+// Draws ship "ship" at "cursorX,cursorY"
+// V120-125 is filled with back as needed
+// Ship drawn red where it overlaps another.
+// "badPlace" set to 1 if any overlaps
+// INPUTS
+//   size = the size of the ship (2,3,4,5)
+//   cursorX = the X coordinate
+//   cursorY = the Y coordinate
+//   horz = 1 for left/right, 0 for up/down
+// OUTPUTS
+//   badPlace = 0 if OK or 1 if overlapping another ship
+//   V120-V125 = backbuffer
+// MANGLES
+//   tmp1, tx, ty, tt, ptr  
+//
+drawShip:  
+  tx = cursorX
+  ty = cursorY
+  ptr = 120
+  badPlace = 0
+  for(tmp1=size;tmp1!=0;tmp1=tmp1-1) { 
+    getTile tx
+    [ptr] = tt  
+    if(tt==BOARD_MAIN) {
+      tt = ship
+    } else {
+      tt = ship+5
+      badPlace = 1
+    }  
+    setTile tx
+    ptr = ptr + 1
+    if(horz==1) {
+      tx = tx + 1
+    } else {
+      ty = ty + 1
+    }
+  
+  }    
+  return
+
+// --------------------------------------------------------------------------
+// Undraws ship "ship" at "cursorX,cursorY"
+// INPUTS
+//   V120-125 = the backbuffer
+//   size = the size of the ship (2,3,4,5)
+//   cursorX = the X coordinate
+//   cursorY = the Y coordinate
+//   horz = 1 for left/right, 0 for up/down
+// MANGLES
+//   tmp1, tx, ty, tt, ptr
+//
+undrawShip:
+  tx = cursorX
+  ty = cursorY
+  ptr = 120  
+
+  for(tmp1=size;tmp1!=0;tmp1=tmp1-1) {
+    tt = [ptr]  
+    setTile tx 
+    ptr = ptr + 1 
+    if(horz==1) {
+      tx = tx + 1
+    } else {
+      ty = ty + 1
+    }
+  }
+
+  return  
+
+// --------------------------------------------------------------------------
+// Place a single ship on the player's board.
+// INPUTS
+//   size = size of ship (2,3,4,5)
+//   ship = boat tile number
+// OUTPUT
+//   cursorX = X coordinate of placed ship
+//   cursorY = Y coordinate of placed ship
+//   horz = 1 for left/right, 0 for up/down
+// MANGLES
+//   inputs, tmp1, badPlace, tx, ty, tt, ptr, V120-V125
+//
+placeShip:
+  
+  horz = 1
+  
+  while(true) {
+
+    // Flash ship on and off until a button is
+    // pressed (end with ship on).
+    while(true) {
+      call drawShip
+      pause 100ms
+      GetInputs variable=inputs
+      if(inputs!=0) {
+        break
+      }
+      call undrawShip
+      pause 100ms
+      GetInputs variable=inputs
+      if(inputs!=0) {
+        call drawShip 
+        break
+      }     
+    }
+  
+    // Valid placement ... return with ship in place
+    if(inputs & IN_A) {
+      if(badPlace==0) {
+        SOUNDCFG Noise,FrequencySweeper
+        SOUND Channel=0, Frequency=600Hz, Wave=0, EDelta=-1, EPeriod=5, ELength=150
+        PAUSE 150ms
+        SOUND Channel=0, Frequency=OFF
+        do {
+          GetInputs variable=inputs
+        } while(inputs!=0)
+        return 
+      } else {
+        SOUNDCFG Noise,FrequencySweeper
+        SOUND Channel=0, Frequency=100Hz, Wave=0, EDelta=6, EPeriod=10, ELength=100, ERepeat=true
+        SOUND Channel=1, Frequency=120Hz, Wave=0, EDelta=8, EPeriod=10, ELength=100, ERepeat=true
+        PAUSE 200ms
+        SOUND Channel=0, Frequency=OFF
+        SOUND Channel=1, Frequency=OFF
+      }  
+    }  
+  
+    // Erase the ship
+    call undrawShip
+
+    // Move the cursor left, right, up, and/or down
+    if(inputs & IN_RIGHT) {
+      cursorX = cursorX + 1
+    }
+    if(inputs & IN_LEFT) {
+      cursorX = cursorX - 1
+    }
+    if(inputs & IN_UP) {
+      cursorY = cursorY - 1
+    } 
+    if(inputs & IN_DOWN) {
+      cursorY = cursorY + 1
+    }  
+
+    // Toggle the orientation
+    if(inputs & IN_B) {
+      if(horz==0) {
+        horz = 1
+      } else {
+        horz = 0
+      }
+      do {
+        GetInputs variable=inputs
+      } while(inputs!=0)
+    }
+
+    // Keep the start of the ship on the board
+    if(cursorX<PLR_BOARD_X) {
+      cursorX = PLR_BOARD_X
+    }
+    if(cursorY<PLR_BOARD_Y) {
+      cursorY = PLR_BOARD_Y
+    }
+
+    // Keep the end (right or bottom) of the ship on the board
+    tmp1 = PLR_BOARD_X_LIMIT
+    if(horz==1) {    
+      tmp1 = tmp1 - size
+    } else {
+      tmp1 = tmp1 - 1
+    }
+    if(cursorX>tmp1) {
+      cursorX = tmp1
+    }
+    tmp1 = PLR_BOARD_Y_LIMIT
+    if(horz==1) {
+      tmp1 = tmp1 - 1
+    } else {
+      tmp1 = tmp1 - size
+    }  
+    if(cursorY>tmp1) {
+      cursorY = tmp1
+    }
+  
+  }
+
+
+------------------------------
+
+ShipsOn:
+ActionScript { // 40+40 = 80 refreshes = 1333 ms
+count=40, deltaX=2, delayX=1
+count=40, deltaX=1, delayX=1
+HALT
+}
+
+ShipsToBoard:
+ActionScript {
+count=56, deltaX=1, delayX=2 // 56*2 refreshes = 933 ms
+HALT
+}
+
+padalign(4)
+
+Seq1:
+SEQUENCE {
+
+VOICE0
+TEMPO 80.0
+
+1C4 2E 2G 2.A 4E 2A
+
+VOICE1
+TEMPO 80.0 
+
+1G3 2C+ 2E 2.E 4C 2E
+
+
+}
+
+padalign(4)
+
+WaveSimple:
+  WAVEFORM {
+     ..
+     ..
+     ..
+     ..
+     X.
+    .X
+}
+

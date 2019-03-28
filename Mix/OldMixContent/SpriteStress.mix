@@ -1,0 +1,602 @@
+variable a,b,c
+variable pad
+variable w,h,cursprite
+
+INPUTDRIVER MODE=OnePad
+
+InitTiles testTiles,0,4
+CALL InitSimpleImages:
+CALL InitComplexImages:
+
+Rectangle 12,9,4,4,1
+Rectangle 16,9,4,4,2
+Rectangle 14,13,4,4,3
+
+CALL ResetSprites
+
+cursprite = 0
+
+while(true) {
+
+ a = cursprite * 16
+ b = a + 2
+
+ GetInputs Player=1, Variable=pad
+ 
+ if(pad&IN_LEFT) {   
+   mem(b,word) = mem(b,word)-1
+ }
+ if(pad&IN_RIGHT) {
+   mem(b,word) = mem(b,word)+1
+ }
+ if(pad&IN_DOWN) {
+   mem(a,word) = mem(a,word)+1
+ }
+ if(pad&IN_UP) {
+   mem(a,word) = mem(a,word)-1
+ }
+
+ if(pad&IN_Z) {
+/*
+   mem(a,word) = 232  
+   mem(b,word) = 280
+   while(pad&IN_Z) {
+     GetInputs Player=1, Variable=pad
+   }
+*/
+   b = a + 6
+   w = mem(b)
+   w = w & 0b_11_00_0000
+   w = w + 0b_01_00_0000
+   if(w==0b_11_00_0000) {
+     w = 0
+   }
+   mem(b) = mem(b) & 0b_00_11_1111
+   mem(b) = mem(b) | w   
+   b = a + 6
+   h = mem(b)
+   h = h & 0b_00_11_0000
+   h = h + 0b_00_01_0000
+   if(h==0b_00_11_0000) {
+     h = 0
+   }
+   mem(b) = mem(b) & 0b_11_00_1111
+   mem(b) = mem(b) | h
+   CALL ChangeGeometry
+ }
+
+ if(pad&IN_A) { // GREEN A Switch sprites
+   cursprite = cursprite + 1
+   cursprite = cursprite & 15
+   while(pad&IN_A) {
+     GetInputs Player=1, Variable=pad
+   }
+ }
+
+ a = cursprite * 16
+
+ if(pad&IN_B) { // RED B Toggle simple/complex/off
+   b = a + 5
+   w = mem(a,word)
+   if(w==0xFFFF) {
+     mem(b) = 0x80
+     mem(a,word) = 232     
+   } else {     
+     w = mem(b)
+     if(w==0x80) {
+       mem(b) = 0
+     } else {
+       mem(a,word) = 0xFFFF 
+     }     
+   }
+   CALL ChangeGeometry
+   while(pad&IN_B) {
+     GetInputs Player=1, Variable=pad
+   }
+ }
+
+ if(pad&IN_X) { // X toggle width   
+   b = a + 6
+   w = mem(b)
+   w = w & 0b_11_00_0000
+   w = w + 0b_01_00_0000
+   if(w==0b_11_00_0000) {
+     w = 0
+   }
+   mem(b) = mem(b) & 0b_00_11_1111
+   mem(b) = mem(b) | w
+   CALL ChangeGeometry
+   while(pad&IN_X) {
+     GetInputs Player=1, Variable=pad
+   }
+ }
+
+ if(pad&IN_Y) { // Y toggle height
+   b = a + 6
+   h = mem(b)
+   h = h & 0b_00_11_0000
+   h = h + 0b_00_01_0000
+   if(h==0b_00_11_0000) {
+     h = 0
+   }
+   mem(b) = mem(b) & 0b_11_00_1111
+   mem(b) = mem(b) | h
+   CALL ChangeGeometry
+   while(pad&IN_Y) {
+     GetInputs Player=1, Variable=pad
+   }
+ }
+
+ if(pad&IN_START) { // START reset sprites
+   CALL ResetSprites
+   while(pad&IN_START) {
+     GetInputs Player=1, Variable=pad
+   }
+ }
+
+ PAUSE 10ms
+
+}
+
+ResetSprites:
+SetSprite Sprite=0, X=120, Y=104, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=1, X=120, Y=96, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=2, X=102, Y=86, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=3, X=101, Y=85, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=4, X=100, Y=84, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=5, X=99, Y=83, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=6, X=98, Y=82, Width=8, Height=8, SimpleImage=5
+
+SetSprite Sprite=7, X=52, Y=42, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=8, X=62, Y=42, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=9, X=72, Y=42, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=10, X=32, Y=52, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=11, X=42, Y=52, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=12, X=52, Y=52, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=13, X=62, Y=52, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=14, X=72, Y=52, Width=8, Height=8, SimpleImage=5
+SetSprite Sprite=15, X=32, Y=62, Width=8, Height=8, SimpleImage=5
+RETURN
+
+ChangeGeometry:
+a = cursprite * 16
+b = a + 5
+h = mem(b)
+h = h>>3
+b = a + 6
+w = mem(b) >> 4
+w = w + h
+w = w + @imageOffset
+w = current(w) + 5
+b = a +4
+mem(b) = w
+RETURN
+
+-----------------------------------------------
+
+testTiles:
+Tile {
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+  ........ GGGGGGGG RRRRRRRR WWWWWWWW
+}
+
+imageOffset:
+49,51,55,0,63,67,75,0,91,99,115,0,0,0,0,0 // Complex
+ 0, 1, 3,0, 7, 9,13,0,21,25, 33,0,0,0,0,0 // Simple
+
+
+
+CLUSTER InitSimpleImages
+  InitTiles simpleImages,5,49
+  RETURN
+
+-----------------------------------------------
+
+simpleImages:
+SimpleImage {
+  INFO Width=8, Height=8
+  ......RR
+  .RRRRRR.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .GGGGGW.
+  ......WW
+}
+SimpleImage {
+  INFO Width=8, Height=16
+  ........
+  .RRRRRR.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .GGGGGW.
+  ........
+}
+SimpleImage {
+  INFO Width=8, Height=32
+  ........
+  .RRRRRR.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .R....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .G....W.
+  .GGGGGW.
+  ........
+}
+SimpleImage {
+  INFO Width=16, Height=8
+  ................
+  .RRRRRRRRRRRRRR.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .GGGGGGGGGGGGGW.
+  ................
+}
+SimpleImage {
+  INFO Width=16, Height=16
+  ................
+  .RRRRRRRRRRRRRR.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .GGGGGGGGGGGGGW.
+  ................
+}
+SimpleImage {
+  INFO Width=16, Height=32
+  ................
+  .RRRRRRRRRRRRRR.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .G............W.
+  .GGGGGGGGGGGGGW.
+  ................
+}
+SimpleImage {
+  INFO Width=32, Height=8
+  ................................
+  .RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .GGGGGGGGGGGGGGGGGGGGGGGGGGGGGW.
+  ................................
+}
+SimpleImage {
+  INFO Width=32, Height=16
+  ................................
+  .RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .GGGGGGGGGGGGGGGGGGGGGGGGGGGGGW.
+  ................................
+}
+SimpleImage {
+  INFO Width=32, Height=32
+  ................................
+  .RRRRRRRRRRRRRRRRRRRRRRRRRRRRRR.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .G............................W.
+  .GGGGGGGGGGGGGGGGGGGGGGGGGGGGGW.
+  ................................
+}
+
+-----------------------------------------------
+
+CLUSTER InitComplexImages
+  InitTiles complexImages,54,98
+  RETURN
+
+-----------------------------------------------
+
+complexImages:
+Image {
+  INFO Width=8, Height=8
+  ........
+  .GGGGGG.
+  .W....R.
+  .W....R.
+  .W..BBR.
+  .W..BBR.
+  .WWWWWR.
+  ........
+}
+Image {
+  INFO Width=8, Height=16
+  ........
+  .GGGGGG.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W..BBR.
+  .W..BBR.
+  .W..BBR.
+  .W..BBR.
+  .WWWWWR.
+  ........
+}
+Image {
+  INFO Width=8, Height=32
+  ........
+  .GGGGGG.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W....R.
+  .W..BBR.
+  .W..BBR.
+  .W..BBR.
+  .W..BBR.
+  .W..BBR.
+  .W..BBR.
+  .W..BBR.
+  .W..BBR.
+  .WWWWWR.
+  ........
+}
+Image {
+  INFO Width=16, Height=8
+  ................
+  .GGGGGGGGGGGGGG.
+  .W............R.
+  .W............R.
+  .W........BBBBR.
+  .W........BBBBR.
+  .WWWWWWWWWWWWWR.
+  ................
+}
+Image {
+  INFO Width=16, Height=16
+  ................
+  .GGGGGGGGGGGGGG.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W........BBBBR.
+  .W........BBBBR.
+  .W........BBBBR.
+  .W........BBBBR.
+  .WWWWWWWWWWWWWR.
+  ................
+}
+Image {
+  INFO Width=16, Height=32
+  ................
+  .GGGGGGGGGGGGGG.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W............R.
+  .W........BBBBR.
+  .W........BBBBR.
+  .W........BBBBR.
+  .W........BBBBR.
+  .W........BBBBR.
+  .W........BBBBR.
+  .W........BBBBR.
+  .W........BBBBR.
+  .WWWWWWWWWWWWWR.
+  ................
+}
+Image {
+  INFO Width=32, Height=8
+  ................................
+  .GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG.
+  .W............................R.
+  .W............................R.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .WWWWWWWWWWWWWWWWWWWWWWWWWWWWWR.
+  ................................
+}
+Image {
+  INFO Width=32, Height=16
+  ................................
+  .GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .WWWWWWWWWWWWWWWWWWWWWWWWWWWWWR.
+  ................................
+}
+Image {
+  INFO Width=32, Height=32
+  ................................
+  .GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W............................R.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .W....................BBBBBBBBR.
+  .WWWWWWWWWWWWWWWWWWWWWWWWWWWWWR.
+  ................................
+}
+

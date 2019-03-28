@@ -1,0 +1,36 @@
+
+WAVEFORM 0,WaveSimple,16
+SOUNDCFG Sequencer
+
+SEQUENCER Seq1
+
+------
+
+Seq1:
+SEQUENCE {
+
+VOICE0
+TEMPO 80.0
+
+1C4 2E 2G 2.A 4E 2A
+
+VOICE1
+TEMPO 80.0 
+
+1G3 2C+ 2E 2.E 4C 2E
+
+
+}
+
+WaveSimple:
+  WAVEFORM {
+     ..
+     ..
+     ..
+     ..
+     X.
+     .X
+  }
+
+
+

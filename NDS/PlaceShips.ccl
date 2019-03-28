@@ -1,0 +1,317 @@
+
+; This cluster manages the logic of placing the ships on the game
+; boards.
+
+cluster PlaceShips
+
+makeSureLoaded:
+  return
+
+; ----------------------------------------------------------------
+;
+; placeHumanShips
+;
+; Draws the human's board and takes the player through placing each
+; ship one by one.
+;
+placeHumanShips:
+
+  tileBlock PLR_BOARD_X,       PLR_BOARD_Y,       10,10, BOARD_MAIN
+  tileBlock PLR_BOARD_X_LIMIT, PLR_BOARD_Y,        1,10, BOARD_LEFT
+  tileBlock PLR_BOARD_X,       PLR_BOARD_Y_LIMIT, 10, 1, BOARD_TOP
+  setTile   PLR_BOARD_X_LIMIT, PLR_BOARD_Y_LIMIT,  BOARD_DOT
+
+  ship = BOATS_UNHIT_A
+  size = 5
+  call placeShip  
+
+  ship = BOATS_UNHIT_B
+  size = 4
+  call placeShip
+
+  ship = BOATS_UNHIT_S
+  size = 3
+  call placeShip
+
+  ship = BOATS_UNHIT_C
+  size = 3
+  call placeShip
+
+  ship = BOATS_UNHIT_P
+  size = 2
+  call placeShip
+
+  hitCount = 17
+
+  return
+
+; ----------------------------------------------------------------
+;
+; placeCPUShips
+;
+; Draws the CPU's board and places (invisibly) all the CPU's ships.
+;
+placeCPUShips:  
+
+  tileBlock CPU_BOARD_X,       CPU_BOARD_Y,       10,10, BOARD_MAIN
+  tileBlock CPU_BOARD_X_LIMIT, CPU_BOARD_Y,        1,10, BOARD_LEFT
+  tileBlock CPU_BOARD_X,       CPU_BOARD_Y_LIMIT, 10, 1, BOARD_TOP
+  setTile   CPU_BOARD_X_LIMIT, CPU_BOARD_Y_LIMIT,  BOARD_DOT
+  
+  size = 5
+  ship = BOATS_INVIS_A 
+  call placeCPUShip  
+  numLeftA = 5
+  numHitA = 0
+  
+  size = 4
+  ship = BOATS_INVIS_B
+  call placeCPUShip
+  numLeftB = 4
+  numHitB = 0
+
+  size = 3
+  ship = BOATS_INVIS_S
+  call placeCPUShip
+  numLeftC = 3
+  numHitC = 0
+
+  size = 3
+  ship = BOATS_INVIS_C
+  call placeCPUShip
+  numLeftS = 3
+  numHitS = 0
+
+  size = 2
+  ship = BOATS_INVIS_P
+  call placeCPUShip
+  numLeftP = 2
+  numHitP = 0
+
+  cpuHitCount = 17
+
+  return
+
+; ---------------------------------------
+; Finds a place for a CPU "ship" and draws
+; it (invisibly) on the board
+;
+placeCPUShip:
+  call randomTxTy  
+  cursorX = tx+CPU_BOARD_X
+  cursorY = ty+CPU_BOARD_Y
+  horz = RND 1
+  call checkCPUShipPlacement
+  if(tx==0) {
+    goto placeCPUShip
+  }
+  tx = cursorX
+  ty = cursorY  
+  tt = ship
+
+placeCPUShip1:   
+  setTile tx
+  if(horz==1) {
+    tx = tx + 1
+  } else {
+    ty = ty + 1
+  }
+  size = size - 1
+  if(size!=0) {
+    goto placeCPUShip1
+  }    
+  return
+
+; ---------------------------------------
+; Checks if CPU ship of "size" will fit at
+; "cursorX","cursorY" with the "horiz" orientation.
+; Returns tx=0 if not, tx=1 if so
+;
+checkCPUShipPlacement:    
+ 
+  tx = cursorX
+  ty = cursorY
+  tmp1 = size
+
+checkPlace1:
+  getTile tx
+  if(tt!=BOARD_MAIN) {
+    tx = 0
+    return
+  }
+
+  if(horz==1) {
+    tx = tx + 1
+  } else {
+    ty = ty + 1
+  }
+
+  tmp1 = tmp1 - 1
+  if(tmp1!=0) {
+    goto checkPlace1
+  }  
+
+  tx = 1
+  return
+
+; ---------------------------------------
+; Returns a random board coordinate in tx,ty
+;
+randomTxTy:
+  tx = RND 15
+  if(tx>9) {
+    goto randomTxTy
+  }
+randomTxTy2:
+  ty = RND 15
+  if(ty>9) {
+    goto randomTxTy2
+  }
+  return
+
+; ---------------------------------------
+; Draws ship "ship" at "cursorX,cursorY"
+; V120-125 is filled with back as needed
+; Ship drawn red where it overlaps another.
+; "badPlace" set to 1 if any overlaps
+;
+drawShip:  
+  tx = cursorX
+  ty = cursorY
+  tmp1 = size
+  ptr = 120
+  badPlace = 0
+drawShip1: 
+  getTile tx
+  [ptr] = tt  
+  if(tt==BOARD_MAIN) {
+    tt = ship
+  } else {
+    tt = ship+5
+    badPlace = 1
+  }  
+  setTile tx
+  ptr = ptr + 1
+  if(horz==1) {
+    tx = tx + 1
+  } else {
+    ty = ty + 1
+  }
+  tmp1 = tmp1 - 1
+  if(tmp1!=0) {
+    goto drawShip1
+  }    
+  return
+
+; ---------------------------------------
+; Undraws ship "ship" at "cursorX,cursorY"
+; V120-125 contains the backbuffer
+;
+undrawShip:
+  tx = cursorX
+  ty = cursorY
+  tmp1 = size
+  ptr = 120  
+undrawShip1:  
+  tt = [ptr]  
+  setTile tx 
+  ptr = ptr + 1 
+  if(horz==1) {
+    tx = tx + 1
+  } else {
+    ty = ty + 1
+  }
+  tmp1 = tmp1 - 1
+  if(tmp1!=0) {
+    goto undrawShip1
+  }    
+  return
+  
+
+placeShip:
+
+  cursorX = PLR_BOARD_X
+  cursorY = PLR_BOARD_Y
+  horz = 1
+  
+placeShipMain:
+
+  call drawShip
+
+placeShip2:
+  padA = V126 & PAD_LRUDAB_MASK
+  if(padA!=0) {
+    call undrawShip
+    call drawShip    
+    goto placeShip2
+  }
+
+placeShip1:
+  padA = V126 & PAD_LRUDAB_MASK
+  if(padA==0) 
+    call undrawShip
+    call drawShip    
+    goto placeShip1
+  }  
+  
+  if(padA & PAD_A) {
+    if(badPlace==0) {
+      return 
+    }    
+  }  
+  
+  call undrawShip
+
+  if(padA & PAD_RIGHT) {
+    cursorX = cursorX + 1
+  }
+
+  if(padA & PAD_LEFT) {
+    cursorX = cursorX - 1
+  }
+
+  if(padA & PAD_UP) {
+    cursorY = cursorY - 1
+  }
+ 
+  if(padA & PAD_DOWN) {
+    cursorY = cursorY + 1
+  }  
+
+  if(padA & PAD_B) {
+    if(horz==0) {
+      horz = 1
+    } else {
+      horz = 0
+    }
+  }
+
+  if(cursorX<PLR_BOARD_X) {
+    cursorX = PLR_BOARD_X
+  }
+
+  if(cursorY<PLR_BOARD_Y) {
+    cursorY = PLR_BOARD_Y
+  }
+
+  tmp1 = PLR_BOARD_X_LIMIT
+  if(horz==1) {    
+    tmp1 = tmp1 - size
+  } else {
+    tmp1 = tmp1 - 1
+  }
+  if(cursorX>tmp1) {
+    cursorX = tmp1
+  }
+
+  tmp1 = PLR_BOARD_Y_LIMIT
+  if(horz==1) {
+    tmp1 = tmp1 - 1
+  } else {
+    tmp1 = tmp1 - size
+  }  
+  if(cursorY>tmp1) {
+    cursorY = tmp1
+  }
+  
+  goto placeShipMain

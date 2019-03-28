@@ -1,0 +1,8 @@
+
+print start
+
+while(true) {
+  print(4)
+}
+
+print end

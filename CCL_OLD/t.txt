@@ -1,0 +1,13 @@
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 21 term in sequence '4E''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 62 term in sequence '4A''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 63 term in sequence '2C+#''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 64 term in sequence '4A-''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 65 term in sequence '2E+''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 66 term in sequence '2A-''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 67 term in sequence '1F+''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 68 term in sequence '2.E''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 69 term in sequence '4E''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 70 term in sequence '4A-''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 71 term in sequence '2A''
+WARNING. Frequency starting on channel 1 already playing on channel 0 : 'Number 72 term in sequence '4B''
+CLUSTER '' 1840 bytes.

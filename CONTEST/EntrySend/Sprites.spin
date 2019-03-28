@@ -1,0 +1,671 @@
+' -------------------------------------------------------------------------------
+''VideoCOG.spin
+'' 
+'' Copyright (C) Chris Cantrell October 10, 2008
+'' Part of the PEGS project (PEGSKIT.com)
+''
+'' The Sprite driver works with the TV driver (see TV8x8.spin) to generate the
+'' display pixels for a set of moving sprites. The sprite driver stays one scan
+'' line ahead of the TV driver and builds the sprite pixel contribution for the
+'' next scan line.
+''
+'' Sprite pixel information includes a MASK to AND with the existing background
+'' and an IMAGE to OR with the existing background. There are two sets of
+'' MASK/IMAGE rows ... one that the TV driver reads and one that the sprite
+'' generators fill.
+''
+'' Game sprites move. Between screen refreshes the sprite engine processes
+'' automatic motion including both steady, linear motion and advanced motion
+'' scripts.
+''
+'' Sprites come in sets. The engine automatically "flips" between several
+'' images to create automatic micro-animation.
+''
+'' Sprites may be multiple sizes with widths and/or height values of:
+'' 8, 16, 32, or 64. Sprites larger than 8x8 use multiple image slots,
+'' and complex sprites use twice as many ... the first set for the MASK
+'' and the second set for the IMAGE bits. The MASK bits are ANDed with
+'' the background ... a 1 in the mask clears a bit in the background. The
+'' IMAGE is ORed with the background after the mask. A 1 in the image
+'' sets a bit in the background.
+''
+''##### SPRITE DATA STRUCTURE #####
+'' The Sprite Table begins in memory at location 0000. Each sprite entry is 16
+'' bytes as follows:
+''   yyyyyyyy  - Current Y coordinate (LSB, MSB). Value 0 is actually -32 off
+''   yyyyyyyy  - the top of the screen.
+''   xxxxxxxx  - Current X coordinate (LSB, MSB). Value 0 is actually -32 off
+''   xxxxxxxx  - the left of the screen.
+''   s000iiii  - Current tile image. S is 1 if the tile is simple (IMAGE only) or
+''   iiiiiiii  - 0 if the image includes a MASK and an IMAGE.
+''   wwhhppdd  - w=width, h=height, p=numPics, d=flipDelay 
+''   dxdxdydy  - dx,dy = signed value to add to x,y
+''   rxrxrxrx  - Number of passes before applying dx 
+''   ryryryry  - Number of passes before applying dy
+''   cxcxcxcx  - Counter of X passes (reloaded from rx)
+''   cycycycy  - Counter of Y passes (reloaded from ry)
+''   00uuvvww  - Flip counters (see below) 
+''   atatatat  - Passes till next script command (reloaded by the script)
+''   aaaaaaaa  - Current script pointer (LSB, MSB). Value 0 if there
+''   aaaaaaaa  - is no script running.
+''
+''  On every vertical retrace, the ww counter is decremented. When ww underflows
+''  it is reloaded with 11 and the delay counter vv is decremented. When vv
+''  underflows it is reloaded with dd and the image i is bumped to the next image
+''  and the pic count uu is decremented. When uu underflows, the image is backed
+''  down to its initial value and uu is reloaded to pp.
+''
+''  The current image and the uu/pp value are tightly coupled. The t field MUST
+''  be initialized so that uu = pp. Otherwise the flip process will back the image
+''  up too far producing undesired pictures.
+''
+''  ww and hh are 0=8, 1=16, 2=32, 3=64
+''
+''##### SPRITE SCRIPTS #####
+''
+''  Sprites can be assigned a complex motion script that moves the sprite
+''  without user intervention. These scripts are processed at every vertical
+''  retrace. The command format is described below.
+
+CON
+SystemBooted = $7812
+
+PUB start(cogNumber,parameterBlock)
+'' Start the Sprite driver
+coginit(cogNumber,@SpriteDriver,parameterBlock) 
+
+DAT      
+         org 0
+
+
+''
+''Sprite Script Commands (multi-byte commands)
+
+SpriteDriver
+
+' The DisplayBeamRowNumber in shared RAM controls all the action. The TV8x8 driver
+' sets it to the the row it is currently displaying. We stay in sync by preparing
+' the next row while it draws the last row we prepared.
+'
+' When the DisplayBeamRowNumber goes to 207, the last row is being drawn and the
+' vertical retrace is about to begin. This signals the sprite engine to do all
+' the sprite moving and flipping.
+'
+' When the sprite engine is done moving and flipping, it sets the DisplayBeamRowNumber
+' to 250. This signals others that nobody is reading/writing the sprite data and it is
+' safe to update the data. On the next-to-the-last invisbile blank-line at the top of the
+' screen the display engine sets the DisplayBeamRowNumber to 254 as a warning that
+' the update period is ending.
+'
+' External updaters should watch DisplayBeamRowNumber and quickly update their data
+' when the value is 250.
+
+' TOPHER describe the overlay mask/image
+' TOPHER describe how two sets can be used
+
+         mov       a,par
+         rdword    mNumSprites,a
+         add       a,#2
+         rdword    mSpriteTable,a
+         add       a,#2
+         rdword    mSorEvenMask,a
+         mov       mSorOddMask,mSorEvenMask
+         add       mSorOddMask,#$50
+         mov       mSorEvenImage,mSorOddMask     
+         add       mSorEvenImage,#$50
+         mov       mSorOddImage,mSorEvenImage
+         add       mSorOddImage,#$50
+         add       a,#2
+         rdword    waitUntilValue,a
+         add       a,#2
+         rdword    thenWriteValue,a
+         add       a,#2
+         rdword    dbrn,a
+         add       a,#2
+         rdword    TileImageMemory,a
+
+stall    rdbyte    draw,C_BOOTED wz    ' Wait for ...
+  if_z   jmp       #stall              ' ... interpreter to boot
+
+main                       
+         rdbyte  draw,dbrn                     ' This is the row the display is drawing
+
+         cmp     draw,#255 wz                  ' This means the display is ...
+  if_z   mov     draw,#0                       ' ... getting ready to draw ...
+  if_z   jmp     #drawRow                      ' ... row zero
+
+         cmp     draw,#254 wz                  ' This gives the outside ...
+  if_z   jmp     #main                         ' ... world a brief ...
+         cmp     draw,#250 wz                  ' ... moment to update ...
+  if_z   jmp     #main                         ' ... the sprite data safely
+         
+         add     draw,#1                       ' We are one row ahead          
+
+         cmp     draw,#208 wz                  ' Is the display drawing the last row?
+  if_ne  jmp     #drawRow                      ' No ... get the next row ready
+
+
+' --------------------------------------------------------------------------------------
+' This is the vertical retrace. Lots of time to handle automatic features like
+' sprite flipping and scripted motion.
+                                                
+         mov       spritePtr,mSpriteTable         ' Sprite 0
+         mov       spriteCount,mNumSprites        ' 16 sprites to process
+         
+motionLoop
+
+         rdword    spriteY,spritePtr
+         cmp       spriteY,C_FFFF wz
+  if_z   jmp       #skipMotion
+
+' Read all the data from the descriptor. We'll change stuff and write it back later
+         add       spritePtr,#2
+         rdword    spriteX,spritePtr
+         add       spritePtr,#2
+         rdword    spritePic,spritePtr
+         add       spritePtr,#2
+         mov       simple,spritePic     
+         rdbyte    spriteInfo,spritePtr
+         add       spritePtr,#1
+         shr       simple,#15
+         rdbyte    xDelta,spritePtr
+         add       spritePtr,#1
+         mov       yDelta,xDelta
+         shr       xDelta,#4
+         and       yDelta,#15             
+         rdbyte    xDelay,spritePtr
+         add       spritePtr,#1
+         rdbyte    yDelay,spritePtr
+         add       spritePtr,#1
+         rdbyte    xCount,spritePtr
+         add       spritePtr,#1
+         rdbyte    yCount,spritePtr
+         add       spritePtr,#1
+         rdbyte    spriteFlipTimer,spritePtr
+         add       spritePtr,#1
+         rdbyte    actionScriptTimer,spritePtr
+         add       spritePtr,#1
+         rdword    actionScriptPtr,spritePtr   
+
+         mov       tmp3,spriteInfo               ' tmp3 contains ...
+         shr       tmp3,#2                       ' ... number of images ...
+         and       tmp3,#3 wz                    ' ... in flip-set
+
+    if_z jmp       #noSpriteFlipping             ' Just the one ... no flipping
+
+' --------------------------------------------------------------------------------------
+' Automatic sprite flipping feature
+
+         mov       spriteWidth,spriteInfo
+         mov       spriteHeight,spriteWidth
+         shr       spriteWidth,#6
+         shr       spriteHeight,#4
+         and       spriteHeight,#3 
+         
+         mov       ptr,#1           ' One 8x8 cell is 1 image slot
+         shl       ptr,spriteWidth  ' Multiply by width         
+         shl       ptr,spriteHeight ' Multiply by height    
+         
+         cmp       simple,#1 wz                 ' Complex sprites ...
+   if_nz shl       ptr,#1            ' ... comsume twice the space (mask and image)   
+
+         mov       loopsPerRow,spriteFlipTimer  ' Separate out ...
+         and       loopsPerRow,#3               ' ... WW, VV, and UU fields
+         mov       orHoldA,spriteFlipTimer      '
+         shr       orHoldA,#2                   '
+         and       orHoldA,#3                   '
+         mov       orHoldB,spriteFlipTimer      '
+         shr       orHoldB,#4                   '
+         and       orHoldB,#3                   '
+         
+         sub       loopsPerRow,#1 wc            ' Count down the WW field
+  if_nc  jmp       #flipDone                    ' Not time if it didn't underflow
+         mov       loopsPerRow,#3               ' Reload the WW field
+         sub       orHoldA,#1 wc                ' Count down the VV field (delay)
+  if_nc  jmp       #flipDone                    ' Not time if it didn't underflow
+         mov       orHoldA,spriteInfo           ' Reload from ...
+         and       orHoldA,#3                   ' ... DD in sprite-info
+         add       spritePic,ptr                ' Bump up to the next picture
+         sub       orHoldB,#1 wc                ' Count down the UU field (num pics)
+  if_nc  jmp       #flipDone                    ' Not time if it didn't underflow
+         mov       orHoldB,spriteInfo           ' Reload from ...
+         shr       orHoldB,#2                   ' ... PP in ...
+         and       orHoldB,#3                   ' ... sprite info
+         mov       tmp,orHoldB                  ' Number of pics to backup
+         add       tmp,#1                       ' 3 means 4 pics ... add one
+flipBack sub       spritePic,ptr                ' Backup ...
+         djnz      tmp,#flipBack                ' ... sprite picture
+
+flipDone shl       orHoldA,#2                    ' Recombine fields ...
+         or        loopsPerRow,orHoldA           ' ... WW ...
+         shl       orHoldB,#4                    ' ... VV ...
+         or        loopsPerRow,orHoldB           ' ... and UU ...
+         mov       spriteFlipTimer,loopsPerRow   ' ... into spriteFlipTimer
+
+noSpriteFlipping
+
+' --------------------------------------------------------------------------------------
+' Automatic motion feature
+
+         mov     orHoldA,#0                     ' Flag that motion was NOT made
+         
+         cmp     xCount,#0 wz
+    if_z jmp     #doY
+         sub     xCount,#1 wz
+  if_nz  jmp     #doY
+         and     xDelta,#%00001000 wz,nr
+  if_nz  or      xDelta,C_SIGN_EXTEND
+         mov     xCount,xDelay
+         add     spriteX,xDelta
+         or      orHoldA,#1                     ' Motion was made
+         cmp     spriteX,#320 wz,wc
+   if_ae mov     spriteY,C_FFFF 
+
+  doY
+         cmp     yCount,#0 wz
+    if_z jmp     #doActionScript
+         sub     yCount,#1 wz
+  if_nz  jmp     #doActionScript
+         and     yDelta,#%00001000 wz,nr
+  if_nz  or      yDelta,C_SIGN_EXTEND
+         mov     yCount,yDelay
+         add     spriteY,yDelta
+         or      orHoldA,#1                     ' Motion was made
+         cmp     spriteY,#272 wz,wc
+ if_ae   mov     spriteY,C_FFFF    
+
+doActionScript
+
+' --------------------------------------------------------------------------------------
+' Action scripting feature
+
+        cmp      orHoldA,#1 wz       ' No motion ...
+ if_nz  jmp      #doWrite            ' ... nothing to do in script
+
+' The sprite engine has no concept of sectors. The action script must be offset into the 
+' desired cluster by the SETSPRITE command. But, we know that we are dealing with even
+' 2K clusters ... we'll use a 0 offset within a cluster to mean no script. 
+
+        and      actionScriptPtr,C_7FF wz,nr  
+ if_z   jmp      #doWrite        
+        sub      actionScriptTimer,#1 wz
+ if_nz  jmp      #doWrite
+
+doActionCommand        
+        rdbyte   tmp,actionScriptPtr
+        add      actionScriptPtr,#1
+        cmp      tmp,#0 wz              ' 0 = short command
+ if_z   jmp      #actionScriptShort
+        cmp      tmp,#1 wz              ' 1 = long command
+ if_z   jmp      #actionScriptLong
+        cmp      tmp,#2 wz              ' 2 = jump
+ if_z   jmp      #actionScriptJump   
+        cmp      tmp,#4 wz
+ if_z   jmp      #actionScriptHalt
+
+''
+'' Stop script (set script pointer to 0) - 1 byte
+''   00000011
+        mov      actionScriptPtr,#0
+        jmp      #doWrite
+
+actionScriptHalt
+        mov      xDelta,#0
+        mov      yDelta,#0
+        mov      actionScriptPtr,#0
+        jmp      #doWrite
+
+actionScriptLong
+
+''
+'' Script long-command - 9 bytes
+''   00000001
+''   s000iiii
+''   iiiiiiii
+''   wwhhppdd
+''   00uuvvww
+''   dxdxdydy
+''   rxrxrxrx  
+''   ryryryry
+''   atatatat
+' 1, spritePicLSB, spritePicMSB, spriteInfo, spriteFlipTimer, then on to 0
+
+        rdbyte   spritePic,actionScriptPtr
+        add      actionScriptPtr,#1
+        rdbyte   tmp,actionScriptPtr
+        add      actionScriptPtr,#1
+        shl      tmp,#8
+        or       spritePic,tmp
+        rdbyte   spriteInfo,actionScriptPtr
+        add      actionScriptPtr,#1
+        rdbyte   spriteFlipTimer,actionScriptPtr
+        add      actionScriptPtr,#1
+        
+actionScriptShort
+
+''
+'' Script short-command - 5 bytes
+''   00000000
+''   dxdxdydy
+''   rxrxrxrx  
+''   ryryryry
+''   atatatat
+' 0, xyDelta, xDelay (and xCount), yDelay (and yCount), actionScriptTimer
+ 
+        rdbyte   xDelta,actionScriptPtr
+        add      actionScriptPtr,#1
+        mov      yDelta,xDelta
+        shr      xDelta,#4
+        and      yDelta,#15
+        rdbyte   xDelay,actionScriptPtr
+        add      actionScriptPtr,#1
+        rdbyte   yDelay,actionScriptPtr
+        add      actionScriptPtr,#1
+        mov      xCount,xDelay
+        mov      yCount,yDelay
+        rdbyte   actionScriptTimer,actionScriptPtr
+        add      actionScriptPtr,#1        
+        jmp      #doWrite
+        
+actionScriptJump
+
+''
+'' GOTO (signed offset) - 3 bytes
+''   00000010
+''   oooooooo
+''   oooooooo
+' 2, offset from current position
+
+        rdbyte   tmp,actionScriptPtr
+        add      actionScriptPtr,#1
+        rdbyte   tmp2,actionScriptPtr
+        add      actionScriptPtr,#1
+        shl      tmp2,#8
+        or       tmp,tmp2
+        and      tmp,C_8000 nr,wz
+ if_nz  or       tmp,C_SIGN_EXTEND2
+        add      actionScriptPtr,tmp
+        jmp      #doActionCommand
+
+' --------------------------------------------------------------------------------------
+' Write the changes we made in automatic features back
+' to the descriptor
+'
+doWrite  wrword    actionScriptPtr,spritePtr
+         sub       spritePtr,#1
+         wrbyte    actionScriptTimer,spritePtr
+         sub       spritePtr,#1
+         wrbyte    spriteFlipTimer,spritePtr
+         sub       spritePtr,#1
+         wrbyte    yCount,spritePtr
+         sub       spritePtr,#1
+         wrbyte    xCount,spritePtr
+         sub       spritePtr,#1
+         wrbyte    yDelay,spritePtr
+         sub       spritePtr,#1
+         wrbyte    xDelay,spritePtr
+         sub       spritePtr,#1
+         shl       xDelta,#4
+         and       yDelta,#15
+         or        xDelta,yDelta         
+         wrbyte    xDelta,spritePtr
+         sub       spritePtr,#1
+         wrbyte    spriteInfo,spritePtr
+         sub       spritePtr,#2
+         wrword    spritePic,spritePtr
+         sub       spritePtr,#2
+         wrword    spriteX,spritePtr
+         sub       spritePtr,#2
+         wrword    spriteY,spritePtr  
+         
+skipMotion
+         andn      spritePtr,#$000F           ' Point to ...
+         add       spritePtr,#$10             ' ... next sprite
+         djnz      spriteCount,#motionLoop    ' Do all sprites ... pray there is time
+
+waitV    rdbyte    draw,dbrn
+         cmp       draw,waitUntilValue wz
+  if_nz  jmp       #waitV
+         wrbyte    thenWriteValue,dbrn  
+         
+         jmp       #main                      ' Back to the top
+
+' --------------------------------------------------------------------------------------
+' This happens every row
+' --------------------------------------------------------------------------------------
+' Draw the sprites on the current row       
+' (As fast as possible ... we are chasing the TV beam.)
+         
+drawRow  mov       fillAreaHold,mSorOddMask      ' Assume odd row         
+         and       draw,#1 nr,wz                 ' But if this is even ...    
+   if_z  mov       fillAreaHold,mSorEvenMask     ' ... use the even row
+         mov       fillArea2Hold,fillAreaHold    ' Pointer to the ...
+         add       fillArea2Hold,#$A0            ' ... correct image row
+                
+' Clear out the mask and image buffers before adding the individual sprites        
+         mov       ptr,fillAreaHold                
+         mov       count,#$14
+         mov       spriteY,#0         
+clear1   wrlong    spriteY,ptr
+         add       ptr,#4
+         djnz      count,#clear1
+         mov       ptr,fillArea2Hold                 
+         mov       count,#$14
+         mov       spriteY,#0         
+clear2   wrlong    spriteY,ptr
+         add       ptr,#4
+         djnz      count,#clear2                                                  
+          
+         mov       spritePtr,mSpriteTable        ' Start of sprite data
+         mov       spriteCount,mNumSprites       ' Number of sprites
+          
+spriteLoop   
+
+' Get the sprite's Y coordinate
+         rdword    spriteY,spritePtr             ' Get the Y coordinate
+         cmp       spriteY,C_240 wz, wc          ' No part ...
+  if_ae  jmp       #skipMe                       ' ... visible
+         add       spritePtr,#2                  ' Next data item
+
+' Get the sprite's X coordinate.
+         rdword    spriteX,spritePtr             ' Get the X coordinate
+         cmp       spriteX,C_288 wz, wc          ' No part ...
+  if_ae  jmp       #skipMe                       ' ... visible
+         add       spritePtr,#2                  ' Next data item
+
+' Get the image number.
+         rdword    spriteMsk,spritePtr           ' Get the image number
+         add       spritePtr,#2                  ' Next data item
+         mov       simple,spriteMsk              ' Simple ...
+         shr       simple,#15                    ' ... flag         
+         and       spriteMsk,C_FFF               ' Image without mask         
+         
+' Get the sprite geometry
+         rdbyte    spriteWidth,spritePtr         ' Sprite geometry
+                  
+         mov       spriteHeight,spriteWidth      ' Peel out ...
+         shr       spriteWidth,#6                ' ... width
+         shr       spriteHeight,#4               ' Peel out ...
+         and       spriteHeight,#3               ' ... height
+
+         mov       pixelHeight,#8                ' Base cell is 8 high
+         shl       pixelHeight,spriteHeight      ' 0=8, 1=16, 2=32, 3=64
+
+         mov       bytesPerSprite,#16            ' One 8x8 cell is 16 bytes
+         shl       bytesPerSprite,spriteWidth    ' Multiply by width         
+         shl       bytesPerSprite,spriteHeight   ' Multiply by height
+
+         mov       loopsPerRow,#1                ' One 8x8 cell takes one loop
+         shl       loopsPerRow,spriteWidth       ' Multiply by width    
+         
+' Sprites are offset by 32 so that Y=0 can be off the top of the screen.
+         sub       spriteY,#32                   ' Translate sprite coords to screen coords
+
+' We need to know which row of the sprite-picture maps to the current
+' drawing row. The current sprite may not even appear on the current
+' drawing row ... we'll find that out as we go.
+   
+         mov       spriteRow,draw                ' Row being drawn on the screen
+         sub       spriteRow,spriteY             ' Skip this sprite if ...
+         cmp       spriteRow,pixelHeight wz,wc   ' ... it doesn't appear ...           
+  if_ae  jmp       #skipMe                       ' ... on this row
+
+' Locate the mask/image data.         
+         shl       spriteMsk,#4                  ' 16 bytes per tile
+         add       spriteMsk,TileImageMemory     ' Start of image data to spriteMsk
+
+         shl       spriteRow,#1                  ' One 8x8 cell is 2 bytes per row
+         shl       spriteRow,spriteWidth         ' Multiply by width
+         add       spriteMsk,spriteRow           ' Offset to current row
+         
+         mov       spritePic,spriteMsk           ' Image data is ...
+         cmp       simple,#1 wz                  ' ... later if ...
+  if_nz  add       spritePic,bytesPerSprite      ' ... sprite is complex
+
+         mov       orHoldA,#0                    ' Clear leftovers ...
+         mov       orHoldB,#0                    ' ... along a single row
+
+' Find the byte offset in within the row (4 pixels per byte)
+' Like Y, X is offset by 32 but there is room in the buffer for the invisible
+         mov       xofs,spriteX                  ' Xofs = ...         
+         shr       xofs,#2                       ' ... (x/4)
+
+' Calculate the shift remainder
+         mov       srem,spriteX                  ' Srem = ...
+         and       srem,#3                       ' ... (x%4) * 2 ...
+         shl       srem,#1                       ' ...
+
+         mov       fillArea,fillAreaHold         ' Reset after ...
+         mov       fillArea2,fillArea2Hold       ' ... each sprite's contribution
+         add       fillArea,xofs                 ' May be off screen
+         add       fillArea2,xofs                ' Image too
+
+multiSprite          
+                           
+         mov       tmp,#0                        ' Simple mask is "ignore-background"
+         cmp       simple,#1                     ' But if complex ...
+         
+   if_nz rdword    tmp,spriteMsk                 ' ... load the mask
+         add       spriteMsk,#2                  ' Bump the mask pointer
+         shl       tmp,srem
+         
+         rdword    tmp2,spritePic                ' Get the next image bits
+         add       spritePic,#2                  ' Bump the image pointer                               
+         or        tmp,orHoldA                   ' Pull in any pixels ... 
+             
+         wrbyte    tmp,fillArea                  ' Store mask
+         shl       tmp2,srem                     ' ... alignment 
+         or        tmp2,orHoldB                  ' ... from the last 8x8 cell pass
+         
+         rdbyte    a,fillArea2                   ' OR the image bits ...
+         or        a,tmp2                        ' ... (not a complete overlap
+         shr       tmp2,#8
+         
+         wrbyte    a,fillArea2                   ' ... solution)
+         shr       tmp,#8                                                             
+         add       fillArea,#1            
+                
+         wrbyte    tmp,fillArea
+         add       fillArea2,#1
+         
+         rdbyte    a,fillArea2
+         or        a,tmp2
+         add       fillArea,#1
+         
+         wrbyte    a,fillArea2
+         shr       tmp,#8              
+         shr       tmp2,#8                     
+                            
+         wrbyte    tmp,fillArea
+         add       fillArea2,#1
+         mov       orHoldA,tmp                   ' Leftover mask for next chunk
+         
+         rdbyte    a,fillArea2
+         or        a,tmp2
+         mov       orHoldB,tmp2                  ' Leftover image for next chunk 
+         wrbyte    a,fillArea2                                                            
+
+         djnz      loopsPerRow,#multiSprite      ' Do all chunks for this sprite
+  
+skipMe   andn      spritePtr,#$000F              ' Point to ...
+         add       spritePtr,#$10                ' ... next sprite
+         djnz      spriteCount,#spriteLoop       ' Do all sprites ... pray there is time
+         
+' Wait for the display to start using the row we filled in before we
+' start building another row.
+waitOnNextRow
+         rdbyte  spriteY,dbrn                    ' Wait for the display to ...
+         cmp     spriteY,draw wc,wz              ' ... get to our data ...
+  if_ne  jmp     #waitOnNextRow                  ' ... before starting more     
+
+         jmp     #main                           ' Line after line after line
+                  
+a                  long 0
+draw               long 0
+fillArea           long 0
+fillArea2          long 0
+fillAreaHold       long 0
+fillArea2Hold      long 0
+ptr                long 0
+count              long 0
+spriteY            long 0
+spriteX            long 0
+spriteRow          long 0    
+
+spriteCount        long 0
+spritePtr          long 0
+
+tmp                long 0
+tmp2               long 0
+tmp3               long 0    
+spriteMsk          long 0
+spritePic          long 0
+spriteWidth        long 0
+spriteHeight       long 0
+pixelHeight        long 0
+bytesPerSprite     long 0
+loopsPerRow        long 0
+
+orHoldA            long 0
+orHoldB            long 0
+
+xDelta             long 0
+yDelta             long 0
+xDelay             long 0
+yDelay             long 0
+xCount             long 0
+yCount             long 0
+
+spriteFlipTimer    long 0
+actionScriptTimer  long 0
+actionScriptPtr    long 0
+spriteInfo         long 0
+
+srem               long 0
+xofs               long 0
+simple             long 0    
+
+C_240              long 240
+C_288              long 288
+C_FFF              long $FFF
+C_7FF              long $7FF
+C_8000             long $00_00_80_00
+C_FFFF             long $FFFF
+C_SIGN_EXTEND      long $FF_FF_FF_F0
+C_SIGN_EXTEND2     long $FF_FF_00_00
+
+C_BOOTED           long SystemBooted 
+
+mNumSprites        long 0
+mSpriteTable       long 0
+mSorEvenMask       long 0
+mSorOddMask        long 0
+mSorEvenImage      long 0
+mSorOddImage       long 0
+waitUntilValue     long 0
+thenWriteValue     long 0
+
+TileImageMemory    long 0 
+dbrn               long 0
+ 
+    fit        ' Must fit under COG [$1F0]

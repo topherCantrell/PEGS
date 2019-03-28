@@ -1,0 +1,192 @@
+variable x,y,k
+
+CLUSTER SpriteTest
+
+INPUTDRIVER ONEPAD
+
+CLS 0
+
+INITTILES bg1,1,1
+
+INITTILES sub1,10,32
+
+INITTILES s1,50,8
+
+RECTANGLE 10,10,5,5,1
+
+SETSPRITE SPRITE=0,X=180,Y=180,WIDTH=16,HEIGHT=16,IMAGE=50
+SETSPRITE SPRITE=1,X=130,Y=100,WIDTH=32,HEIGHT=16,SIMPLEIMAGE=10,
+  NUMPICS=4,FLIPDELAY=3,
+  ACTIONSCRIPT=myScript
+
+
+x=180
+y=180
+
+while(true) {
+
+WaitForVerticalRetrace
+
+mem(0,word)=y
+mem(2,word)=x
+
+GETINPUTS player=1, variable=k
+
+if(k&1) {
+  x=x-1
+}
+if(k&2) {
+  x=x+1
+}
+if(k&4) {
+  y=y+1
+}
+if(k&8) {
+  y=y-1
+}
+
+if(k&256) {
+
+  SETSPRITE SPRITE=8,X=50,Y=271,WIDTH=8,HEIGHT=8,SIMPLEIMAGE=111, DELAYY=1, DELTAY=-4
+  mem(128,word) = y-6
+  mem(130,word) = x+4
+
+}
+
+pause 10ms
+
+}
+
+
+----------
+
+
+bg1:
+Tile {
+
+RRRRRRRR
+RRRRRRRR
+........
+..WWWW..
+..WWWW..
+........
+GGGGGGGG
+GGGGGGGG
+
+}
+
+
+s1:
+Image {
+
+INFO WIDTH=16,HEIGHT=16
+
+................
+................
+..RRRRRRRRRRRR..
+..RRRRRRRRRRRR..
+..GG........RR..
+..GG........RR..
+..GG..WWWW..RR..
+..GG..WBBW..RR..
+..GG..WBBW..RR..
+..GG..WWWW..RR..
+..GG........RR..
+..GG........RR..
+..GGGGGGGGGGGG..
+..GGGGGGGGGGGG..
+................
+................
+}
+
+
+
+
+sub1:
+SimpleImage {
+
+INFO WIDTH=32, HEIGHT=16, MAP=.O+X
+
+....................XXXXX.......
+....................X++++X......
+..........OOX.......X+OO+X......
+............X.......X++++X......
+............X.......X++++X......
+.........XXXXXXXXXXXX++++XX.....
+O...XXXXX++++++++++++++++++XXX..
+.O.X++++++++++OO++++++++++++++X.
+..X+++++++++++++++++++++++++O++X
+..X+++OOO++++++++OOOOOOO++++O++X
+..X++++++++++++OOOOOOOOOOO++++X.
+.O.X+++++++O+++++OOOOOOO+++++X..
+O...XXX++++++++++++++++++++XX...
+.......XXXX+++++++++++++XXX.....
+...........XXXXXXXXXXXXX........
+................................
+
+....................XXXXX.......
+....................X++++X......
+...........OO.......X+OO+X......
+............X.......X++++X......
+............X.......X++++X......
+.........XXXXXXXXXXXX++++XX.....
+....XXXXX++++++++++++++++++XXX..
+O..X++++++++++++++++++++++++++X.
+.OX+++++++++++++++++++++++++O++X
+..X+++OOO++++++++OOOOOOO++++O++X
+.OX++++++++++++OOOOOOOOOOO++++X.
+O..X+++++++O+++++OOOOOOO+++++X..
+....XXX++++++++++++++++++++XX...
+.......XXXX+++++++++++++XXX.....
+...........XXXXXXXXXXXXX........
+................................
+
+................................
+....................XXXXX.......
+....................X++++X......
+.............OO.....X+OO+X......
+.............X......X++++X......
+.............X......X++++X......
+.........XXXXXXXXXXXX++++XX.....
+....XXXXX++++++++++++++++++XXX..
+...X++++++++++++++++++++++++++X.
+OOX+++++++++++++++++++++++++O++X
+..X+++OOO++++++++OOOOOOO++++O++X
+OOX++++++++++++OOOOOOOOOOO++++X.
+...X+++++++++++++OOOOOOO+++++X..
+....XXX++++++++++++++++++++XX...
+.......XXXX+++++++++++++XXX.....
+...........XXXXXXXXXXXXX........
+
+................................
+....................XXXXX.......
+....................X++++X......
+............XOO.....X+OO+X......
+............X.......X++++X......
+............X.......X++++X......
+.........XXXXXXXXXXXX++++XX.....
+....XXXXX++++++++++++++++++XXX..
+O..X++++++++++++++++++++++++++X.
+.OX+++++++++++++++++++++++++O++X
+..X+++OOO++++++++OOOOOOO++++O++X
+.OX++++++++++++OOOOOOOOOOO++++X.
+O..X+++++++++++++OOOOOOO+++++X..
+....XXX++++++++++++++++++++XX...
+.......XXXX+++++++++++++XXX.....
+...........XXXXXXXXXXXXX........
+
+}
+
+myScript:
+ActionScript {
+
+  count=40, deltaX=1,  delayX=1, SimpleImage=10,width=32,height=16,numpics=4,flipdelay=2
+  count=40, deltaY=1,  delayY=1
+  count=40, deltaX=-1, delayX=2
+  count=40, deltaY=-1, delayY=2, image=50, width=16, height=16
+  count=40, deltaX=1,  delayX=1, deltaY=-1, delayY=2, SimpleImage=10, width=32, height=16
+  count=40, deltaX=-1, delayX=1, deltaY=1,  delayY=2
+  REPEAT
+}
+
+ 

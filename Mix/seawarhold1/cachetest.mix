@@ -1,0 +1,83 @@
+
+cluster A1
+
+//reserve 3
+
+print "MADE IT TO A1\n"
+call B2:
+print "GOT BACK TO A1"
+
+cluster B2
+print "MADE IT TO B2\n"
+call C3:
+return
+
+cluster C3
+print "MADE IT TO C3\n"
+call D4:
+return
+
+cluster D4
+print "MADE IT TO D4\n"
+call E5:
+return
+
+cluster E5
+print "MADE IT TO E5\n"
+call F6:
+return
+
+cluster F6
+print "MADE IT TO F6\n"
+call G7:
+return
+
+cluster G7
+print "MADE IT TO G7\n"
+call H8:
+return
+
+cluster H8
+print "MADE IT TO H8\n"
+call I9:
+return
+
+cluster I9
+print "MADE IT TO I9\n"
+call J10:
+return
+
+cluster J10
+print "MADE IT TO J10\n"
+call K11:
+return
+
+cluster K11
+print "MADE IT TO K11\n"
+call L12:
+return
+
+cluster L12
+print "MADE IT TO L12\n"
+call M13:
+return
+
+cluster M13
+print "MADE IT TO M13\n"
+//call N14:
+return
+
+cluster N14
+print "MADE IT TO N14\n"
+call O15:
+return
+
+cluster O15
+print "MADE IT TO O15\n"
+call P16:
+return
+
+cluster P16
+print "MADE IT TO P16\n"
+return
+

@@ -1,0 +1,74 @@
+
+// Difference in waveforms in demo
+// In demo, three beeps between demos and print on screen
+// Make DTMF tones in demo
+// Make train in demo
+// Yeah-Alabama in demo
+// Flying saucer, explosion, moon-patrol-theme in background
+
+// SOUND<NSF1> Chan, Freq,  Wave,  EDelta, EDuration, ELength, ERepeat
+  // <NSF1> is default if not given
+// SOUND Chan, Freq
+// SOUND Chan, Freq,  Volume, Wave
+// SOUND Chan, Freq,  Volume, Wave,  EDelta, EDuration, ELength, ERepeat
+// SOUND Chan, Freq,  Volume, Wave,  EDelta, EDuration, ELength
+// SOUND Chan, OFF
+
+// WAVEFORM N,ptr
+
+// SEQUENCER ptr
+// SEQUENCER OFF
+
+//SOUNDCFG noise=on,Sequencer=on,sweeper=frequency,samples=2
+
+
+// Waveforms can have any number of rows up to 64 (0-63).
+// Waveforms must have rows with columns of 2,4,8,16, or 32.
+
+//WAVEFORM TONE,Wave1
+
+
+SOUND Channel=0, Frequency=440Hz, Volume=10, Waveform=0, EDelta=1, EPeriod=100MS, ELength=2000MS, ERepeat=FALSE
+//PAUSE 5000
+
+SEQUENCER Seq1
+
+
+// TOPHER ... still allow < > overrides but change cycles meaning back to number-of-samples
+
+
+// TOPHER < ... > allow spaces in these terms
+
+--DATA--
+
+
+//TIMING<NSF1> // TOPHER
+//NOTESTARTSTYLE<Volume=11,Waveform=0,EDelta=1,EPeriod=100MS,ELength=2000MS,ERepeat=FALSE>
+//NOTESTOPSTYLE<Volume=11,Waveform=0,EDelta=1,EPeriod=100MS,ELength=2000MS,ERepeat=FALSE>
+
+
+//NOTEHOLDSTYLE<...> // TOPHER ... maybe one day
+//ATTACK<100> MS     // TOPHER
+
+//4C D E F G A B C+
+
+
+Seq1:
+SEQUENCE {
+
+VOICE0 
+
+SOUND<F=440HZ>
+PAUSE<5000>
+
+}
+
+
+Wave1:
+WAVEFORM { // Default for waveform-0
+ X.
+ .X
+}
+
+
+

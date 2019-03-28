@@ -1,0 +1,107 @@
+variable value,x,y,c,w,z,sb
+variable val,t1,t2,tz,sx,sy
+
+cluster LEDNumber
+
+// ***********************************************************
+DrawHexWord: // value, x,y,c,w,z, sb
+  t2 = value
+  value = value >> 8
+  call DrawHexByte
+  value = t2
+  x=x+w
+  x=x+sb
+  call DrawHexByte
+  return
+
+// ***********************************************************
+DrawHexByte: // value, x,y,c,w,z, sb
+  t1 = value
+  value = value >> 4
+  call DrawDigit
+  value = t1
+  x=x+w
+  x=x+sb
+  call DrawDigit
+  return
+
+// ***********************************************************
+DrawDigit: // value, x,y,c,w,z
+  val = value & 15
+  val = val + @digitSegmentInfo
+  val = current(val)
+  sx=x
+  sy=y
+  if(val&64) {
+    call HorizSeg
+  }
+  if(val&32) {
+    x=x+w
+    x=x-1
+    call VertSeg
+  }
+  if(val&16) {
+    x=x+w
+    x=x-1
+    y=y+z
+    y=y-1
+    call VertSeg
+  }
+  if(val&8) {
+    y=y+z    
+    y=y+z
+    y=y-2    
+    call HorizSeg   
+  }
+  if(val&4) {
+    y=y+z
+    y=y-1
+    call VertSeg
+  }
+  if(val&2) {
+    call VertSeg
+  }
+  if(val&1) {
+    y=y+z
+    y=y-1
+    call HorizSeg
+  }
+  return
+
+HorizSeg:
+  for(tz=0;tz<w;++tz) {
+    call LEDGraphics:plot
+    x=x+1
+  }
+  x=sx
+  y=sy
+  return
+
+VertSeg:
+  for(tz=0;tz<z;++tz) {
+    call LEDGraphics:plot
+    y=y+1
+  }
+  x=sx
+  y=sy
+  return
+
+----------------------------------------
+
+digitSegmentInfo:
+0b0_1111110 // 0
+0b0_0110000 // 1
+0b0_1101101 // 2
+0b0_1111001 // 3
+0b0_0110011 // 4
+0b0_1011011 // 5
+0b0_0011111 // 6
+0b0_1110000 // 7
+0b0_1111111 // 8
+0b0_1110011 // 9
+0b0_1110111 // A
+0b0_0011111 // b
+0b0_1001110 // C
+0b0_0111101 // d
+0b0_1001111 // E
+0b0_1000111 // F

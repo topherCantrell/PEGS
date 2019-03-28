@@ -1,0 +1,37 @@
+
+//define TOKENVALUE = 4
+//variable a
+variable firstWord
+
+//RECTANGLE x=1,y=2,width=3,height=4,tile=5
+
+//CLS tile=33
+
+//print "HOW NOW BROWN COWS "
+
+//firstword = 1
+//print MESARRAY [ firstword ]
+
+//firstWord = TOKENVALUE
+
+//V1 = @spacer
+
+//printvar firstWord
+//printvar v1
+
+
+//getNumber   firstWORD
+//printvar    firstWord
+//getLine buffer=buf,size=23
+//print buf
+
+//setCursor y=13,x=15
+//PRINT "X"
+
+CLS
+PRINT "VIDEO UNIT TEST"
+
+------
+
+
+

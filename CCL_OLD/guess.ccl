@@ -1,0 +1,28 @@
+
+variable guess
+variable myNumber
+
+myNumber = VRANDOM % 99
+myNumber = myNumber + 1
+
+print "I AM THINKING OF A NUMBER BETWEEN 1 AND 100.\n"
+print "YOU GUESS IT!\n"
+
+while(1) {
+
+  print "GUESS: "
+  getNumber guess
+  print "\n"
+
+  if(guess==myNumber) {
+    print "YOU GOT IT!\n"
+    break
+  }
+
+  if(guess>myNumber) {
+    print "LOWER.\n"
+  } else {
+    print "HIGHER.\n"
+  }
+
+}

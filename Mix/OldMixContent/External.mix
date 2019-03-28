@@ -1,0 +1,79 @@
+/**
+
+  This program shows how to load a COG with a binary propeller program 
+  stored in a MIX cluster.  
+
+/*
+
+cluster start
+
+call ExternalCOG:
+
+while(true) {
+  mem(0x7904,long) = 10
+  mem(0x7908,long) = 11
+  v0 = mem(0x7900,long)
+  printvar v0
+  print "\n"
+  v0 = mem(0x790C,long)
+  printvar v0
+  print "\n"
+  pause 1s
+}
+
+// **********************************************************************************
+// **********************************************************************************
+
+cluster ExternalCOG
+
+// This overtakes the SoundCOG ... just for demonstration.
+EXECUTE COG=4, PAR=0x4321
+// STOP
+
+// The STOP command is automatically added to the end of every cluster's
+// code section. The EXECUTE command knows to skip the LONG before loading
+// the program from the top of the data section.
+
+// EXECUTE automatically does a RETURN when the cog is loaded.
+
+--------------
+
+0xf0,0xf,0xbc,0xa0,0x9,0xe,0x3c,0x8,0xa,0xe,0xbc,0x8,0xb
+0x10,0xbc,0x8,0x8,0xe,0xbc,0x80,0xc,0xe,0x3c,0x8,0x0,0x0
+0x7c,0x5c,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x79,0x0,0x0
+0x4,0x79,0x0,0x0,0x8,0x79,0x0,0x0,0xc,0x79,0x0,0x0,0x32,0x0
+0x0,0x0
+
+/*
+
+pub start
+
+dat
+         org 0
+        
+top
+         mov       x,par
+         wrlong    x,t1
+         rdlong    x,t2
+         rdlong    y,t3
+         add       x,y         
+         wrlong    x,t4
+         jmp       #top     
+
+x   long 0
+y   long 0
+t1  long $7900
+t2  long $7904
+t3  long $7908
+t4  long $790C
+
+*/
+
+/*
+
+Compile the SPIN code in the IDE and save it to External.binary.
+java Externalizer External.binary > t.txt
+
+The MIX byte stream above is in t.txt
+
+*/

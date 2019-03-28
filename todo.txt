@@ -1,0 +1,79 @@
+#########################################################################
+* Block comments
+* Rework the input cog for GC or Keyboard config
+* Looking up a cluster should ignore case
+* system defines for rumble
+* Input Mode command (and default to keyboard if not given 1st)
+* Rumble commands 
+* while(true)
+* ++ and --
+? invalid commands show up as "Invalid number" instead of "Unknown Command"
+* ReadPlayer command
+* ERROR.MIX should work but the while(true) at the top does something weird
+* variable a,b,c,d
+* Color pick MIX program. Clean and comment it.
+* Multiline commands
+* Clean up the VideoCOGParser and structure commands
+* Clean/comment the KeyState program
+* Complex sprites need "transparent" color
+* We can still use 0 as flag for no-script ... just have to mask off the cluster offset added in.
+* Change sprite info geometry so that 0=8, 1=16, 2=32, and 3=64.
+* SPRITE/TILE use Arguments for geometry and mapping
+* ActionScript using arguments
+* handle true/false (1/0) in ALL help text and in processing everywhere (search for it).
+* make sure everyone uses equals("COMMAND") || startsWith("COMMAND ") and substrings here need to be 7 ... not 8.
+* everywhere there is a TILE= variable add an optional COLOR=
+* if( a==1 || a==2 || a==3) ... auto parenthesis
+* Better error handling from exceptions in ExpressionParser
+* LONG counter in memory ... counts retraces
+* Instead of SIMPLE,TILE -- SIMPLEIMAGE or IMAGE
+* There is only ONE pass through the parser ... change the commands that check for null for 1st pass
+* Need a command to wait for retrace (to change static sprites)
+## ! NOT handling in expression tree
+##* Arithmetic expression tree ... no order of operation
+* COLORSET INDEX=0, C0=a, C1=b, C2=c, C3=d (becomes a long write)
+* PRINT commands need to preserve color set
+* Document the VideoCOG commands
+
+-------------------------------------------------------------------------
+
+* MIX helper library for sprites
+
+* Weird error if you accidentally put a structure in the code section
+* defines for player inputs
+
+* More complete sprite testing ... all sizes, simple/complex, num per line, etc
+
+* Find a way to speed up the sprite-draw-loop. Maybe cache some calculations during
+  refresh ... separate code for simples.
+
+
+
+* sweep through commands and makesure N is correct in getArgument("blah",N)
+
+* Error message for: V1=MEM[V2]
+
+* document all system-defines in MIX.doc
+
+* In command reference, give the ranges and defaults of all parameters
+
+* Color of 15 means treat target tile as pointer to actual tile. Automatic tile/flipping algorithm.
+  Change the videocogparser to error on COLORSET 15
+
+
+
+
+
+* Emulator
+
+* Web site
+
+* Find SD cards cheap
+
+* Write a book "Flow" about loops and if/else etc. Use a quasi-assembly discussion
+  - Conditional jumps
+  - gotos ... are they evil?
+  - loops
+  - expression trees
+  - breaks/continues
+  - do/while-false

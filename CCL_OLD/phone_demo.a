@@ -1,0 +1,75 @@
+CLUSTER 
+WAVEFORM 0,WaveSimple,16
+SOUNDCFG None
+SOUND channel=0, frequency=440HZ // Desired:440.0 Actual:439.5990856339019
+SOUND channel=1, frequency=350HZ // Desired:350.0 Actual:350.1891021151422
+PAUSE 2000
+PAUSE 1000
+SOUND Channel=0,Frequency=1477Hz // Desired:1477.0 Actual:1475.796930342385
+SOUND Channel=1,Frequency=770Hz // Desired:770.0 Actual:770.4160246533128
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+SOUND Channel=0,Frequency=1336Hz // Desired:1336.0 Actual:1336.8983957219252
+SOUND Channel=1,Frequency=770Hz // Desired:770.0 Actual:770.4160246533128
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+SOUND Channel=0,Frequency=1209Hz // Desired:1209.0 Actual:1208.89748549323
+SOUND Channel=1,Frequency=697Hz // Desired:697.0 Actual:697.1556051310653
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+SOUND Channel=0,Frequency=1336Hz // Desired:1336.0 Actual:1336.8983957219252
+SOUND Channel=1,Frequency=852Hz // Desired:852.0 Actual:851.2087163772557
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+SOUND Channel=0,Frequency=1336Hz // Desired:1336.0 Actual:1336.8983957219252
+SOUND Channel=1,Frequency=697Hz // Desired:697.0 Actual:697.1556051310653
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+SOUND Channel=0,Frequency=1336Hz // Desired:1336.0 Actual:1336.8983957219252
+SOUND Channel=1,Frequency=852Hz // Desired:852.0 Actual:851.2087163772557
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+SOUND Channel=0,Frequency=1336Hz // Desired:1336.0 Actual:1336.8983957219252
+SOUND Channel=1,Frequency=697Hz // Desired:697.0 Actual:697.1556051310653
+PAUSE 250
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+PAUSE 500
+SOUND Channel=0,Frequency=480Hz // Desired:480.0 Actual:480.49202383240436
+SOUND Channel=1,Frequency=440Hz // Desired:440.0 Actual:439.5990856339019
+PAUSE 2000
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 2000
+PAUSE 2000
+SOUND Channel=0,Frequency=480Hz // Desired:480.0 Actual:480.49202383240436
+SOUND Channel=1,Frequency=440Hz // Desired:440.0 Actual:439.5990856339019
+PAUSE 2000
+SOUND Channel=0,Frequency=OFF
+SOUND Channel=1,Frequency=OFF
+PAUSE 250
+SOUNDCFG Noise,Sequencer,FrequencySweeper
+SOUND Channel=0,Wave=1,Frequency=1000Hz // Desired:1000.0 Actual:1000.4001600640256
+PAUSE 50
+STOP
+--DATA--
+WaveSimple:
+WAVEFORM {
+................................
+................................
+X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.
+.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X
+}

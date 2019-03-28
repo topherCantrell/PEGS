@@ -1,0 +1,653 @@
+
+
+
+labels cannot have spaces in them
+
+GOTO cluster: (offset defaults to 0)
+GOTO cluster:offset
+GOTO offset (cluster defaults to current)
+GOTO :offset (not really needed)
+
+SPIN assembly format suggestions:
+  - opcodes start in column 10
+  - opperands start in column 20
+  - comments start in column 40
+
+
+
+<HTML>
+<HEAD><TITLE>CCL Design Document</TITLE></HEAD>
+<BODY>
+
+<h1>CCL Structure</h1>
+
+CLUSTER myName
+...
+...
+// Comment
+...
+
+----------------
+
+mySequence:
+MusicSequence {
+}
+
+myTiles:
+
+VideoTile {
+}
+
+mySprite:
+VideoSprite {
+}
+
+myString:
+"This is a test", 13, 10, 0
+
+<h1>Interpreter Commands</h1>
+<PRE>
+
+Interpreter commands are always 4 bytes (1 long)
+
+0 sss 000c | cccccccc | ccccccco | oooooooo
+ These commands specify a cluster/offset.
+ GOTO             s=0      PC always changed
+ CALL             s=1      PC always changed, return stacked
+ BRANCH-IFNOT     s=2      PC is changed if last result == 0
+ BRANCH-IF        s=3      PC is changed if last result != 0
+ TOKENIZE         s=4      No room left in the VideoCOG. Overflowing here.
+ STOP             s=7      PC changed to this (infinite loop)
+ NOP              s=*      Anything else, do nothing
+
+For COG commands, pointers in clusters are full 11 bits (2K). But for
+interpreter commands, code must always reside on a 4-byte boundary
+thus 9bit offsets.
+
+Cluster numbers are 16 bits (64K clusters). 
+A reference to cluster FFFF means the current cluster.
+64K clusters * 2K bytes = 128M (minus 2K) of addressable program space.
+
+0 001 ---- | -------- | -------- | --------
+ RETURN
+
+0 010 pppp | pppppppp | pppppppp | pppppppp
+ PAUSE (p is number of timer-counts to wait)
+
+0 011 ---- | -------- | -------- | -------D
+ DEBUG (D is 1 or 0 to turn debug LED on or off)
+
+' This doesn't really belong here, but the VideoCOG is full.
+0 100 mmmm | bbbbbbbb | bbbbdddd | dddddddd
+ TOKENIZE (buffer-user-input, dictionary-pointer, max-tokens)
+
+</PRE>
+
+<h1>VariableCOG (Box 1) COG 1</h1>
+<PRE>
+
+Operation encoded as:
+DEST PROCESS LEFT OP RIGHT
+
+<-- Long COG ->
+1 111 0bbb | ss---abc | FLAGS | PROCESS:OP   ||   [DEST] [LEFT] [RIGHT]
+
+---- sizes ----
+abc = 0 if field (DLR) is 4 bytes or 1 if field is 1 byte
+DLR
+dddddddd llllllll llllrrrr rrrrrrrr
+d is only 8 bits in short form
+l and r are 12 bits in short form
+
+---- Flags ----
+
+dl DD LL RR
+
+d=1 if DEST field is used
+l=1 if LEFT field is used
+
+DD/LL/RR
+
+00 = Variable   
+01 = [Variable] 
+10 = Constant   
+11 = Special (Random, Memory, GPIO, etc) (field MUST be 4 bytes)
+
+Specials:
+-- | -T | xx | xx
+
+T:
+0000 Shared RAM location (byte) (xxxx)
+0001 VariableCOG Register (xxx) intended for SFRs
+0010 Shared RAM location (byte) (Vn)
+0011 VKEY next key in buffer or 0 if none (as dest to clear buffer)
+0100 VKEYSTATE for (xxxx)
+0101 VKEYSTATE for (Vn)
+1000 VLOCAL (currentOffset+xxxx)
+1001 VLOCAL (currentOffset+Vn)
+1010 Shared RAM location (word) (xxxx)
+1011 Shared RAM location (word) (Vn)
+1100
+1101
+1110
+1111 Random value (read only) write to change seed
+
+The following table shows the possible configuration of
+parameters and the number of extra longs required for each.
+
+D L R
+a b c - d l   s   Encoding
+---------------------------------
+0 0 0   0 0   0   RRRR
+0 0 0   0 1   0   LLLL RRRR
+0 0 0   1 0   0   DDDD RRRR
+0 0 0   1 1   0   DDDD LLLL RRRR
+
+1 1 1   0 0   0    DLR
+1 1 0   1 1   0    DLR RRRR
+1 0 1   0 1   0    DLR LLLL * (extra read in parse)
+0 1 1   1 0   0    DLR DDDD * (extra read in parse)
+0 0 1   1 1   0    DLR DDDD LLLL * (extra read in parse)
+1 0 0   0 1   0    DLR LLLL RRRR
+0 1 0   1 0   0    DLR DDDD RRRR
+
+Parameter parsing:
+- Read long to tmp
+- Parse byte DLR into tmpD, tmpL, and tmpR
+- if abc != 0 read long to tmp
+- if a==0 D=tmp and read next long to tmp
+- if b==0 L=tmp and read next long to tmp
+- if c==0 R=tmp
+
+---- Process ----
+=        000
+==       001
+!=       010
+<        011
+<=       100
+>        101
+>=       110
+
+---- OP ----
++        0000
+-        0001
+*        0010
+/        0011
+%        0100
+<<       0101
+>>       0110
+&        0111
+|        1000
+^        1001
+~        1010
+
+         1100 Store memory to memory. L = Start/Number R = pointer
+         1101 Read memory from memory. L = Start/Number R = pointer
+         1110 Store variables to memory. L = Start/Number R = pointer
+         1111 Read variables from memory. L = Start/Number R = pointer
+
+--- Examples ---
+
+VRAND
+VMEM[1234]
+VMEM[V1]
+VOUT
+VIN
+VDIR
+V0 = 12
+[V0] = V1
+V1 = v2 * 5
+V0=~V0
+
+Variable lines begin with "V" or "[V"
+
+--- CCL Parser strategy ---
+
+Look for PROCESS. 
+  Strip off left into LEFT. 
+  Note PROCESS and strip it off.
+  Strip off right hand side.
+Look for OP.
+  Strip off right into RIGHT.
+  Note OP and strip it off.
+What remains is LEFT
+  
+If there is an OP, make sure there is a LEFT and RIGHT ... UNLESS "~" and "-"
+  For "~" there must NOT be a LEFT. Make LEFT a C_0
+  For "-" if there is no LEFT MAKE LEFT a C_0
+If there is no OP move LEFT to RIGHT and null LEFT
+</PRE>
+
+<h1>TV8x8 (Driver) COG 7</h1>
+
+<PRE>
+7F60 - 7F9F TV driver params structure 
+7FA0 - 7FAF TV driver color schemes 
+
+For some reason I have bad results reading/writing the first 16 bytes of
+memory.
+
+Screen memory starts at $0010 - 068F (32*26 tiles ... 2 byte numbers)
+Tile memory starts at   $0690 - 17FF (4464 bytes or 279 tiles)
+</PRE>
+
+<h1>VideoCOG (Box 2) COG 2</h1>
+
+<PRE>
+CLS {32}
+RECTANGLE x,y,width,height,65
+RECTANGLE Vn
+  1_111_0010___00_i_00000___xxxxxxxx__yyyyyyyy | wwwwwwww_hhhhhhhh_vvvvvvvv_vvvvvvvv
+  i = 0 if x,y,w,h,v are constant or 1 if y is 1st variable number
+
+PRINT mesPtr
+  1_010_0000___00_0_00001___pppppppp__pppppppp
+
+PRINT mesPtr[Vn]
+  1_111_0010___00_0_00010___pppppppp__pppppppp | 00000000_00000000_00000000_vvvvvvvv
+
+PRINTVAR var
+  1_010_0000___00_0_00011___00000000__vvvvvvvv
+
+SETCURSOR x,y
+SETCURSOR Vn
+  1_010_0000___00_i_00100___xxxxxxxx__yyyyyyyy
+  i = 0 if x,y is constant or 1 if y is the 1st of 2 variables 
+
+SETCURSORINFO tileA,tileB,blinkRate
+  1_111_0010___00_0_00101___rrrrrrrr__rrrrrrrr  | AAAAAAAA__AAAAAAAA__BBBBBBBB__BBBBBBBB
+
+GETNUMBER Vn
+  1_010_0000___00_0_00110___00000000__vvvvvvvv
+
+GETLINE ptr,size
+  1_111_0010___00_0_00111___pppppppp__pppppppp  | 00000000__00000000__ssssssss__ssssssss
+
+INITTILES ptr,start,count
+  1_111_0010___00_0_01000___pppppppp__pppppppp  | ssssssss__ssssssss__cccccccc__cccccccc
+
+SETTILE x,y,n
+SETTILE Vn
+  1_111_0010___00_i_01001___xxxxxxxx__yyyyyyyy  | 00000000__00000000__nnnnnnnn__nnnnnnnn
+  i = 0 if x,y,n are constant or 1 if y is 1st variable number
+
+GETTILE x,y,Vn
+GETTILE Vn
+  1_111_0010___00_i_01010___xxxxxxxx__yyyyyyyy  | 00000000__00000000__00000000__vvvvvvvv
+  i = 0 if x,y,v are constant or 1 if y is 1st variable number
+
+
+
+SETSPRITE n,x,y,simple,pic,width,height,numPics,flipDelay,deltaX,deltaY,delayX,delayY,
+          flipTimer,actionScriptTimer,actionScript
+SETSPRITE actionScript,Vn
+ 
+                 i
+ 1_111_0010___11_0_01011____00000000__0000nnnn 
+  aaaaaaaa_bbbbbbbb_cccccccc_dddddddd            These 16 bytes are copied to
+  eeeeeeee_ffffffff_gggggggg_hhhhhhhh            sprite memory verbatum
+  iiiiiiii_jjjjjjjj_kkkkkkkk_llllllll
+  mmmmmmmm_nnnnnnnn_oooooooo_pppppppp
+
+                 i
+ 1_111_0010___00_1_01011____00000000__vvvvvvvv
+  00000000_00000000_aaaaaaaa_aaaaaaaa
+
+GETSPRITE Vn
+ 1_010_0000___00_0_01100___00000000__vvvvvvvv
+
+
+*** NO ROOM *** 
+
+ TOPHER Not really a Video thing, though it goes with text input which goes with screen/keyboard
+        so you would never need it without video.
+
+TOKENIZE buf,ptr,vn,maxWords
+  1_111_0bbb___00_0_00000___vvvvvvvv__mmmmmmmm  | bbbbbbbb__bbbbbbbb__pppppppp__pppppppp
+
+
+</PRE>
+
+<H1>Inputs (Driver)</H1>
+<PRE>
+7800 - 780F GC Controller values
+7FB0 - 7FFC Keyboard driver memory
+
+  7FB0 -       par_tail
+  7FB4 -       par_head
+  7FB8 -       par_present
+  7FBC - 7FCB  par_states
+  7FDC - 7FFB  par_keys
+
+The Inputs driver reads/writes memory directly. The VariableMgr includes special
+variables for chasing the head and tail of the keyboard buffer.
+
+- If par_tail == par_head there is no key
+- Read word from tail and bump tail (and with $F to wrap)
+- Set par_tail = par_head to clear the buffer
+- Get state of key: state := -(par_states[k >> 5] >> k & 1)
+
+VKEY          - next key from buffer (0 if none)
+              - VKEY = 0 (VKEY as dest) to clear the buffer
+</PRE>
+
+<h1>DiskCOG (Box 0) COG 0</h1>
+
+<PRE>
+MOUNT
+1_000__0000___0000_0000___00000000___00000000
+
+CACHE
+1_000__0000___0001_00hr___cccccccc___cccccccc
+
+h = 1 if loaded cluster should be ref-counted 0 if just a hint
+r = 1 if current cluster should be dereferenced
+c = cluster to load (FFFF means only dereference if r)
+returns pointer to cluster or FFFF is unable to load
+
+WRITE
+1_000__0000___0010_0000___00000000___00000000
+
+RESERVE
+1_000__0000___0011_0000___00000000___0000nnnn
+nnnn is number of new clusters to reserve
+
+
+7811 - Sectors per FAT cluster (0 means not mounted)
+7812 - 7815 1st sector of data area
+
+The cache-table has the following 4-byte format
+RRRRRRRR PPPPPPPP CCCCCCCC CCCCCCCC
+
+R is the reference count
+P is the RAM cluster number (N to 14 where 0-N and 15 are reserved)
+C is the disk cluster number (FFFF if not used)
+
+
+List is initialized with C=FFFF and P from N to 14
+
+CACHE:
+
+- Scan list. U=entry-of-current-cluster, C=entry-containing-cccc, 
+  F=entry-of-last-free (if any), Z=entry-of-last-zero-ref-cnt
+
+- If r and U decrement U->ref (floor 0)
+- If cccc==FFFF return FFFF
+
+- If C, move C to end of list. 
+- else If F, move F to end of list. Load cluster to F. 
+- else If Z, move Z to end of list. Load cluster to Z.
+- else return FFFF (All sectors loaded and locked down)
+
+- Add h to lastEntry->ref
+- Return lastEntry->pos
+
+REFERENCE:
+ CACHE command with h=1,r=0, and c to target cluster (usually current number filled in by CCL)
+
+DEREFERENCE:
+ CACHE command with h=0,r=1, and c=FFFF and offset to target cluster passed as usual
+
+HINT:
+ CACHE command with h=0,r=0, and c to target cluster
+
+WRITE:
+- Find entry. Return FFFF if not found (big time problem)
+- Write entry.
+- Return entry->pos (just an indicator)
+
+</PRE>
+
+<h1>SoundCOG (Box 3) COG 4</h1>
+<PRE>
+
+The audio system has 3 independently programmable voices.
+
+Each voice points to one of 3 loaded waveforms or a 4th waveform
+that is always random values (for noise). The 3 waveforms are initialized 
+to square, triangle, and sine. These can be changed with an external command.
+
+Each voice has a delay value that controls how many voice-loops pass between
+waveform value changes. The longer the delay, the lower the frequency of the
+voice output.
+
+Each voice has a volume decrease. This value is subtracted from the 
+waveform values -- efectively shifting the entire waveform down linearly.
+
+
+
+TOPHER talk about sweepers here
+TOPHER talk about sequencers here
+TOPHER talk about block-configuration here
+
+
+
+
+
+Channel commands contain the following information
+ (c) Channel: 2 bits            (A,B,C)
+ (f) Delay: 16 bits             (# of main loops before changing samples)
+ (v) Volume Decrease: 4 bits    (0-15)
+ (w) Waveform: 2 bits           (0,1,2,Noise)
+ (i) Sweeper increment: 4 bits  (signed)
+ (d) Sweeper delay: 8 bits      (# of main loops shifted left 6 bits)
+ (l) Sweeper length: 8 bits     (# of sweeper loops)
+ (r) Sweeper reload: 1 bit      (1=reload)
+ (s) Reset sweeper              (1=load sweeper values, 0=frequency only)
+
+// SOUND Timing=NSF1 Channel=0, Frequency=440Hz, Wave=0, EDelta=, EDuration=, ELength=, ERepeat=
+  // Timing=NSF1 is default if never given
+  // If given once, the last value is the default
+// SOUND Chan, Freq
+// SOUND Chan, Freq, Volume
+// SOUND Chan, Freq, Volume, Wave
+// SOUND Chan, Freq, Volume, Wave,  EDelta, EDuration, ELength, ERepeat
+// SOUND Chan, Freq, Volume, Wave,  EDelta, EDuration, ELength
+// SOUND Chan, OFF
+// SOUND OFF
+
+1_111_0011 | 00__0000_00 || 0scc_0vvvvvv_iiii_r
+ dddddddd_llllllll_ww00ffff_ffffffff
+
+// SEQUENCER n,ptr
+// SEQUENCER n,OFF
+// SEQUENCER ptr
+// SEQUENCER OFF
+
+1_011_000n | 00__0001_00_pppppppp_pppppppp 
+  (n) is sequencer id (0 or 1)
+  (p) is pointer to script (all 0s for stop sequencer)
+
+// SOUNDCFG Noise,Sequencer,FrequencySweeper,VolumeSweeper
+
+1_011_0000 | 00__0010_00000000000000_FVSN
+
+F= Frequency sweeper (only one: F or V)
+V= Volume sweeper    (only one: F or V)
+S= Sequencer
+N= Noise
+
+// WAVEFORM N,ptr
+
+1_011_0000 | 00__0011_ww_pppppppp_pppppppp
+
+Channel scripts are sequences of WORD commands:
+  1000 dddddddddddd       d is delay event ... wait d voice-loops before next event (shifted left 8 bits)
+  1001 oooooooooooo       GOTO given offset in sequence
+  1111 111111111111       Stop sequencer
+
+  0scc ffffffffffff      (s=0) Change just frequency
+
+  0scc 0vvvvvv iiii r    (s=1) Complete channel command (two words follow)
+   dddddddd_llllllll
+   ww00ffff_ffffffff
+
+The system clock is running at 80_000_000 Hz
+A piano range is A0=27.5Hz to C8=4186Hz
+
+Assume our working frequency is 40 to 40000Hz
+
+Assume a waveform consists of N samples (up to 64). The following table
+shows how many clocks-per-sample you have for a given frequency and
+waveform resolution.
+
+Freq   Sampes/waveform    Samples/second    Clocks/sample
+40                   2                80          1000000
+40                   4               160           500000
+40                   8               320           250000
+40                  16               640           125000
+40                  32              1280            62500
+40                  64              2560            31250
+60                   2               120      666666.6667
+60                   4               240      333333.3333
+60                   8               480      166666.6667
+60                  16               960      83333.33333
+60                  32              1920      41666.66667
+60                  64              3840      20833.33333
+100                  2               200           400000
+100                  4               400           200000
+100                  8               800           100000
+100                 16              1600            50000
+100                 32              3200            25000
+100                 64              6400            12500
+10000                2             20000             4000
+10000                4             40000             2000
+10000                8             80000             1000
+10000               16            160000              500
+10000               32            320000              250
+10000               64            640000              125
+20000                2             40000             2000
+20000                4             80000             1000
+20000                8            160000              500
+20000               16            320000              250
+20000               32            640000              125
+20000               64           1280000             62.5
+40000                2             80000             1000
+40000                4            160000              500
+40000                8            320000              250
+40000               16            640000              125
+40000               32           1280000             62.5
+40000               64           2560000            31.25
+
+The more samples you have to pump per second, the less time you
+have between pumps. Higher waveform resolution reduces your available
+clocks as does higher frequency. 
+
+Frequency production is also limited to whole number multiples of the
+main loop. Fast inner loops of low-resolution waveforms gives the most
+available frequency values (good for music) but poor control of sound.
+
+Q is the number of clocks in the main loop. A waveform has N samples.
+The main loop changes samples after M loops.
+
+The waveform completes 1 cycle after Q*M*N clocks.
+
+Freq = 80000000 / (Q*M*N)
+M = 80000000 / (Q*N*Freq)
+
+-- Sequencer Commands --
+
+* LFs are replaced with spaces
+* "|" are ignored (optional measure marks)
+* Case insensitive
+
+ VOICE1 VOICE2 VOICE3
+
+NOTESTARTSTYLE<Volume=0, Waveform=0, EDelta=1, EPeriod=100, ELength=200, ERepeat = TRUE>
+NOTESTOPSTYLE<EDelta=1, EPeriod=100, ELength=200, ERepeat = TRUE>
+SOUND< ..... >
+ PAUSE<100>
+ TEMPO<60>
+ STACCATO<80%> or STACCATO<10MS>
+ REPEATTOHERE
+
+4.TA0#
+
+4.TA++b
+  DB-#
+   C
+   D
+   E
+   F
+   G
+   R
+
+A musical note specification is really two events: a note on and a note off.
+Note events come as two major parts: length and frequency.
+
+2A0	- Means half note (2 beats) A in the 0th octave
+G	- Means a G in the last used octave at the last used length
+4.tC++	- Means a dotted quarter note tripplet (T) two octaves (++) above the last octave
+4dC3b	- Means a quarter note double C-flat (b) in octave 3	
+4G_	- Means a quarter note G held into the next note (_)
+
+Lengths:
+1,2,4,8,16,32 	Standard music beats ... can have "." and or "t/d" modifiers
+If unspecified, use last given length
+
+Frequencies:
+A,B,C,D,E,F,G, and R (for rest)
+Octave info, if given, follows as an absolute number or multiple "+/-".
+Octave info defaults to the last used value.
+Accidental info, if needed, follows as a "b" (flat) or "#" (sharp)
+A trailing "_" indicates the note is held into the next note, which must be the same frequency
+
+
+</PRE>
+
+
+
+
+
+SPRITE COG
+
+; TOPHER SPrite data should go here since it is fixed
+; X,Y,X-delta,Y-delay,X-delta-delay,Y-delta-delay
+
+XX YY XD YD XC YC -- --
+
+
+<HR>
+<h1>TODO</h1>
+<HR>
+
+<PRE>
+
+# In the parser watch for --DATA-- and do all commands data after. No need for '#'.
+# In the parser allow "GETLINE food,10" the food reserve to be created automatically
+# Lower-case letters are upper-case GREEN
+# Finish VideoParser for INIT,SET,GET TILE and verify
+# PRINT "msg" automatically add --DATA--
+# Add STOP to end of code
+# VKEY command from video cog doesn't work
+# RANDOM, Multiply, Divide, Modulo
+# Get compiler generating binary
+# Disk Manager
+# Output format in either intermediate CCL, SPIN, or binary
+# Get binary running in CCL
+# Disk manager marks reserved clusters from configured settings
+# Disk manager command to grab a reserved from top.
+# VMEM(blah) = val doesn't seem to work
+* VLOCAL(offset) VLOCAL(Vn)
+* Store/Read memory/variables in VariableCOG
+
+* Test Disk Manager's cache with CCL program
+
+* Move 16-byte Video scratch area to 1st 16 bytes. Hardcode clock frequency for TV8x8.
+* common variables like "v" replace common commands. Keep original and sub strings.
+* >= in Var manager doesn't seem to work
+* Compiler/Emulator on web with simple text input window
+* Sound (November)
+* Sprites (December)
+* CCL Language reference to the web
+* CCL Technical reference to the web
+* Sample CCL to the web
+  * Greeter
+  * Guess
+  # Madlibs
+  * Drive
+
+</PRE>
+
+</BODY>
+</HTML>

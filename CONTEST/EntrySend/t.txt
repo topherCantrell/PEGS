@@ -1,0 +1,1669 @@
+::1
+::IF( (a==5) )
+>>GOTO FLOW_LOOP_WHILE_1_break>>
+<<GOTO FLOW_LOOP_WHILE_1_continue<<
+::1
+::IF( (a==4 && (b<4 || c>5)) )
+>>GOTO FLOW_LOOP_WHILE_1_loop>>
+::1
+::IF( (hitCount==0) )
+>>call playerWin>>
+>>return>>
+::1
+::IF( (cpuHitCount==0) )
+>>call cpuWin>>
+>>return>>
+::1
+::IF( (true) )
+>>GOTO FLOW_LOOP_WHILE_2_loop>>
+::1
+::IF( (inputs!=0) )
+>>GOTO FLOW_LOOP_DO_3_loop>>
+::1
+::IF( (inputs==0) )
+>>GOTO FLOW_LOOP_DO_4_loop>>
+::1
+::IF( (inputs!=0) )
+>>GOTO FLOW_LOOP_DO_5_loop>>
+::1
+::IF( (inputs!=0) )
+>>cursorTile = tmp1>>
+>>setTile cursorX>>
+>>GOTO FLOW_LOOP_WHILE_7_break>>
+::1
+::IF( (inputs!=0) )
+>>GOTO FLOW_LOOP_WHILE_7_break>>
+::1
+::IF( (true) )
+>>GOTO FLOW_LOOP_WHILE_7_loop>>
+::1
+::IF( (inputs & IN_RIGHT) )
+>>cursorX = cursorX + 1>>
+::1
+::IF( (inputs & IN_LEFT) )
+>>cursorX = cursorX - 1>>
+::1
+::IF( (inputs & IN_UP) )
+>>cursorY = cursorY - 1>>
+::1
+::IF( (inputs & IN_DOWN) )
+>>cursorY = cursorY + 1>>
+::1
+::IF( (cursorX<CPU_BOARD_X) )
+>>cursorX = CPU_BOARD_X>>
+::1
+::IF( (cursorY<CPU_BOARD_Y) )
+>>cursorY = CPU_BOARD_Y>>
+::1
+::IF( (cursorX>=CPU_BOARD_X_LIMIT) )
+>>cursorX = cursorX-1>>
+::1
+::IF( (cursorY>=CPU_BOARD_Y_LIMIT) )
+>>cursorY = cursorY-1>>
+::1
+::IF( (inputs & IN_A) )
+>>GetInputs variable=inputs>>
+>>IF(inputs!=0) {>>
+>>GOTO FLOW_LOOP_DO_8_loop>>
+>>}>>
+>>blinkX = cursorX>>
+>>blinkY = cursorY>>
+>>blinkBack = cursorTile>>
+>>SOUND Channel=0, Frequency=900Hz, Wave=0, EDelta=1, EPeriod=10ms, ELength=2000ms>>
+>>if(cursorTile<COMPUTER_MISS) {>>
+>>if(cursorTile==BOARD_MAIN) {>>
+>>call shotAnimate>>
+>>blinkBack = HUMAN_MISS>>
+>>SOUND Channel=0, Frequency=OFF>>
+>>call shotAnimate>>
+>>return>>
+>>}>>
+>>if(cursorTile>=BOATS_INVIS_P) {>>
+>>call shotAnimate>>
+>>blinkBack = cursorTile - 5>>
+>>SOUND Channel=0, Frequency=500Hz, Wave=1, EDelta=2, EPeriod=5ms, ELength=2000ms>>
+>>call shotAnimate>>
+>>SOUND Channel=0, Frequency=OFF>>
+>>PAUSE 250ms>>
+>>hitCount = hitCount - 1>>
+>>return>>
+>>}>>
+>>}>>
+::1
+::IF( (inputs!=0) )
+>>GOTO FLOW_LOOP_DO_8_loop>>
+::1
+::IF( (cursorTile<COMPUTER_MISS) )
+>>if(cursorTile==BOARD_MAIN) {>>
+>>call shotAnimate>>
+>>blinkBack = HUMAN_MISS>>
+>>SOUND Channel=0, Frequency=OFF>>
+>>call shotAnimate>>
+>>return>>
+>>}>>
+>>if(cursorTile>=BOATS_INVIS_P) {>>
+>>call shotAnimate>>
+>>blinkBack = cursorTile - 5>>
+>>SOUND Channel=0, Frequency=500Hz, Wave=1, EDelta=2, EPeriod=5ms, ELength=2000ms>>
+>>call shotAnimate>>
+>>SOUND Channel=0, Frequency=OFF>>
+>>PAUSE 250ms>>
+>>hitCount = hitCount - 1>>
+>>return>>
+>>}>>
+::1
+::IF( (cursorTile==BOARD_MAIN) )
+>>call shotAnimate>>
+>>blinkBack = HUMAN_MISS>>
+>>SOUND Channel=0, Frequency=OFF>>
+>>call shotAnimate>>
+>>return>>
+::1
+::IF( (cursorTile>=BOATS_INVIS_P) )
+>>call shotAnimate>>
+>>blinkBack = cursorTile - 5>>
+>>SOUND Channel=0, Frequency=500Hz, Wave=1, EDelta=2, EPeriod=5ms, ELength=2000ms>>
+>>call shotAnimate>>
+>>SOUND Channel=0, Frequency=OFF>>
+>>PAUSE 250ms>>
+>>hitCount = hitCount - 1>>
+>>return>>
+::1
+::IF( (true) )
+>>GOTO FLOW_LOOP_WHILE_6_loop>>
+::1
+::IF( (tx==0) )
+>>GOTO FLOW_LOOP_DO_9_loop>>
+::1
+::IF( (horz==1) )
+>>tx = tx + 1>>
+<<ty = ty + 1<<
+::1
+::IF( (size!=0) )
+>>GOTO FLOW_LOOP_FOR_10_loop>>
+::1
+::IF( (tt!=BOARD_MAIN) )
+>>tx = 0>>
+>>return>>
+::1
+::IF( (horz==1) )
+>>tx = tx + 1>>
+<<ty = ty + 1<<
+::1
+::IF( (tmp1!=0) )
+>>GOTO FLOW_LOOP_FOR_11_loop>>
+::1
+::IF( (tx>9) )
+>>GOTO FLOW_LOOP_DO_12_loop>>
+::1
+::IF( (ty>9) )
+>>GOTO FLOW_LOOP_DO_13_loop>>
+::1
+::IF( (tt==BOARD_MAIN) )
+>>tt = ship>>
+<<tt = ship+5<<
+<<badPlace = 1<<
+::1
+::IF( (horz==1) )
+>>tx = tx + 1>>
+<<ty = ty + 1<<
+::1
+::IF( (tmp1!=0) )
+>>GOTO FLOW_LOOP_FOR_14_loop>>
+::1
+::IF( (horz==1) )
+>>tx = tx + 1>>
+<<ty = ty + 1<<
+::1
+::IF( (tmp1!=0) )
+>>GOTO FLOW_LOOP_FOR_15_loop>>
+::1
+::IF( (inputs!=0) )
+>>GOTO FLOW_LOOP_WHILE_17_break>>
+::1
+::IF( (inputs!=0) )
+>>call drawShip>>
+>>GOTO FLOW_LOOP_WHILE_17_break>>
+::1
+::IF( (true) )
+>>GOTO FLOW_LOOP_WHILE_17_loop>>
+::1
+::IF( (inputs & IN_A) )
+>>if(badPlace==0) {>>
+>>SOUNDCFG Noise,FrequencySweeper>>
+>>SOUND Channel=0, Frequency=600Hz, Wave=0, EDelta=-1, EPeriod=5, ELength=150>>
+>>PAUSE 150ms>>
+>>SOUND Channel=0, Frequency=OFF>>
+>>GetInputs variable=inputs>>
+>>IF(inputs!=0) {>>
+>>GOTO FLOW_LOOP_DO_18_loop>>
+>>}>>
+>>return>>
+>>} else {>>
+>>SOUNDCFG Noise,FrequencySweeper>>
+>>SOUND Channel=0, Frequency=100Hz, Wave=0, EDelta=6, EPeriod=10, ELength=100, ERepeat=true>>
+>>SOUND Channel=1, Frequency=120Hz, Wave=0, EDelta=8, EPeriod=10, ELength=100, ERepeat=true>>
+>>PAUSE 200ms>>
+>>SOUND Channel=0, Frequency=OFF>>
+>>SOUND Channel=1, Frequency=OFF>>
+>>}>>
+::1
+::IF( (badPlace==0) )
+>>SOUNDCFG Noise,FrequencySweeper>>
+>>SOUND Channel=0, Frequency=600Hz, Wave=0, EDelta=-1, EPeriod=5, ELength=150>>
+>>PAUSE 150ms>>
+>>SOUND Channel=0, Frequency=OFF>>
+>>GetInputs variable=inputs>>
+>>IF(inputs!=0) {>>
+>>GOTO FLOW_LOOP_DO_18_loop>>
+>>}>>
+>>return>>
+<<SOUNDCFG Noise,FrequencySweeper<<
+<<SOUND Channel=0, Frequency=100Hz, Wave=0, EDelta=6, EPeriod=10, ELength=100, ERepeat=true<<
+<<SOUND Channel=1, Frequency=120Hz, Wave=0, EDelta=8, EPeriod=10, ELength=100, ERepeat=true<<
+<<PAUSE 200ms<<
+<<SOUND Channel=0, Frequency=OFF<<
+<<SOUND Channel=1, Frequency=OFF<<
+::1
+::IF( (inputs!=0) )
+>>GOTO FLOW_LOOP_DO_18_loop>>
+::1
+::IF( (inputs & IN_RIGHT) )
+>>cursorX = cursorX + 1>>
+::1
+::IF( (inputs & IN_LEFT) )
+>>cursorX = cursorX - 1>>
+::1
+::IF( (inputs & IN_UP) )
+>>cursorY = cursorY - 1>>
+::1
+::IF( (inputs & IN_DOWN) )
+>>cursorY = cursorY + 1>>
+::1
+::IF( (inputs & IN_B) )
+>>if(horz==0) {>>
+>>horz = 1>>
+>>} else {>>
+>>horz = 0>>
+>>}>>
+>>GetInputs variable=inputs>>
+>>IF(inputs!=0) {>>
+>>GOTO FLOW_LOOP_DO_19_loop>>
+>>}>>
+::1
+::IF( (horz==0) )
+>>horz = 1>>
+<<horz = 0<<
+::1
+::IF( (inputs!=0) )
+>>GOTO FLOW_LOOP_DO_19_loop>>
+::1
+::IF( (cursorX<PLR_BOARD_X) )
+>>cursorX = PLR_BOARD_X>>
+::1
+::IF( (cursorY<PLR_BOARD_Y) )
+>>cursorY = PLR_BOARD_Y>>
+::1
+::IF( (horz==1) )
+>>tmp1 = tmp1 - size>>
+<<tmp1 = tmp1 - 1<<
+::1
+::IF( (cursorX>tmp1) )
+>>cursorX = tmp1>>
+::1
+::IF( (horz==1) )
+>>tmp1 = tmp1 - 1>>
+<<tmp1 = tmp1 - size<<
+::1
+::IF( (cursorY>tmp1) )
+>>cursorY = tmp1>>
+::1
+::IF( (true) )
+>>GOTO FLOW_LOOP_WHILE_16_loop>>
+::1
+::IF( (numHitA>0) )
+>>lastHitX = lastHitXA>>
+>>lastHitY = lastHitYA>>
+>>numLeft = numLeftA>>
+>>numHit = numHitA>>
+>>goto trackShip>>
+::1
+::IF( (numHitB>0) )
+>>lastHitX = lastHitXB>>
+>>lastHitY = lastHitYB>>
+>>numLeft = numLeftB>>
+>>numHit = numHitB>>
+>>goto trackShip>>
+::1
+::IF( (numHitC>0) )
+>>lastHitX = lastHitXC>>
+>>lastHitY = lastHitYC>>
+>>numLeft = numLeftC>>
+>>numHit = numHitC>>
+>>goto trackShip>>
+::1
+::IF( (numHitS>0) )
+>>lastHitX = lastHitXS>>
+>>lastHitY = lastHitYS>>
+>>numLeft = numLeftS>>
+>>numHit = numHitS>>
+>>goto trackShip>>
+::1
+::IF( (numHitP>0) )
+>>lastHitX = lastHitXP>>
+>>lastHitY = lastHitYP>>
+>>numLeft = numLeftP>>
+>>numHit = numHitP>>
+>>goto trackShip>>
+::1
+::IF( (tt==ship) )
+>>tmp1 = 1>>
+>>goto trackRight>>
+::1
+::IF( (tt<BOATS_HIT_P) )
+>>if(tt>=BOARD_MAIN) {>>
+>>goto doItR>>
+>>}>>
+::1
+::IF( (tt>=BOARD_MAIN) )
+>>goto doItR>>
+::1
+::IF( (tt<COMPUTER_MISS) )
+>>if(tt>BOATS_HIT_C) {>>
+>>tlx = tx>>
+>>tly = ty>>
+>>if(tmp1==1) {>>
+>>goto recordShot>>
+>>}>>
+>>}>>
+::1
+::IF( (tt>BOATS_HIT_C) )
+>>tlx = tx>>
+>>tly = ty>>
+>>if(tmp1==1) {>>
+>>goto recordShot>>
+>>}>>
+::1
+::IF( (tmp1==1) )
+>>goto recordShot>>
+::1
+::IF( (tt==ship) )
+>>tmp1 = 1>>
+>>goto trackLeft>>
+::1
+::IF( (tt<BOATS_HIT_P) )
+>>if(tt>=BOARD_MAIN) {>>
+>>goto doItL>>
+>>}>>
+::1
+::IF( (tt>=BOARD_MAIN) )
+>>goto doItL>>
+::1
+::IF( (tt<COMPUTER_MISS) )
+>>if(tt>BOATS_HIT_C) {>>
+>>tlx = tx>>
+>>tly = ty>>
+>>if(tmp1==1) {>>
+>>goto recordShot>>
+>>}>>
+>>}>>
+::1
+::IF( (tt>BOATS_HIT_C) )
+>>tlx = tx>>
+>>tly = ty>>
+>>if(tmp1==1) {>>
+>>goto recordShot>>
+>>}>>
+::1
+::IF( (tmp1==1) )
+>>goto recordShot>>
+::1
+::IF( (tmp1==1) )
+>>goto trackRight>>
+::1
+::IF( (tt==ship) )
+>>tmp1 = 1>>
+>>goto trackUp>>
+::1
+::IF( (tt<BOATS_HIT_P) )
+>>if(tt>=BOARD_MAIN) {>>
+>>goto doItU>>
+>>}>>
+::1
+::IF( (tt>=BOARD_MAIN) )
+>>goto doItU>>
+::1
+::IF( (tt<COMPUTER_MISS) )
+>>if(tt>BOATS_HIT_C) {>>
+>>tlx = tx>>
+>>tly = ty>>
+>>if(tmp1==1) {>>
+>>goto recordShot>>
+>>}>>
+>>}>>
+::1
+::IF( (tt>BOATS_HIT_C) )
+>>tlx = tx>>
+>>tly = ty>>
+>>if(tmp1==1) {>>
+>>goto recordShot>>
+>>}>>
+::1
+::IF( (tmp1==1) )
+>>goto recordShot>>
+::1
+::IF( (tt==ship) )
+>>tmp1 = 1>>
+>>goto trackDown>>
+::1
+::IF( (tt<BOATS_HIT_P) )
+>>if(tt>=BOARD_MAIN) {>>
+>>goto doItD>>
+>>}>>
+::1
+::IF( (tt>=BOARD_MAIN) )
+>>goto doItD>>
+::1
+::IF( (tt<COMPUTER_MISS) )
+>>if(tt>BOATS_HIT_C) {>>
+>>tlx = tx>>
+>>tly = ty>>
+>>if(tmp1==1) {>>
+>>goto recordShot>>
+>>}>>
+>>}>>
+::1
+::IF( (tt>BOATS_HIT_C) )
+>>tlx = tx>>
+>>tly = ty>>
+>>if(tmp1==1) {>>
+>>goto recordShot>>
+>>}>>
+::1
+::IF( (tmp1==1) )
+>>goto recordShot>>
+::1
+::IF( (tmp1==1) )
+>>goto trackUp>>
+::1
+::IF( (tx>9) )
+>>goto randomTxTy>>
+::1
+::IF( (ty>9) )
+>>goto randomTxTy2>>
+::1
+::IF( (tt >= BOATS_HIT_P) )
+>>goto randomCpuShot>>
+::1
+::IF( (tt==BOATS_UNHIT_A) )
+>>lastHitXA = tx>>
+>>lastHitYA = ty>>
+>>numHitA = numHitA + 1>>
+>>numLeftA = numLeftA - 1>>
+>>cpuHitCount = cpuHitCount - 1>>
+>>if(numLeftA==0) {>>
+>>numHitA=0>>
+>>}>>
+::1
+::IF( (numLeftA==0) )
+>>numHitA=0>>
+::1
+::IF( (tt==BOATS_UNHIT_B) )
+>>lastHitXB = tx>>
+>>lastHitYB = ty>>
+>>numHitB = numHitB + 1>>
+>>numLeftB = numLeftB - 1>>
+>>cpuHitCount = cpuHitCount - 1>>
+>>if(numLeftB==0) {>>
+>>numHitB=0>>
+>>}>>
+::1
+::IF( (numLeftB==0) )
+>>numHitB=0>>
+::1
+::IF( (tt==BOATS_UNHIT_S) )
+>>lastHitXC = tx>>
+>>lastHitYC = ty>>
+>>numHitC = numHitC + 1>>
+>>numLeftC = numLeftC - 1>>
+>>cpuHitCount = cpuHitCount - 1>>
+>>if(numLeftC==0) {>>
+>>numHitC=0>>
+>>}>>
+::1
+::IF( (numLeftC==0) )
+>>numHitC=0>>
+::1
+::IF( (tt==BOATS_UNHIT_C) )
+>>lastHitXS = tx>>
+>>lastHitYS = ty>>
+>>numHitS = numHitS + 1>>
+>>numLeftS = numLeftS - 1>>
+>>cpuHitCount = cpuHitCount - 1>>
+>>if(numLeftS==0) {>>
+>>numHitS=0>>
+>>}>>
+::1
+::IF( (numLeftS==0) )
+>>numHitS=0>>
+::1
+::IF( (tt==BOATS_UNHIT_P) )
+>>lastHitXP = tx>>
+>>lastHitYP = ty>>
+>>numHitP = numHitP + 1>>
+>>numLeftP = numLeftP - 1>>
+>>cpuHitCount = cpuHitCount - 1>>
+>>if(numLeftP==0) {>>
+>>numHitP=0>>
+>>}>>
+::1
+::IF( (numLeftP==0) )
+>>numHitP=0>>
+::1
+::IF( (tt==BOARD_MAIN) )
+>>inputs = 0>>
+>>tt = COMPUTER_MISS>>
+>>SOUND Channel=0, Frequency=OFF>>
+<<inputs = 1<<
+<<tt = tt + 5<<
+<<SOUND Channel=0, Frequency=500Hz, Wave=1, EDelta=2, EPeriod=5ms, ELength=2000ms<<
+::1
+::IF( (inputs) )
+>>SOUND Channel=0, Frequency=OFF>>
+battleship.mix:3:define PLR_BOARD_X =       18
+battleship.mix:4:define PLR_BOARD_Y =        5
+battleship.mix:5:define PLR_BOARD_X_LIMIT = 28
+battleship.mix:6:define PLR_BOARD_Y_LIMIT = 15
+battleship.mix:9:define CPU_BOARD_X =        2
+battleship.mix:10:define CPU_BOARD_Y =        5
+battleship.mix:11:define CPU_BOARD_X_LIMIT = 12
+battleship.mix:12:define CPU_BOARD_Y_LIMIT = 15
+BattleshipBoardConstants.mix:2:define BOARD_BLANK    = 428
+BattleshipBoardConstants.mix:3:define BOARD_TOP      = 429
+BattleshipBoardConstants.mix:4:define BOARD_LEFT     = 430
+BattleshipBoardConstants.mix:5:define BOARD_DOT      = 431
+BattleshipBoardConstants.mix:6:define BOARD_MAIN     = 432
+BattleshipBoardConstants.mix:8:define BOATS_UNHIT_P  = 433
+BattleshipBoardConstants.mix:9:define BOATS_UNHIT_S  = 434
+BattleshipBoardConstants.mix:10:define BOATS_UNHIT_B  = 435
+BattleshipBoardConstants.mix:11:define BOATS_UNHIT_A  = 436
+BattleshipBoardConstants.mix:12:define BOATS_UNHIT_C  = 437
+BattleshipBoardConstants.mix:13:define BOATS_HIT_P    = 438
+BattleshipBoardConstants.mix:14:define BOATS_HIT_S    = 439
+BattleshipBoardConstants.mix:15:define BOATS_HIT_B    = 440
+BattleshipBoardConstants.mix:16:define BOATS_HIT_A    = 441
+BattleshipBoardConstants.mix:17:define BOATS_HIT_C    = 442
+BattleshipBoardConstants.mix:18:define BOATS_INVIS_P  = 443
+BattleshipBoardConstants.mix:19:define BOATS_INVIS_S  = 444
+BattleshipBoardConstants.mix:20:define BOATS_INVIS_B  = 445
+BattleshipBoardConstants.mix:21:define BOATS_INVIS_A  = 446
+BattleshipBoardConstants.mix:22:define BOATS_INVIS_C  = 447
+BattleshipBoardConstants.mix:23:define COMPUTER_MISS  = 448
+BattleshipBoardConstants.mix:24:define HUMAN_MISS     = 449
+BattleshipBoardConstants.mix:25:define RED_B          = 450
+BattleshipBoardConstants.mix:26:define GREEN_A        = 451
+BattleshipBoardConstants.mix:27:define CURSOR_B       = 452
+BattleshipBoardConstants.mix:28:define SHOT_INDICATOR = 453
+battleship.mix:17:variable cursorX, cursorY, cursorTile
+battleship.mix:19:variable ship, horz, badPlace, size
+battleship.mix:21:variable numLeft, numHit
+battleship.mix:23:variable tmp1
+battleship.mix:24:variable ptr
+battleship.mix:26:variable tx, ty, tt
+battleship.mix:27:variable inputs
+battleship.mix:29:variable hitCount, cpuHitCount
+battleship.mix:31:variable lastHitXA, lastHitYA, numLeftA, numHitA
+battleship.mix:32:variable lastHitXB, lastHitYB, numLeftB, numHitB
+battleship.mix:33:variable lastHitXC, lastHitYC, numLeftC, numHitC
+battleship.mix:34:variable lastHitXS, lastHitYS, numLeftS, numHitS
+battleship.mix:35:variable lastHitXP, lastHitYP, numLeftP, numHitP
+battleship.mix:37:variable lastHitX, lastHitY
+battleship.mix:39:variable tlx, tly
+battleship.mix:42:variable blinkX, blinkY, blinkTile, blinkBack
+battleship.mix:44:cluster init
+battleship.mix:48:call BoardData:InitTiles
+battleship.mix:50:initTiles winLetters,458,13
+#FLOW_LOOP_WHILE_1_begin
+battleship.mix:53:GOTO FLOW_LOOP_WHILE_1_continue
+#FLOW_LOOP_WHILE_1_loop
+battleship.mix:55:if(a==5) {
+battleship.mix:56:GOTO FLOW_LOOP_WHILE_1_break
+battleship.mix:58:GOTO FLOW_LOOP_WHILE_1_continue
+#FLOW_LOOP_WHILE_1_continue
+battleship.mix:61:IF(a==4 && (b<4 || c>5)) {
+battleship.mix:61:GOTO FLOW_LOOP_WHILE_1_loop
+#FLOW_LOOP_WHILE_1_break
+#FLOW_LOOP_WHILE_1_end
+battleship.mix:65:CLS BOARD_BLANK
+battleship.mix:68:rectangle PLR_BOARD_X,       PLR_BOARD_Y,       10,10, BOARD_MAIN
+battleship.mix:69:rectangle PLR_BOARD_X_LIMIT, PLR_BOARD_Y,        1,10, BOARD_LEFT
+battleship.mix:70:rectangle PLR_BOARD_X,       PLR_BOARD_Y_LIMIT, 10, 1, BOARD_TOP
+battleship.mix:71:setTile   PLR_BOARD_X_LIMIT, PLR_BOARD_Y_LIMIT,  BOARD_DOT
+battleship.mix:72:}
+battleship.mix:81:return
+#PlaceAndPlay
+battleship.mix:86:call PlaceShips:placeHumanShips
+battleship.mix:93:call PlaceShips:placeCPUShips
+battleship.mix:96:cursorX = CPU_BOARD_X
+battleship.mix:97:cursorY = CPU_BOARD_Y
+battleship.mix:100:call GamePlay
+battleship.mix:101:goto SeaWar:ReStart
+#GamePlay
+#FLOW_LOOP_WHILE_2_begin
+battleship.mix:106:GOTO FLOW_LOOP_WHILE_2_continue
+#FLOW_LOOP_WHILE_2_loop
+battleship.mix:109:call playerShot
+battleship.mix:110:if(hitCount==0) {
+battleship.mix:111:call playerWin
+battleship.mix:112:return
+battleship.mix:116:call CPU:cpuShot
+battleship.mix:117:if(cpuHitCount==0) {
+battleship.mix:118:call cpuWin
+battleship.mix:119:return
+#FLOW_LOOP_WHILE_2_continue
+battleship.mix:122:IF(true) {
+battleship.mix:122:GOTO FLOW_LOOP_WHILE_2_loop
+#FLOW_LOOP_WHILE_2_break
+#FLOW_LOOP_WHILE_2_end
+#PlayerWin
+battleship.mix:135:setTile 11,3,459
+battleship.mix:136:setTile 12,3,460
+battleship.mix:137:setTile 13,3,461
+battleship.mix:138:setTile 15,3,462
+battleship.mix:139:setTile 16,3,458
+battleship.mix:140:setTile 17,3,463
+battleship.mix:141:setTile 18,3,470
+battleship.mix:142:call WaitStart
+battleship.mix:143:return
+#CpuWin
+battleship.mix:150:setTile 12,3,458
+battleship.mix:151:setTile 14,3,462
+battleship.mix:152:setTile 15,3,458
+battleship.mix:153:setTile 16,3,463
+battleship.mix:154:setTile 17,3,470
+battleship.mix:155:call WaitStart
+battleship.mix:156:return
+#WaitStart
+#FLOW_LOOP_DO_3_begin
+#FLOW_LOOP_DO_3_continue
+battleship.mix:160:GetInputs variable=inputs
+battleship.mix:161:IF(inputs!=0) {
+battleship.mix:161:GOTO FLOW_LOOP_DO_3_loop
+#FLOW_LOOP_DO_3_break
+#FLOW_LOOP_DO_3_end
+battleship.mix:162:pause 250ms
+#FLOW_LOOP_DO_4_begin
+#FLOW_LOOP_DO_4_continue
+battleship.mix:164:GetInputs variable=inputs
+battleship.mix:165:IF(inputs==0) {
+battleship.mix:165:GOTO FLOW_LOOP_DO_4_loop
+#FLOW_LOOP_DO_4_break
+#FLOW_LOOP_DO_4_end
+battleship.mix:166:pause 250ms
+#FLOW_LOOP_DO_5_begin
+#FLOW_LOOP_DO_5_continue
+battleship.mix:168:GetInputs variable=inputs
+battleship.mix:169:IF(inputs!=0) {
+battleship.mix:169:GOTO FLOW_LOOP_DO_5_loop
+#FLOW_LOOP_DO_5_break
+#FLOW_LOOP_DO_5_end
+battleship.mix:170:pause 250ms
+battleship.mix:171:return
+#playerShot
+#FLOW_LOOP_WHILE_6_begin
+battleship.mix:181:GOTO FLOW_LOOP_WHILE_6_continue
+#FLOW_LOOP_WHILE_6_loop
+#FLOW_LOOP_WHILE_7_begin
+battleship.mix:183:GOTO FLOW_LOOP_WHILE_7_continue
+#FLOW_LOOP_WHILE_7_loop
+battleship.mix:185:getTile cursorX
+battleship.mix:186:tmp1 = cursorTile
+battleship.mix:189:cursorTile = CURSOR_B
+battleship.mix:190:setTile cursorX
+battleship.mix:192:pause 100ms
+battleship.mix:193:GetInputs variable=inputs
+battleship.mix:194:if(inputs!=0) {
+battleship.mix:195:cursorTile = tmp1
+battleship.mix:196:setTile cursorX
+battleship.mix:197:GOTO FLOW_LOOP_WHILE_7_break
+battleship.mix:200:cursorTile = tmp1
+battleship.mix:201:setTile cursorX
+battleship.mix:202:pause 100ms
+battleship.mix:203:GetInputs variable=inputs
+battleship.mix:204:if(inputs!=0) {
+battleship.mix:205:GOTO FLOW_LOOP_WHILE_7_break
+#FLOW_LOOP_WHILE_7_continue
+battleship.mix:207:IF(true) {
+battleship.mix:207:GOTO FLOW_LOOP_WHILE_7_loop
+#FLOW_LOOP_WHILE_7_break
+#FLOW_LOOP_WHILE_7_end
+battleship.mix:210:if(inputs & IN_RIGHT) {
+battleship.mix:211:cursorX = cursorX + 1
+battleship.mix:213:if(inputs & IN_LEFT) {
+battleship.mix:214:cursorX = cursorX - 1
+battleship.mix:216:if(inputs & IN_UP) {
+battleship.mix:217:cursorY = cursorY - 1
+battleship.mix:219:if(inputs & IN_DOWN) {
+battleship.mix:220:cursorY = cursorY + 1
+battleship.mix:224:if(cursorX<CPU_BOARD_X) {
+battleship.mix:225:cursorX = CPU_BOARD_X
+battleship.mix:227:if(cursorY<CPU_BOARD_Y) {
+battleship.mix:228:cursorY = CPU_BOARD_Y
+battleship.mix:230:if(cursorX>=CPU_BOARD_X_LIMIT) {
+battleship.mix:231:cursorX = cursorX-1
+battleship.mix:233:if(cursorY>=CPU_BOARD_Y_LIMIT) {
+battleship.mix:234:cursorY = cursorY-1
+battleship.mix:238:if(inputs & IN_A) {
+#FLOW_LOOP_DO_8_begin
+#FLOW_LOOP_DO_8_continue
+battleship.mix:241:GetInputs variable=inputs
+battleship.mix:242:IF(inputs!=0) {
+battleship.mix:242:GOTO FLOW_LOOP_DO_8_loop
+#FLOW_LOOP_DO_8_break
+#FLOW_LOOP_DO_8_end
+battleship.mix:245:blinkX = cursorX
+battleship.mix:246:blinkY = cursorY
+battleship.mix:247:blinkBack = cursorTile
+battleship.mix:249:SOUND Channel=0, Frequency=900Hz, Wave=0, EDelta=1, EPeriod=10ms, ELength=2000ms
+battleship.mix:250:if(cursorTile<COMPUTER_MISS) {
+battleship.mix:252:if(cursorTile==BOARD_MAIN) {
+battleship.mix:253:call shotAnimate
+battleship.mix:254:blinkBack = HUMAN_MISS
+battleship.mix:255:SOUND Channel=0, Frequency=OFF
+battleship.mix:256:call shotAnimate
+battleship.mix:257:return
+battleship.mix:260:if(cursorTile>=BOATS_INVIS_P) {
+battleship.mix:261:call shotAnimate
+battleship.mix:262:blinkBack = cursorTile - 5
+battleship.mix:263:SOUND Channel=0, Frequency=500Hz, Wave=1, EDelta=2, EPeriod=5ms, ELength=2000ms
+battleship.mix:264:call shotAnimate
+battleship.mix:265:SOUND Channel=0, Frequency=OFF
+battleship.mix:266:PAUSE 250ms
+battleship.mix:267:hitCount = hitCount - 1
+battleship.mix:268:return
+#FLOW_LOOP_WHILE_6_continue
+battleship.mix:273:IF(true) {
+battleship.mix:273:GOTO FLOW_LOOP_WHILE_6_loop
+#FLOW_LOOP_WHILE_6_break
+#FLOW_LOOP_WHILE_6_end
+#shotAnimate
+battleship.mix:284:blinkTile = SHOT_INDICATOR
+battleship.mix:285:setTile blinkX
+battleship.mix:286:PAUSE 250ms
+battleship.mix:287:blinkTile = blinkBack
+battleship.mix:288:setTile blinkX
+battleship.mix:289:PAUSE 250ms
+battleship.mix:290:blinkTile = SHOT_INDICATOR
+battleship.mix:291:setTile blinkX
+battleship.mix:292:PAUSE 250ms
+battleship.mix:293:blinkTile = blinkBack
+battleship.mix:294:setTile blinkX
+battleship.mix:295:PAUSE 250ms
+battleship.mix:296:return
+battleship.mix:298:-------
+#showUnhit
+battleship.mix:308:TILE {
+battleship.mix:310:WWWWWWWW
+battleship.mix:311:WG.G.G.G
+battleship.mix:312:W.WWWWW.
+battleship.mix:313:WGWG.GWG
+battleship.mix:314:W.WWWWW.
+battleship.mix:315:WGWG.G.G
+battleship.mix:316:W.W.G.G.
+battleship.mix:317:WG.G.G.G
+battleship.mix:319:WWWWWWWW
+battleship.mix:320:WG.G.G.G
+battleship.mix:321:W.GWWWW.
+battleship.mix:322:WGWG.G.G
+battleship.mix:323:W.GWWWG.
+battleship.mix:324:WG.G.GWG
+battleship.mix:325:W.WWWWG.
+battleship.mix:326:WG.G.G.G
+battleship.mix:328:WWWWWWWW
+battleship.mix:329:WG.G.G.G
+battleship.mix:330:W.WWWWG.
+battleship.mix:331:WGWG.GWG
+battleship.mix:332:W.WWWWG.
+battleship.mix:333:WGWG.GWG
+battleship.mix:334:W.WWWWG.
+battleship.mix:335:WG.G.G.G
+battleship.mix:337:WWWWWWWW
+battleship.mix:338:WG.G.G.G
+battleship.mix:339:W.G.W.G.
+battleship.mix:340:WG.W.W.G
+battleship.mix:341:W.WWWWW.
+battleship.mix:342:WGWG.GWG
+battleship.mix:343:W.W.G.W.
+battleship.mix:344:WG.G.G.G
+battleship.mix:346:WWWWWWWW
+battleship.mix:347:WG.G.G.G
+battleship.mix:348:W.GWWWG.
+battleship.mix:349:WGWG.GWG
+battleship.mix:350:W.W.G.G.
+battleship.mix:351:WGWG.GWG
+battleship.mix:352:W.GWWWG.
+battleship.mix:353:WG.G.G.G
+battleship.mix:355:}
+#winLetters
+battleship.mix:358:TILE {
+battleship.mix:359:..WWW...
+battleship.mix:360:...W....
+battleship.mix:361:...W....
+battleship.mix:362:...W....
+battleship.mix:363:...W....
+battleship.mix:364:...W....
+battleship.mix:365:..WWW...
+battleship.mix:366:........
+battleship.mix:368:W.....W.
+battleship.mix:369:W.....W.
+battleship.mix:370:.W...W..
+battleship.mix:371:..W.W...
+battleship.mix:372:...W....
+battleship.mix:373:...W....
+battleship.mix:374:...W....
+battleship.mix:375:........
+battleship.mix:377:.WWWWW..
+battleship.mix:378:W.....W.
+battleship.mix:379:W.....W.
+battleship.mix:380:W.....W.
+battleship.mix:381:W.....W.
+battleship.mix:382:W.....W.
+battleship.mix:383:.WWWWW..
+battleship.mix:384:........
+battleship.mix:386:W.....W.
+battleship.mix:387:W.....W.
+battleship.mix:388:W.....W.
+battleship.mix:389:W.....W.
+battleship.mix:390:W.....W.
+battleship.mix:391:W.....W.
+battleship.mix:392:.WWWWW..
+battleship.mix:393:........
+battleship.mix:395:W.....W.
+battleship.mix:396:W.....W.
+battleship.mix:397:W.....W.
+battleship.mix:398:W..W..W.
+battleship.mix:399:W..W..W.
+battleship.mix:400:.W.W.W..
+battleship.mix:401:..W.W...
+battleship.mix:402:........
+battleship.mix:404:W.....W.
+battleship.mix:405:WW....W.
+battleship.mix:406:W.W...W.
+battleship.mix:407:W..W..W.
+battleship.mix:408:W...W.W.
+battleship.mix:409:W....WW.
+battleship.mix:410:W.....W.
+battleship.mix:411:........
+battleship.mix:413:WWWWWW..
+battleship.mix:414:W.....W.
+battleship.mix:415:W.....W.
+battleship.mix:416:WWWWWW..
+battleship.mix:417:W.......
+battleship.mix:418:W.......
+battleship.mix:419:W.......
+battleship.mix:420:........
+battleship.mix:422:WWWWWW..
+battleship.mix:423:W.....W.
+battleship.mix:424:W.....W.
+battleship.mix:425:WWWWWW..
+battleship.mix:426:W...W...
+battleship.mix:427:W....W..
+battleship.mix:428:W.....W.
+battleship.mix:429:........
+battleship.mix:431:WWWWWWW.
+battleship.mix:432:W.......
+battleship.mix:433:W.......
+battleship.mix:434:WWWWWW..
+battleship.mix:435:W.......
+battleship.mix:436:W.......
+battleship.mix:437:WWWWWWW.
+battleship.mix:438:........
+battleship.mix:440:.WWWWW..
+battleship.mix:441:W.....W.
+battleship.mix:442:W.......
+battleship.mix:443:.WWWWW..
+battleship.mix:444:......W.
+battleship.mix:445:W.....W.
+battleship.mix:446:.WWWWW..
+battleship.mix:447:........
+battleship.mix:449:...W....
+battleship.mix:450:..W.W...
+battleship.mix:451:.W...W..
+battleship.mix:452:W.....W.
+battleship.mix:453:WWWWWWW.
+battleship.mix:454:W.....W.
+battleship.mix:455:W.....W.
+battleship.mix:456:........
+battleship.mix:458:W.....W.
+battleship.mix:459:W...WW..
+battleship.mix:460:W.WW....
+battleship.mix:461:WW......
+battleship.mix:462:W.WW....
+battleship.mix:463:W...WW..
+battleship.mix:464:W.....W.
+battleship.mix:465:........
+battleship.mix:467:...W....
+battleship.mix:468:...W....
+battleship.mix:469:...W....
+battleship.mix:470:...W....
+battleship.mix:471:...W....
+battleship.mix:472:........
+battleship.mix:473:...W....
+battleship.mix:474:........
+battleship.mix:476:}
+BattleshipPlaceShips.mix:2:cluster PlaceShips
+#placeHumanShips
+BattleshipPlaceShips.mix:14:SETSPRITE sprite=0,
+BattleshipPlaceShips.mix:15:x=0, y=72,image=314,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:16:width=32, height=8,actionScript=ShipsOn
+BattleshipPlaceShips.mix:18:SETSPRITE sprite=1,
+BattleshipPlaceShips.mix:19:x=0, y=88,image=346,numPics=2,flipDelay=3,
+BattleshipPlaceShips.mix:20:width=32, height=8,actionScript=ShipsOn
+BattleshipPlaceShips.mix:22:SETSPRITE sprite=2,
+BattleshipPlaceShips.mix:23:x=0, y=104,image=378,numPics=2,flipDelay=3,
+BattleshipPlaceShips.mix:24:width=16, height=8,actionScript=ShipsOn
+BattleshipPlaceShips.mix:26:SETSPRITE sprite=3,
+BattleshipPlaceShips.mix:27:x=0, y=120,image=394,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:28:width=16, height=8,actionScript=ShipsOn
+BattleshipPlaceShips.mix:30:SETSPRITE sprite=4,
+BattleshipPlaceShips.mix:31:x=0, y=136,image=410,numPics=2,flipDelay=2,
+BattleshipPlaceShips.mix:32:width=16, height=8,actionScript=ShipsOn
+BattleshipPlaceShips.mix:34:WAVEFORM 0,WaveSimple,16
+BattleshipPlaceShips.mix:35:SOUNDCFG Sequencer
+BattleshipPlaceShips.mix:37:SEQUENCER Seq1
+BattleshipPlaceShips.mix:39:PAUSE 1333ms
+BattleshipPlaceShips.mix:41:SETSPRITE sprite=0,
+BattleshipPlaceShips.mix:42:x=120, y=72,image=314,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:43:width=32, height=8,actionScript=ShipsToBoard
+BattleshipPlaceShips.mix:44:PAUSE 1866ms
+BattleshipPlaceShips.mix:45:SETSPRITE sprite=0,
+BattleshipPlaceShips.mix:46:x=0, y=72,image=314,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:47:width=32, height=8
+BattleshipPlaceShips.mix:49:cursorX = PLR_BOARD_X
+BattleshipPlaceShips.mix:50:cursorY = PLR_BOARD_Y
+BattleshipPlaceShips.mix:51:ship = BOATS_UNHIT_A
+BattleshipPlaceShips.mix:52:size = 5
+BattleshipPlaceShips.mix:53:call placeShip
+BattleshipPlaceShips.mix:55:SETSPRITE sprite=1,
+BattleshipPlaceShips.mix:56:x=120, y=88,image=346,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:57:width=32, height=8,actionScript=ShipsToBoard
+BattleshipPlaceShips.mix:58:PAUSE 1866ms
+BattleshipPlaceShips.mix:59:SETSPRITE sprite=1,
+BattleshipPlaceShips.mix:60:x=0, y=88,image=346,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:61:width=32, height=8
+BattleshipPlaceShips.mix:63:cursorX = PLR_BOARD_X
+BattleshipPlaceShips.mix:64:cursorY = PLR_BOARD_Y+2
+BattleshipPlaceShips.mix:65:ship = BOATS_UNHIT_B
+BattleshipPlaceShips.mix:66:size = 4
+BattleshipPlaceShips.mix:67:call placeShip
+BattleshipPlaceShips.mix:69:SETSPRITE sprite=2,
+BattleshipPlaceShips.mix:70:x=120, y=104,image=378,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:71:width=16, height=8,actionScript=ShipsToBoard
+BattleshipPlaceShips.mix:72:PAUSE 1866ms
+BattleshipPlaceShips.mix:73:SETSPRITE sprite=2,
+BattleshipPlaceShips.mix:74:x=0, y=104,image=378,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:75:width=16, height=8
+BattleshipPlaceShips.mix:77:cursorX = PLR_BOARD_X
+BattleshipPlaceShips.mix:78:cursorY = PLR_BOARD_Y+4
+BattleshipPlaceShips.mix:79:ship = BOATS_UNHIT_S
+BattleshipPlaceShips.mix:80:size = 3
+BattleshipPlaceShips.mix:81:call placeShip
+BattleshipPlaceShips.mix:83:SETSPRITE sprite=3,
+BattleshipPlaceShips.mix:84:x=120, y=120,image=394,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:85:width=16, height=8,actionScript=ShipsToBoard
+BattleshipPlaceShips.mix:86:PAUSE 1866ms
+BattleshipPlaceShips.mix:87:SETSPRITE sprite=3,
+BattleshipPlaceShips.mix:88:x=0, y=120,image=394,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:89:width=16, height=8
+BattleshipPlaceShips.mix:91:cursorX = PLR_BOARD_X
+BattleshipPlaceShips.mix:92:cursorY = PLR_BOARD_Y+6
+BattleshipPlaceShips.mix:93:ship = BOATS_UNHIT_C
+BattleshipPlaceShips.mix:94:size = 3
+BattleshipPlaceShips.mix:95:call placeShip
+BattleshipPlaceShips.mix:97:SETSPRITE sprite=4,
+BattleshipPlaceShips.mix:98:x=120, y=136,image=410,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:99:width=16, height=8,actionScript=ShipsToBoard
+BattleshipPlaceShips.mix:100:PAUSE 1866ms
+BattleshipPlaceShips.mix:101:SETSPRITE sprite=4,
+BattleshipPlaceShips.mix:102:x=0, y=136,image=410,numPics=2,flipDelay=1,
+BattleshipPlaceShips.mix:103:width=16, height=8
+BattleshipPlaceShips.mix:105:cursorX = PLR_BOARD_X
+BattleshipPlaceShips.mix:106:cursorY = PLR_BOARD_Y+8
+BattleshipPlaceShips.mix:107:ship = BOATS_UNHIT_P
+BattleshipPlaceShips.mix:108:size = 2
+BattleshipPlaceShips.mix:109:call placeShip
+BattleshipPlaceShips.mix:111:hitCount = 17
+BattleshipPlaceShips.mix:113:return
+#placeCPUShips
+BattleshipPlaceShips.mix:126:rectangle CPU_BOARD_X,       CPU_BOARD_Y,       10,10, BOARD_MAIN
+BattleshipPlaceShips.mix:127:rectangle CPU_BOARD_X_LIMIT, CPU_BOARD_Y,        1,10, BOARD_LEFT
+BattleshipPlaceShips.mix:128:rectangle CPU_BOARD_X,       CPU_BOARD_Y_LIMIT, 10, 1, BOARD_TOP
+BattleshipPlaceShips.mix:129:setTile   CPU_BOARD_X_LIMIT, CPU_BOARD_Y_LIMIT,  BOARD_DOT
+BattleshipPlaceShips.mix:131:size = 5
+BattleshipPlaceShips.mix:132:ship = BOATS_INVIS_A
+BattleshipPlaceShips.mix:133:call placeCPUShip
+BattleshipPlaceShips.mix:134:numLeftA = 5
+BattleshipPlaceShips.mix:135:numHitA = 0
+BattleshipPlaceShips.mix:137:size = 4
+BattleshipPlaceShips.mix:138:ship = BOATS_INVIS_B
+BattleshipPlaceShips.mix:139:call placeCPUShip
+BattleshipPlaceShips.mix:140:numLeftB = 4
+BattleshipPlaceShips.mix:141:numHitB = 0
+BattleshipPlaceShips.mix:143:size = 3
+BattleshipPlaceShips.mix:144:ship = BOATS_INVIS_S
+BattleshipPlaceShips.mix:145:call placeCPUShip
+BattleshipPlaceShips.mix:146:numLeftC = 3
+BattleshipPlaceShips.mix:147:numHitC = 0
+BattleshipPlaceShips.mix:149:size = 3
+BattleshipPlaceShips.mix:150:ship = BOATS_INVIS_C
+BattleshipPlaceShips.mix:151:call placeCPUShip
+BattleshipPlaceShips.mix:152:numLeftS = 3
+BattleshipPlaceShips.mix:153:numHitS = 0
+BattleshipPlaceShips.mix:155:size = 2
+BattleshipPlaceShips.mix:156:ship = BOATS_INVIS_P
+BattleshipPlaceShips.mix:157:call placeCPUShip
+BattleshipPlaceShips.mix:158:numLeftP = 2
+BattleshipPlaceShips.mix:159:numHitP = 0
+BattleshipPlaceShips.mix:161:cpuHitCount = 17
+BattleshipPlaceShips.mix:163:return
+#placeCPUShip
+#FLOW_LOOP_DO_9_begin
+#FLOW_LOOP_DO_9_continue
+BattleshipPlaceShips.mix:182:call randomTxTy
+BattleshipPlaceShips.mix:183:cursorX = tx+CPU_BOARD_X
+BattleshipPlaceShips.mix:184:cursorY = ty+CPU_BOARD_Y
+BattleshipPlaceShips.mix:185:horz = RAND & 1
+BattleshipPlaceShips.mix:186:call checkCPUShipPlacement
+BattleshipPlaceShips.mix:187:IF(tx==0) {
+BattleshipPlaceShips.mix:187:GOTO FLOW_LOOP_DO_9_loop
+#FLOW_LOOP_DO_9_break
+#FLOW_LOOP_DO_9_end
+BattleshipPlaceShips.mix:190:tx = cursorX
+BattleshipPlaceShips.mix:191:ty = cursorY
+#FLOW_LOOP_FOR_10_begin
+BattleshipPlaceShips.mix:192:tt=ship
+BattleshipPlaceShips.mix:192:GOTO FLOW_LOOP_FOR_10_check
+#FLOW_LOOP_FOR_10_loop
+BattleshipPlaceShips.mix:193:setTile tx
+BattleshipPlaceShips.mix:194:if(horz==1) {
+BattleshipPlaceShips.mix:195:tx = tx + 1
+BattleshipPlaceShips.mix:197:ty = ty + 1
+#FLOW_LOOP_FOR_10_continue
+BattleshipPlaceShips.mix:199:size=size-1
+#FLOW_LOOP_FOR_10_check
+BattleshipPlaceShips.mix:199:IF(size!=0) {
+BattleshipPlaceShips.mix:199:GOTO FLOW_LOOP_FOR_10_loop
+#FLOW_LOOP_FOR_10_break
+#FLOW_LOOP_FOR_10_end
+BattleshipPlaceShips.mix:201:return
+#checkCPUShipPlacement
+BattleshipPlaceShips.mix:219:tx = cursorX
+BattleshipPlaceShips.mix:220:ty = cursorY
+#FLOW_LOOP_FOR_11_begin
+BattleshipPlaceShips.mix:222:tmp1=size
+BattleshipPlaceShips.mix:222:GOTO FLOW_LOOP_FOR_11_check
+#FLOW_LOOP_FOR_11_loop
+BattleshipPlaceShips.mix:224:getTile tx
+BattleshipPlaceShips.mix:225:if(tt!=BOARD_MAIN) {
+BattleshipPlaceShips.mix:226:tx = 0
+BattleshipPlaceShips.mix:227:return
+BattleshipPlaceShips.mix:230:if(horz==1) {
+BattleshipPlaceShips.mix:231:tx = tx + 1
+BattleshipPlaceShips.mix:233:ty = ty + 1
+#FLOW_LOOP_FOR_11_continue
+BattleshipPlaceShips.mix:236:tmp1=tmp1-1
+#FLOW_LOOP_FOR_11_check
+BattleshipPlaceShips.mix:236:IF(tmp1!=0) {
+BattleshipPlaceShips.mix:236:GOTO FLOW_LOOP_FOR_11_loop
+#FLOW_LOOP_FOR_11_break
+#FLOW_LOOP_FOR_11_end
+BattleshipPlaceShips.mix:238:tx = 1
+BattleshipPlaceShips.mix:239:return
+#randomTxTy
+#FLOW_LOOP_DO_12_begin
+#FLOW_LOOP_DO_12_continue
+BattleshipPlaceShips.mix:249:tx = RAND & 15
+BattleshipPlaceShips.mix:250:IF(tx>9) {
+BattleshipPlaceShips.mix:250:GOTO FLOW_LOOP_DO_12_loop
+#FLOW_LOOP_DO_12_break
+#FLOW_LOOP_DO_12_end
+#FLOW_LOOP_DO_13_begin
+#FLOW_LOOP_DO_13_continue
+BattleshipPlaceShips.mix:252:ty = RAND & 15
+BattleshipPlaceShips.mix:253:IF(ty>9) {
+BattleshipPlaceShips.mix:253:GOTO FLOW_LOOP_DO_13_loop
+#FLOW_LOOP_DO_13_break
+#FLOW_LOOP_DO_13_end
+BattleshipPlaceShips.mix:254:return
+#drawShip
+BattleshipPlaceShips.mix:273:tx = cursorX
+BattleshipPlaceShips.mix:274:ty = cursorY
+BattleshipPlaceShips.mix:275:ptr = 120
+BattleshipPlaceShips.mix:276:badPlace = 0
+#FLOW_LOOP_FOR_14_begin
+BattleshipPlaceShips.mix:277:tmp1=size
+BattleshipPlaceShips.mix:277:GOTO FLOW_LOOP_FOR_14_check
+#FLOW_LOOP_FOR_14_loop
+BattleshipPlaceShips.mix:278:getTile tx
+BattleshipPlaceShips.mix:279:[ptr] = tt
+BattleshipPlaceShips.mix:280:if(tt==BOARD_MAIN) {
+BattleshipPlaceShips.mix:281:tt = ship
+BattleshipPlaceShips.mix:283:tt = ship+5
+BattleshipPlaceShips.mix:284:badPlace = 1
+BattleshipPlaceShips.mix:286:setTile tx
+BattleshipPlaceShips.mix:287:ptr = ptr + 1
+BattleshipPlaceShips.mix:288:if(horz==1) {
+BattleshipPlaceShips.mix:289:tx = tx + 1
+BattleshipPlaceShips.mix:291:ty = ty + 1
+#FLOW_LOOP_FOR_14_continue
+BattleshipPlaceShips.mix:294:tmp1=tmp1-1
+#FLOW_LOOP_FOR_14_check
+BattleshipPlaceShips.mix:294:IF(tmp1!=0) {
+BattleshipPlaceShips.mix:294:GOTO FLOW_LOOP_FOR_14_loop
+#FLOW_LOOP_FOR_14_break
+#FLOW_LOOP_FOR_14_end
+BattleshipPlaceShips.mix:295:return
+#undrawShip
+BattleshipPlaceShips.mix:309:tx = cursorX
+BattleshipPlaceShips.mix:310:ty = cursorY
+BattleshipPlaceShips.mix:311:ptr = 120
+#FLOW_LOOP_FOR_15_begin
+BattleshipPlaceShips.mix:313:tmp1=size
+BattleshipPlaceShips.mix:313:GOTO FLOW_LOOP_FOR_15_check
+#FLOW_LOOP_FOR_15_loop
+BattleshipPlaceShips.mix:314:tt = [ptr]
+BattleshipPlaceShips.mix:315:setTile tx
+BattleshipPlaceShips.mix:316:ptr = ptr + 1
+BattleshipPlaceShips.mix:317:if(horz==1) {
+BattleshipPlaceShips.mix:318:tx = tx + 1
+BattleshipPlaceShips.mix:320:ty = ty + 1
+#FLOW_LOOP_FOR_15_continue
+BattleshipPlaceShips.mix:322:tmp1=tmp1-1
+#FLOW_LOOP_FOR_15_check
+BattleshipPlaceShips.mix:322:IF(tmp1!=0) {
+BattleshipPlaceShips.mix:322:GOTO FLOW_LOOP_FOR_15_loop
+#FLOW_LOOP_FOR_15_break
+#FLOW_LOOP_FOR_15_end
+BattleshipPlaceShips.mix:324:return
+#placeShip
+BattleshipPlaceShips.mix:340:horz = 1
+#FLOW_LOOP_WHILE_16_begin
+BattleshipPlaceShips.mix:342:GOTO FLOW_LOOP_WHILE_16_continue
+#FLOW_LOOP_WHILE_16_loop
+#FLOW_LOOP_WHILE_17_begin
+BattleshipPlaceShips.mix:346:GOTO FLOW_LOOP_WHILE_17_continue
+#FLOW_LOOP_WHILE_17_loop
+BattleshipPlaceShips.mix:347:call drawShip
+BattleshipPlaceShips.mix:348:pause 100ms
+BattleshipPlaceShips.mix:349:GetInputs variable=inputs
+BattleshipPlaceShips.mix:350:if(inputs!=0) {
+BattleshipPlaceShips.mix:351:GOTO FLOW_LOOP_WHILE_17_break
+BattleshipPlaceShips.mix:353:call undrawShip
+BattleshipPlaceShips.mix:354:pause 100ms
+BattleshipPlaceShips.mix:355:GetInputs variable=inputs
+BattleshipPlaceShips.mix:356:if(inputs!=0) {
+BattleshipPlaceShips.mix:357:call drawShip
+BattleshipPlaceShips.mix:358:GOTO FLOW_LOOP_WHILE_17_break
+#FLOW_LOOP_WHILE_17_continue
+BattleshipPlaceShips.mix:360:IF(true) {
+BattleshipPlaceShips.mix:360:GOTO FLOW_LOOP_WHILE_17_loop
+#FLOW_LOOP_WHILE_17_break
+#FLOW_LOOP_WHILE_17_end
+BattleshipPlaceShips.mix:363:if(inputs & IN_A) {
+BattleshipPlaceShips.mix:364:if(badPlace==0) {
+BattleshipPlaceShips.mix:365:SOUNDCFG Noise,FrequencySweeper
+BattleshipPlaceShips.mix:366:SOUND Channel=0, Frequency=600Hz, Wave=0, EDelta=-1, EPeriod=5, ELength=150
+BattleshipPlaceShips.mix:367:PAUSE 150ms
+BattleshipPlaceShips.mix:368:SOUND Channel=0, Frequency=OFF
+#FLOW_LOOP_DO_18_begin
+#FLOW_LOOP_DO_18_continue
+BattleshipPlaceShips.mix:370:GetInputs variable=inputs
+BattleshipPlaceShips.mix:371:IF(inputs!=0) {
+BattleshipPlaceShips.mix:371:GOTO FLOW_LOOP_DO_18_loop
+#FLOW_LOOP_DO_18_break
+#FLOW_LOOP_DO_18_end
+BattleshipPlaceShips.mix:372:return
+BattleshipPlaceShips.mix:374:SOUNDCFG Noise,FrequencySweeper
+BattleshipPlaceShips.mix:375:SOUND Channel=0, Frequency=100Hz, Wave=0, EDelta=6, EPeriod=10, ELength=100, ERepeat=true
+BattleshipPlaceShips.mix:376:SOUND Channel=1, Frequency=120Hz, Wave=0, EDelta=8, EPeriod=10, ELength=100, ERepeat=true
+BattleshipPlaceShips.mix:377:PAUSE 200ms
+BattleshipPlaceShips.mix:378:SOUND Channel=0, Frequency=OFF
+BattleshipPlaceShips.mix:379:SOUND Channel=1, Frequency=OFF
+BattleshipPlaceShips.mix:384:call undrawShip
+BattleshipPlaceShips.mix:387:if(inputs & IN_RIGHT) {
+BattleshipPlaceShips.mix:388:cursorX = cursorX + 1
+BattleshipPlaceShips.mix:390:if(inputs & IN_LEFT) {
+BattleshipPlaceShips.mix:391:cursorX = cursorX - 1
+BattleshipPlaceShips.mix:393:if(inputs & IN_UP) {
+BattleshipPlaceShips.mix:394:cursorY = cursorY - 1
+BattleshipPlaceShips.mix:396:if(inputs & IN_DOWN) {
+BattleshipPlaceShips.mix:397:cursorY = cursorY + 1
+BattleshipPlaceShips.mix:401:if(inputs & IN_B) {
+BattleshipPlaceShips.mix:402:if(horz==0) {
+BattleshipPlaceShips.mix:403:horz = 1
+BattleshipPlaceShips.mix:405:horz = 0
+#FLOW_LOOP_DO_19_begin
+#FLOW_LOOP_DO_19_continue
+BattleshipPlaceShips.mix:408:GetInputs variable=inputs
+BattleshipPlaceShips.mix:409:IF(inputs!=0) {
+BattleshipPlaceShips.mix:409:GOTO FLOW_LOOP_DO_19_loop
+BattleshipPlaceShips.mix:413:if(cursorX<PLR_BOARD_X) {
+BattleshipPlaceShips.mix:414:cursorX = PLR_BOARD_X
+BattleshipPlaceShips.mix:416:if(cursorY<PLR_BOARD_Y) {
+BattleshipPlaceShips.mix:417:cursorY = PLR_BOARD_Y
+BattleshipPlaceShips.mix:421:tmp1 = PLR_BOARD_X_LIMIT
+BattleshipPlaceShips.mix:422:if(horz==1) {
+BattleshipPlaceShips.mix:423:tmp1 = tmp1 - size
+BattleshipPlaceShips.mix:425:tmp1 = tmp1 - 1
+BattleshipPlaceShips.mix:427:if(cursorX>tmp1) {
+BattleshipPlaceShips.mix:428:cursorX = tmp1
+BattleshipPlaceShips.mix:430:tmp1 = PLR_BOARD_Y_LIMIT
+BattleshipPlaceShips.mix:431:if(horz==1) {
+BattleshipPlaceShips.mix:432:tmp1 = tmp1 - 1
+BattleshipPlaceShips.mix:434:tmp1 = tmp1 - size
+BattleshipPlaceShips.mix:436:if(cursorY>tmp1) {
+BattleshipPlaceShips.mix:437:cursorY = tmp1
+#FLOW_LOOP_WHILE_16_continue
+BattleshipPlaceShips.mix:440:IF(true) {
+BattleshipPlaceShips.mix:440:GOTO FLOW_LOOP_WHILE_16_loop
+#FLOW_LOOP_WHILE_16_break
+#FLOW_LOOP_WHILE_16_end
+BattleshipPlaceShips.mix:443:------------------------------
+#ShipsOn
+BattleshipPlaceShips.mix:446:ActionScript {
+BattleshipPlaceShips.mix:447:count=40, deltaX=2, delayX=1
+BattleshipPlaceShips.mix:448:count=40, deltaX=1, delayX=1
+BattleshipPlaceShips.mix:449:HALT
+BattleshipPlaceShips.mix:450:}
+#ShipsToBoard
+BattleshipPlaceShips.mix:453:ActionScript {
+BattleshipPlaceShips.mix:454:count=56, deltaX=1, delayX=2
+BattleshipPlaceShips.mix:455:HALT
+BattleshipPlaceShips.mix:456:}
+BattleshipPlaceShips.mix:458:padalign(4)
+#Seq1
+BattleshipPlaceShips.mix:461:SEQUENCE {
+BattleshipPlaceShips.mix:463:VOICE0
+BattleshipPlaceShips.mix:464:TEMPO 80.0
+BattleshipPlaceShips.mix:466:1C4 2E 2G 2.A 4E 2A
+BattleshipPlaceShips.mix:468:VOICE1
+BattleshipPlaceShips.mix:469:TEMPO 80.0
+BattleshipPlaceShips.mix:471:1G3 2C+ 2E 2.E 4C 2E
+BattleshipPlaceShips.mix:474:}
+BattleshipPlaceShips.mix:476:padalign(4)
+#WaveSimple
+BattleshipPlaceShips.mix:479:WAVEFORM {
+BattleshipPlaceShips.mix:480:..
+BattleshipPlaceShips.mix:481:..
+BattleshipPlaceShips.mix:482:..
+BattleshipPlaceShips.mix:483:..
+BattleshipPlaceShips.mix:484:X.
+BattleshipPlaceShips.mix:485:.X
+BattleshipPlaceShips.mix:486:}
+battleshipCPU.mix:2:cluster CPU
+#cpuShot
+battleshipCPU.mix:13:if(numHitA>0) {
+battleshipCPU.mix:14:lastHitX = lastHitXA
+battleshipCPU.mix:15:lastHitY = lastHitYA
+battleshipCPU.mix:16:numLeft = numLeftA
+battleshipCPU.mix:17:numHit = numHitA
+battleshipCPU.mix:18:goto trackShip
+battleshipCPU.mix:21:if(numHitB>0) {
+battleshipCPU.mix:22:lastHitX = lastHitXB
+battleshipCPU.mix:23:lastHitY = lastHitYB
+battleshipCPU.mix:24:numLeft = numLeftB
+battleshipCPU.mix:25:numHit = numHitB
+battleshipCPU.mix:26:goto trackShip
+battleshipCPU.mix:29:if(numHitC>0) {
+battleshipCPU.mix:30:lastHitX = lastHitXC
+battleshipCPU.mix:31:lastHitY = lastHitYC
+battleshipCPU.mix:32:numLeft = numLeftC
+battleshipCPU.mix:33:numHit = numHitC
+battleshipCPU.mix:34:goto trackShip
+battleshipCPU.mix:37:if(numHitS>0) {
+battleshipCPU.mix:38:lastHitX = lastHitXS
+battleshipCPU.mix:39:lastHitY = lastHitYS
+battleshipCPU.mix:40:numLeft = numLeftS
+battleshipCPU.mix:41:numHit = numHitS
+battleshipCPU.mix:42:goto trackShip
+battleshipCPU.mix:45:if(numHitP>0) {
+battleshipCPU.mix:46:lastHitX = lastHitXP
+battleshipCPU.mix:47:lastHitY = lastHitYP
+battleshipCPU.mix:48:numLeft = numLeftP
+battleshipCPU.mix:49:numHit = numHitP
+battleshipCPU.mix:50:goto trackShip
+battleshipCPU.mix:54:call randomCpuShot
+battleshipCPU.mix:56:return
+#trackShip
+battleshipCPU.mix:70:tx = lastHitX
+battleshipCPU.mix:71:ty = lastHitY
+battleshipCPU.mix:72:getTile tx
+battleshipCPU.mix:73:ship = tt
+battleshipCPU.mix:75:tmp1 = 0
+#trackRight
+battleshipCPU.mix:78:tx=tx+1
+battleshipCPU.mix:79:getTile tx
+battleshipCPU.mix:80:if(tt==ship) {
+battleshipCPU.mix:81:tmp1 = 1
+battleshipCPU.mix:82:goto trackRight
+battleshipCPU.mix:84:if(tt<BOATS_HIT_P) {
+battleshipCPU.mix:85:if(tt>=BOARD_MAIN) {
+battleshipCPU.mix:86:goto doItR
+battleshipCPU.mix:89:if(tt<COMPUTER_MISS) {
+battleshipCPU.mix:90:if(tt>BOATS_HIT_C) {
+#doItR
+battleshipCPU.mix:92:tlx = tx
+battleshipCPU.mix:93:tly = ty
+battleshipCPU.mix:94:if(tmp1==1) {
+battleshipCPU.mix:95:goto recordShot
+battleshipCPU.mix:99:tx = tx - 1
+#trackLeft
+battleshipCPU.mix:102:tx=tx-1
+battleshipCPU.mix:103:getTile tx
+battleshipCPU.mix:104:if(tt==ship) {
+battleshipCPU.mix:105:tmp1 = 1
+battleshipCPU.mix:106:goto trackLeft
+battleshipCPU.mix:108:if(tt<BOATS_HIT_P) {
+battleshipCPU.mix:109:if(tt>=BOARD_MAIN) {
+battleshipCPU.mix:110:goto doItL
+battleshipCPU.mix:113:if(tt<COMPUTER_MISS) {
+battleshipCPU.mix:114:if(tt>BOATS_HIT_C) {
+#doItL
+battleshipCPU.mix:116:tlx = tx
+battleshipCPU.mix:117:tly = ty
+battleshipCPU.mix:118:if(tmp1==1) {
+battleshipCPU.mix:119:goto recordShot
+battleshipCPU.mix:123:tx = tx + 1
+battleshipCPU.mix:124:if(tmp1==1) {
+battleshipCPU.mix:125:goto trackRight
+#trackUp
+battleshipCPU.mix:129:ty=ty-1
+battleshipCPU.mix:130:getTile tx
+battleshipCPU.mix:131:if(tt==ship) {
+battleshipCPU.mix:132:tmp1 = 1
+battleshipCPU.mix:133:goto trackUp
+battleshipCPU.mix:135:if(tt<BOATS_HIT_P) {
+battleshipCPU.mix:136:if(tt>=BOARD_MAIN) {
+battleshipCPU.mix:137:goto doItU
+battleshipCPU.mix:140:if(tt<COMPUTER_MISS) {
+battleshipCPU.mix:141:if(tt>BOATS_HIT_C) {
+#doItU
+battleshipCPU.mix:143:tlx = tx
+battleshipCPU.mix:144:tly = ty
+battleshipCPU.mix:145:if(tmp1==1) {
+battleshipCPU.mix:146:goto recordShot
+battleshipCPU.mix:150:ty = ty + 1
+#trackDown
+battleshipCPU.mix:153:ty=ty+1
+battleshipCPU.mix:154:getTile tx
+battleshipCPU.mix:155:if(tt==ship) {
+battleshipCPU.mix:156:tmp1 = 1
+battleshipCPU.mix:157:goto trackDown
+battleshipCPU.mix:159:if(tt<BOATS_HIT_P) {
+battleshipCPU.mix:160:if(tt>=BOARD_MAIN) {
+battleshipCPU.mix:161:goto doItD
+battleshipCPU.mix:164:if(tt<COMPUTER_MISS) {
+battleshipCPU.mix:165:if(tt>BOATS_HIT_C) {
+#doItD
+battleshipCPU.mix:167:tlx = tx
+battleshipCPU.mix:168:tly = ty
+battleshipCPU.mix:169:if(tmp1==1) {
+battleshipCPU.mix:170:goto recordShot
+battleshipCPU.mix:174:ty = ty - 1
+battleshipCPU.mix:175:if(tmp1==1) {
+battleshipCPU.mix:176:goto trackUp
+battleshipCPU.mix:179:tx = tlx
+battleshipCPU.mix:180:ty = tly
+battleshipCPU.mix:181:goto recordShot
+battleshipCPU.mix:183:return
+#randomTxTy
+battleshipCPU.mix:192:tx = RAND & 15
+battleshipCPU.mix:193:if(tx>9) {
+battleshipCPU.mix:194:goto randomTxTy
+#randomTxTy2
+battleshipCPU.mix:197:ty = RAND & 15
+battleshipCPU.mix:198:if(ty>9) {
+battleshipCPU.mix:199:goto randomTxTy2
+battleshipCPU.mix:201:return
+#randomCpuShot
+battleshipCPU.mix:210:call randomTxTy
+battleshipCPU.mix:211:tx = tx + PLR_BOARD_X
+battleshipCPU.mix:212:ty = ty + PLR_BOARD_Y
+battleshipCPU.mix:213:getTile tx
+battleshipCPU.mix:215:if(tt >= BOATS_HIT_P) {
+battleshipCPU.mix:216:goto randomCpuShot
+#recordShot
+battleshipCPU.mix:224:getTile tx
+battleshipCPU.mix:226:blinkX = tx
+battleshipCPU.mix:227:blinkY = ty
+battleshipCPU.mix:228:blinkBack = tt
+battleshipCPU.mix:229:SOUND Channel=0, Frequency=800Hz, Wave=0, EDelta=1, EPeriod=10ms, ELength=2000ms
+battleshipCPU.mix:230:call init:shotAnimate
+battleshipCPU.mix:234:if(tt==BOATS_UNHIT_A) {
+battleshipCPU.mix:235:lastHitXA = tx
+battleshipCPU.mix:236:lastHitYA = ty
+battleshipCPU.mix:237:numHitA = numHitA + 1
+battleshipCPU.mix:238:numLeftA = numLeftA - 1
+battleshipCPU.mix:239:cpuHitCount = cpuHitCount - 1
+battleshipCPU.mix:240:if(numLeftA==0) {
+battleshipCPU.mix:241:numHitA=0
+battleshipCPU.mix:244:if(tt==BOATS_UNHIT_B) {
+battleshipCPU.mix:245:lastHitXB = tx
+battleshipCPU.mix:246:lastHitYB = ty
+battleshipCPU.mix:247:numHitB = numHitB + 1
+battleshipCPU.mix:248:numLeftB = numLeftB - 1
+battleshipCPU.mix:249:cpuHitCount = cpuHitCount - 1
+battleshipCPU.mix:250:if(numLeftB==0) {
+battleshipCPU.mix:251:numHitB=0
+battleshipCPU.mix:254:if(tt==BOATS_UNHIT_S) {
+battleshipCPU.mix:255:lastHitXC = tx
+battleshipCPU.mix:256:lastHitYC = ty
+battleshipCPU.mix:257:numHitC = numHitC + 1
+battleshipCPU.mix:258:numLeftC = numLeftC - 1
+battleshipCPU.mix:259:cpuHitCount = cpuHitCount - 1
+battleshipCPU.mix:260:if(numLeftC==0) {
+battleshipCPU.mix:261:numHitC=0
+battleshipCPU.mix:264:if(tt==BOATS_UNHIT_C) {
+battleshipCPU.mix:265:lastHitXS = tx
+battleshipCPU.mix:266:lastHitYS = ty
+battleshipCPU.mix:267:numHitS = numHitS + 1
+battleshipCPU.mix:268:numLeftS = numLeftS - 1
+battleshipCPU.mix:269:cpuHitCount = cpuHitCount - 1
+battleshipCPU.mix:270:if(numLeftS==0) {
+battleshipCPU.mix:271:numHitS=0
+battleshipCPU.mix:274:if(tt==BOATS_UNHIT_P) {
+battleshipCPU.mix:275:lastHitXP = tx
+battleshipCPU.mix:276:lastHitYP = ty
+battleshipCPU.mix:277:numHitP = numHitP + 1
+battleshipCPU.mix:278:numLeftP = numLeftP - 1
+battleshipCPU.mix:279:cpuHitCount = cpuHitCount - 1
+battleshipCPU.mix:280:if(numLeftP==0) {
+battleshipCPU.mix:281:numHitP=0
+battleshipCPU.mix:285:if(tt==BOARD_MAIN) {
+battleshipCPU.mix:286:inputs = 0
+battleshipCPU.mix:287:tt = COMPUTER_MISS
+battleshipCPU.mix:288:SOUND Channel=0, Frequency=OFF
+battleshipCPU.mix:290:inputs = 1
+battleshipCPU.mix:291:tt = tt + 5
+battleshipCPU.mix:292:SOUND Channel=0, Frequency=500Hz, Wave=1, EDelta=2, EPeriod=5ms, ELength=2000ms
+battleshipCPU.mix:296:blinkBack = tt
+battleshipCPU.mix:298:call init:shotAnimate
+battleshipCPU.mix:300:if(inputs) {
+battleshipCPU.mix:301:SOUND Channel=0, Frequency=OFF
+battleshipCPU.mix:304:return
+BattleshipBoardTiles.mix:17:Cluster BoardData
+#InitTiles
+BattleshipBoardTiles.mix:21:InitTiles tileData,428,26
+BattleshipBoardTiles.mix:22:return
+BattleshipBoardTiles.mix:24:------------------------
+#tileData
+BattleshipBoardTiles.mix:28:TILE {
+BattleshipBoardTiles.mix:33:........
+BattleshipBoardTiles.mix:34:........
+BattleshipBoardTiles.mix:35:........
+BattleshipBoardTiles.mix:36:........
+BattleshipBoardTiles.mix:37:........
+BattleshipBoardTiles.mix:38:........
+BattleshipBoardTiles.mix:39:........
+BattleshipBoardTiles.mix:40:........
+BattleshipBoardTiles.mix:43:WWWWWWWW
+BattleshipBoardTiles.mix:44:........
+BattleshipBoardTiles.mix:45:........
+BattleshipBoardTiles.mix:46:........
+BattleshipBoardTiles.mix:47:........
+BattleshipBoardTiles.mix:48:........
+BattleshipBoardTiles.mix:49:........
+BattleshipBoardTiles.mix:50:........
+BattleshipBoardTiles.mix:53:W.......
+BattleshipBoardTiles.mix:54:W.......
+BattleshipBoardTiles.mix:55:W.......
+BattleshipBoardTiles.mix:56:W.......
+BattleshipBoardTiles.mix:57:W.......
+BattleshipBoardTiles.mix:58:W.......
+BattleshipBoardTiles.mix:59:W.......
+BattleshipBoardTiles.mix:60:W.......
+BattleshipBoardTiles.mix:63:W.......
+BattleshipBoardTiles.mix:64:........
+BattleshipBoardTiles.mix:65:........
+BattleshipBoardTiles.mix:66:........
+BattleshipBoardTiles.mix:67:........
+BattleshipBoardTiles.mix:68:........
+BattleshipBoardTiles.mix:69:........
+BattleshipBoardTiles.mix:70:........
+BattleshipBoardTiles.mix:73:WWWWWWWW
+BattleshipBoardTiles.mix:74:W.......
+BattleshipBoardTiles.mix:75:W.......
+BattleshipBoardTiles.mix:76:W.......
+BattleshipBoardTiles.mix:77:W.......
+BattleshipBoardTiles.mix:78:W.......
+BattleshipBoardTiles.mix:79:W.......
+BattleshipBoardTiles.mix:80:W.......
+BattleshipBoardTiles.mix:85:WWWWWWWW
+BattleshipBoardTiles.mix:86:WGGGGGGG
+BattleshipBoardTiles.mix:87:WGWWWWWG
+BattleshipBoardTiles.mix:88:WGWGGGWG
+BattleshipBoardTiles.mix:89:WGWWWWWG
+BattleshipBoardTiles.mix:90:WGWGGGGG
+BattleshipBoardTiles.mix:91:WGWGGGGG
+BattleshipBoardTiles.mix:92:WGGGGGGG
+BattleshipBoardTiles.mix:95:WWWWWWWW
+BattleshipBoardTiles.mix:96:WGGGGGGG
+BattleshipBoardTiles.mix:97:WGGWWWWG
+BattleshipBoardTiles.mix:98:WGWGGGGG
+BattleshipBoardTiles.mix:99:WGGWWWGG
+BattleshipBoardTiles.mix:100:WGGGGGWG
+BattleshipBoardTiles.mix:101:WGWWWWGG
+BattleshipBoardTiles.mix:102:WGGGGGGG
+BattleshipBoardTiles.mix:105:WWWWWWWW
+BattleshipBoardTiles.mix:106:WGGGGGGG
+BattleshipBoardTiles.mix:107:WGWWWWGG
+BattleshipBoardTiles.mix:108:WGWGGGWG
+BattleshipBoardTiles.mix:109:WGWWWWGG
+BattleshipBoardTiles.mix:110:WGWGGGWG
+BattleshipBoardTiles.mix:111:WGWWWWGG
+BattleshipBoardTiles.mix:112:WGGGGGGG
+BattleshipBoardTiles.mix:115:WWWWWWWW
+BattleshipBoardTiles.mix:116:WGGGGGGG
+BattleshipBoardTiles.mix:117:WGGGWGGG
+BattleshipBoardTiles.mix:118:WGGWGWGG
+BattleshipBoardTiles.mix:119:WGWWWWWG
+BattleshipBoardTiles.mix:120:WGWGGGWG
+BattleshipBoardTiles.mix:121:WGWGGGWG
+BattleshipBoardTiles.mix:122:WGGGGGGG
+BattleshipBoardTiles.mix:125:WWWWWWWW
+BattleshipBoardTiles.mix:126:WGGGGGGG
+BattleshipBoardTiles.mix:127:WGGWWWGG
+BattleshipBoardTiles.mix:128:WGWGGGWG
+BattleshipBoardTiles.mix:129:WGWGGGGG
+BattleshipBoardTiles.mix:130:WGWGGGWG
+BattleshipBoardTiles.mix:131:WGGWWWGG
+BattleshipBoardTiles.mix:132:WGGGGGGG
+BattleshipBoardTiles.mix:137:WWWWWWWW
+BattleshipBoardTiles.mix:138:WRRRRRRR
+BattleshipBoardTiles.mix:139:WRWWWWWR
+BattleshipBoardTiles.mix:140:WRWRRRWR
+BattleshipBoardTiles.mix:141:WRWWWWWR
+BattleshipBoardTiles.mix:142:WRWRRRRR
+BattleshipBoardTiles.mix:143:WRWRRRRR
+BattleshipBoardTiles.mix:144:WRRRRRRR
+BattleshipBoardTiles.mix:147:WWWWWWWW
+BattleshipBoardTiles.mix:148:WRRRRRRR
+BattleshipBoardTiles.mix:149:WRRWWWWR
+BattleshipBoardTiles.mix:150:WRWRRRRR
+BattleshipBoardTiles.mix:151:WRRWWWRR
+BattleshipBoardTiles.mix:152:WRRRRRWR
+BattleshipBoardTiles.mix:153:WRWWWWRR
+BattleshipBoardTiles.mix:154:WRRRRRRR
+BattleshipBoardTiles.mix:157:WWWWWWWW
+BattleshipBoardTiles.mix:158:WRRRRRRR
+BattleshipBoardTiles.mix:159:WRWWWWRR
+BattleshipBoardTiles.mix:160:WRWRRRWR
+BattleshipBoardTiles.mix:161:WRWWWWRR
+BattleshipBoardTiles.mix:162:WRWRRRWR
+BattleshipBoardTiles.mix:163:WRWWWWRR
+BattleshipBoardTiles.mix:164:WRRRRRRR
+BattleshipBoardTiles.mix:167:WWWWWWWW
+BattleshipBoardTiles.mix:168:WRRRRRRR
+BattleshipBoardTiles.mix:169:WRRRWRRR
+BattleshipBoardTiles.mix:170:WRRWRWRR
+BattleshipBoardTiles.mix:171:WRWWWWWR
+BattleshipBoardTiles.mix:172:WRWRRRWR
+BattleshipBoardTiles.mix:173:WRWRRRWR
+BattleshipBoardTiles.mix:174:WRRRRRRR
+BattleshipBoardTiles.mix:177:WWWWWWWW
+BattleshipBoardTiles.mix:178:WRRRRRRR
+BattleshipBoardTiles.mix:179:WRRWWWRR
+BattleshipBoardTiles.mix:180:WRWRRRWR
+BattleshipBoardTiles.mix:181:WRWRRRRR
+BattleshipBoardTiles.mix:182:WRWRRRWR
+BattleshipBoardTiles.mix:183:WRRWWWRR
+BattleshipBoardTiles.mix:184:WRRRRRRR
+BattleshipBoardTiles.mix:189:WWWWWWWW
+BattleshipBoardTiles.mix:190:W.......
+BattleshipBoardTiles.mix:191:W.......
+BattleshipBoardTiles.mix:192:W.......
+BattleshipBoardTiles.mix:193:W.......
+BattleshipBoardTiles.mix:194:W.......
+BattleshipBoardTiles.mix:195:W.......
+BattleshipBoardTiles.mix:196:W.......
+BattleshipBoardTiles.mix:199:WWWWWWWW
+BattleshipBoardTiles.mix:200:W.......
+BattleshipBoardTiles.mix:201:W.......
+BattleshipBoardTiles.mix:202:W.......
+BattleshipBoardTiles.mix:203:W.......
+BattleshipBoardTiles.mix:204:W.......
+BattleshipBoardTiles.mix:205:W.......
+BattleshipBoardTiles.mix:206:W.......
+BattleshipBoardTiles.mix:209:WWWWWWWW
+BattleshipBoardTiles.mix:210:W.......
+BattleshipBoardTiles.mix:211:W.......
+BattleshipBoardTiles.mix:212:W.......
+BattleshipBoardTiles.mix:213:W.......
+BattleshipBoardTiles.mix:214:W.......
+BattleshipBoardTiles.mix:215:W.......
+BattleshipBoardTiles.mix:216:W.......
+BattleshipBoardTiles.mix:219:WWWWWWWW
+BattleshipBoardTiles.mix:220:W.......
+BattleshipBoardTiles.mix:221:W.......
+BattleshipBoardTiles.mix:222:W.......
+BattleshipBoardTiles.mix:223:W.......
+BattleshipBoardTiles.mix:224:W.......
+BattleshipBoardTiles.mix:225:W.......
+BattleshipBoardTiles.mix:226:W.......
+BattleshipBoardTiles.mix:229:WWWWWWWW
+BattleshipBoardTiles.mix:230:W.......
+BattleshipBoardTiles.mix:231:W.......
+BattleshipBoardTiles.mix:232:W.......
+BattleshipBoardTiles.mix:233:W.......
+BattleshipBoardTiles.mix:234:W.......
+BattleshipBoardTiles.mix:235:W.......
+BattleshipBoardTiles.mix:236:W.......
+BattleshipBoardTiles.mix:241:WWWWWWWW
+BattleshipBoardTiles.mix:242:W.......
+BattleshipBoardTiles.mix:243:W.......
+BattleshipBoardTiles.mix:244:W.......
+BattleshipBoardTiles.mix:245:W...W...
+BattleshipBoardTiles.mix:246:W.......
+BattleshipBoardTiles.mix:247:W.......
+BattleshipBoardTiles.mix:248:W.......
+BattleshipBoardTiles.mix:253:WWWWWWWW
+BattleshipBoardTiles.mix:254:W.......
+BattleshipBoardTiles.mix:255:W.......
+BattleshipBoardTiles.mix:256:W...W...
+BattleshipBoardTiles.mix:257:W..WWW..
+BattleshipBoardTiles.mix:258:W...W...
+BattleshipBoardTiles.mix:259:W.......
+BattleshipBoardTiles.mix:260:W.......
+BattleshipBoardTiles.mix:265:...RR...
+BattleshipBoardTiles.mix:266:.RRRRRR.
+BattleshipBoardTiles.mix:267:.RWWWRR.
+BattleshipBoardTiles.mix:268:RRWRRWRR
+BattleshipBoardTiles.mix:269:RRWWWRRR
+BattleshipBoardTiles.mix:270:.RWRRWR.
+BattleshipBoardTiles.mix:271:.RWWWRR.
+BattleshipBoardTiles.mix:272:...RR...
+BattleshipBoardTiles.mix:277:...GG...
+BattleshipBoardTiles.mix:278:.GGGGGG.
+BattleshipBoardTiles.mix:279:.GG..GG.
+BattleshipBoardTiles.mix:280:GG.GG.GG
+BattleshipBoardTiles.mix:281:GG....GG
+BattleshipBoardTiles.mix:282:.G.GG.G.
+BattleshipBoardTiles.mix:283:.GGGGGG.
+BattleshipBoardTiles.mix:284:...GG...
+BattleshipBoardTiles.mix:289:WWWWWWWW
+BattleshipBoardTiles.mix:290:WG..G..G
+BattleshipBoardTiles.mix:291:W.G.G.G.
+BattleshipBoardTiles.mix:292:W...G...
+BattleshipBoardTiles.mix:293:WGGGGGGG
+BattleshipBoardTiles.mix:294:W...G...
+BattleshipBoardTiles.mix:295:W.G.G.G.
+BattleshipBoardTiles.mix:296:WG..G..G
+BattleshipBoardTiles.mix:300:WWWWWWWW
+BattleshipBoardTiles.mix:301:WWWWWWWW
+BattleshipBoardTiles.mix:302:WWWWWWWW
+BattleshipBoardTiles.mix:303:WWWWWWWW
+BattleshipBoardTiles.mix:304:WWWWWWWW
+BattleshipBoardTiles.mix:305:WWWWWWWW
+BattleshipBoardTiles.mix:306:WWWWWWWW
+BattleshipBoardTiles.mix:307:WWWWWWWW
+BattleshipBoardTiles.mix:308:}
